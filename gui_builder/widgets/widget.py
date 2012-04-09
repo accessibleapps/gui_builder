@@ -11,6 +11,7 @@ class Widget(object):
   """This method should be implemented on subfields to translate arguments to the particular UI backend being supported."""
   return kwargs
 
- def create_control(self):
+ def create_control(self, **runtime_kwargs):
   control_args = self.translate_control_arguments(**self.control_kwargs)
+  control_args.update(runtime_kwargs)
   self.control = self.control_type(**control_args)

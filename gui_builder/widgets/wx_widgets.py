@@ -8,13 +8,26 @@ class WXWidget(Widget):
  STYLE_PREFIX = ""
  DEFAULT_EVENT = None #the default event which triggers this widget's callback
  callback = None
+ label = None
 
+ def __init__(self, label=None, callback=None, *args, **kwargs):
+  super(WXWidget, self).__init__(*args, **kwargs)
+  if callback is None:
+   callback = self.callback
+  self.callback = callback
+  if label is None:
+   label = self.label
+  self.label = label
+  self.label_control = None
 
  def create_control(self):
-  super(WXWidget, self).create_control()
+  if self.control_type in LABELED_CONTROLS:
+   super(WXWidget, self).create_control(parent=self.parent, label=self.label)
+  else:
+   super(WXWidget, self).__init__()
+   self.label_control = wx.StaticText(parent=self.parent, label=self.label)
   if self.DEFAULT_EVENT is not None and callable(self.callback):
    self.control.Bind(self.DEFAULT_EVENT, self.callback)
-
 
  def translate_control_arguments(self, **kwargs):
   answer = dict(style=0)
@@ -28,6 +41,7 @@ class WXWidget(Widget):
   if answer["style"] == 0:
    del answer["style"]
   return answer
+  
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
@@ -35,7 +49,6 @@ class Text(WXWidget):
  
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
- STYLE_PREFIX = "CB"
  DEFAULT_EVENT = wx.EVT_CHECKBOX
 
 class ComboBox(WXWidget):
