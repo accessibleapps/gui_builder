@@ -10,7 +10,7 @@ class WXWidget(Widget):
  callback = None
  label = None
 
- def __init__(self, label=None, callback=None, *args, **kwargs):
+ def __init__(self, parent=None, label=None, callback=None, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -18,14 +18,15 @@ class WXWidget(Widget):
   if label is None:
    label = self.label
   self.label = label
+  self.parent = parent
   self.label_control = None
 
  def create_control(self):
   if self.control_type in LABELED_CONTROLS:
    super(WXWidget, self).create_control(parent=self.parent, label=self.label)
   else:
-   super(WXWidget, self).__init__()
    self.label_control = wx.StaticText(parent=self.parent, label=self.label)
+   super(WXWidget, self).create_control()
   if self.DEFAULT_EVENT is not None and callable(self.callback):
    self.control.Bind(self.DEFAULT_EVENT, self.callback)
 

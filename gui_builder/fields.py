@@ -1,5 +1,6 @@
 
 class GUIField(object):
+ _UI_element = True
  creation_counter = 0
  widget_type = None
 
@@ -27,3 +28,4 @@ class GUIField(object):
 
  def render(self):
   self.widget = self.widget_type(label=self.control_label, parent=self.parent.widget, *self.control_args, **self.control_kwargs)
+  self.widget.create_control()
