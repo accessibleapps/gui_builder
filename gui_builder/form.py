@@ -1,5 +1,6 @@
 
 class BaseForm(object):
+ widget_type = None
 
  def __init__(self, fields):
   super(BaseForm, self).__init__()
@@ -8,6 +9,7 @@ class BaseForm(object):
    fields = fields.items()
   for name, unbound_field in fields:
    self[name] = unbound_field
+  self.widget = None
    
  def __iter__(self):
   return self._fields.itervalues()
@@ -21,6 +23,15 @@ class BaseForm(object):
  def __delitem__(self, name):
   del self._fields[name]
 
+ def get_value(self):
+  res = {}
+  for field in self:
+   res[field.bound_name] = field.get_value()
+  return res
+
+ def render(self):
+  for field in self:
+   field.render()
 
 class FormMeta(type):
 
@@ -35,7 +46,8 @@ class FormMeta(type):
     if name.startswith('_'):
      continue
     unbound_field = getattr(cls, name)
-    fields.append((name, unbound_field))
+    if hasattr(unbound_field, '_UI_element'):
+     fields.append((name, unbound_field))
    fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
    cls._unbound_fields = fields
   return type.__call__(cls, *args, **kwargs)
