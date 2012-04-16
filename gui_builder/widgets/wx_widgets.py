@@ -1,6 +1,6 @@
 from .widget import Widget
 import wx
-
+from wx.lib import sized_controls as sc
 LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.Panel) #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
@@ -23,10 +23,12 @@ class WXWidget(Widget):
 
  def create_control(self):
   if self.control_type in LABELED_CONTROLS:
-   super(WXWidget, self).create_control(parent=self.parent, label=self.label)
+   super(WXWidget, self).create_control(parent=self.parent.control, label=self.label)
   else:
-   self.label_control = wx.StaticText(parent=self.parent, label=self.label)
-   super(WXWidget, self).create_control()
+   if self.label:
+    self.label_control = wx.StaticText(parent=self.parent.control, label=self.label)
+   parent = getattr(self.parent, "control", None)
+   super(WXWidget, self).create_control(parent=parent)
   if self.DEFAULT_EVENT is not None and callable(self.callback):
    self.control.Bind(self.DEFAULT_EVENT, self.callback)
 
@@ -90,3 +92,9 @@ class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  STYLE_PREFIX = "SP"
  DEFAULT_EVENT = wx.EVT_SPINCTRL
+
+class SizedDialog(WXWidget):
+ control_type = sc.SizedDialog
+
+class SizedFrame(WXWidget):
+ control_type = sc.SizedFrame

@@ -1,8 +1,10 @@
 
 class BaseForm(object):
  widget_type = None
+ widget_args = []
+ widget_kwargs = {}
 
- def __init__(self, fields):
+ def __init__(self, fields, *args, **kwargs):
   super(BaseForm, self).__init__()
   self._fields = {}
   if hasattr(fields, 'items'):
@@ -10,7 +12,10 @@ class BaseForm(object):
   for name, unbound_field in fields:
    self[name] = unbound_field
   self.widget = None
-   
+  self.widget_args.extend(args)
+  self.widget_kwargs.update(kwargs)
+
+
  def __iter__(self):
   return self._fields.itervalues()
 
@@ -30,6 +35,11 @@ class BaseForm(object):
   return res
 
  def render(self):
+  if self.widget_type is None and self._fields:
+   raise RuntimeError("Must provide a widget type for this form before rendering.")
+  self.widget = self.widget_type(*self.widget_args, **self.widget_kwargs)
+  self.widget.create_control()
+  self.widget.control.Show()
   for field in self:
    field.render()
 
@@ -46,7 +56,7 @@ class FormMeta(type):
     if name.startswith('_'):
      continue
     unbound_field = getattr(cls, name)
-    if hasattr(unbound_field, '_UI_element'):
+    if hasattr(unbound_field, '_GUI_FIELD'):
      fields.append((name, unbound_field))
    fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
    cls._unbound_fields = fields
@@ -66,7 +76,7 @@ class Form(BaseForm):
  __metaclass__ = FormMeta
 
  def __init__(self, *args, **kwargs):
-  super(Form, self).__init__(self._unbound_fields)
+  super(Form, self).__init__(self._unbound_fields, *args, **kwargs)
   for name, field in self._fields.items():
    setattr(self, name, field)
 
