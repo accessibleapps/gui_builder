@@ -38,8 +38,12 @@ class WXWidget(Widget):
    if self.STYLE_PREFIX:
     possible_style = "%s_%s" % (self.STYLE_PREFIX, k.upper().replace("_", ""))
     if hasattr(wx, possible_style) and v is True:
-     answer["style"] |= getattr(wx, possible_style)
+
+     answer['style'] |= getattr(wx, possible_style)
      continue
+   if hasattr(wx, k.upper()) and v is True: #It's unprefixed, I.E. wx.WANTS_CHARS
+    answer['style'] |= getattr(wx, k.upper())
+    continue
    answer[k] = v
   if answer["style"] == 0:
    del answer["style"]
