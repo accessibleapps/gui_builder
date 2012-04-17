@@ -93,14 +93,21 @@ class SpinBox(WXWidget):
  STYLE_PREFIX = "SP"
  DEFAULT_EVENT = wx.EVT_SPINCTRL
 
-class SizedDialog(WXWidget):
+class BaseContainer(WXWidget):
+
+ def create_control(self):
+  super(BaseContainer, self).create_control()
+  self.control.Show()
+
+
+class SizedDialog(BaseContainer):
  control_type = sc.SizedDialog
 
-class SizedFrame(WXWidget):
+class SizedFrame(BaseContainer):
  control_type = sc.SizedFrame
 
-class Frame(WXWidget):
+class Frame(BaseContainer):
  control_type = wx.Frame
 
-class Dialog(WXWidget):
+class Dialog(BaseContainer):
  control_type = wx.Dialog
