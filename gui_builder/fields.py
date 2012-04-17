@@ -4,6 +4,7 @@ class GUIField(object):
  _GUI_FIELD = True
  creation_counter = 0
  widget_type = None
+ __autolabel__ = True
 
  def __init__(self, widget_type=None, label=None, *args, **kwargs):
   if widget_type is None:
@@ -19,7 +20,6 @@ class GUIField(object):
   self.widget_kwargs = kwargs
   self.parent = None
   self.bound_name = None
-  self.label = None
   self.widget = None
 
  def bind(self, parent, name):
@@ -27,8 +27,16 @@ class GUIField(object):
   self.bound_name = name
   return self
 
+ @property
+ def label(self):
+  if self.control_label is not None:
+   return self.control_label
+  if self.__autolabel__:
+   return self.bound_name.replace("_", " ").title()
+
+ 
  def render(self):
-  self.widget = self.widget_type(label=self.control_label, parent=self.parent.widget, *self.widget_args, **self.widget_kwargs)
+  self.widget = self.widget_type(label=self.label, parent=self.parent.widget, *self.widget_args, **self.widget_kwargs)
   self.widget.create_control()
 
 class Text(GUIField):
