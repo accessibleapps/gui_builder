@@ -39,7 +39,6 @@ class BaseForm(object):
    raise RuntimeError("Must provide a widget type for this form before rendering.")
   self.widget = self.widget_type(*self.widget_args, **self.widget_kwargs)
   self.widget.create_control()
-  self.widget.control.Show()
   for field in self:
    field.render()
 
