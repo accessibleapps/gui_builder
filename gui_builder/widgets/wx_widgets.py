@@ -98,3 +98,9 @@ class SizedDialog(WXWidget):
 
 class SizedFrame(WXWidget):
  control_type = sc.SizedFrame
+
+class Frame(WXWidget):
+ control_type = wx.Frame
+
+class Dialog(WXWidget):
+ control_type = wx.Dialog

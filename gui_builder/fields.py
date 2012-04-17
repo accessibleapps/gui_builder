@@ -1,10 +1,11 @@
+from widgets import wx_widgets as widgets
 
 class GUIField(object):
  _GUI_FIELD = True
  creation_counter = 0
  widget_type = None
 
- def __init__(self, widget_type, label=None, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   if widget_type is None:
@@ -29,3 +30,9 @@ class GUIField(object):
  def render(self):
   self.widget = self.widget_type(label=self.control_label, parent=self.parent.widget, *self.widget_args, **self.widget_kwargs)
   self.widget.create_control()
+
+class Text(GUIField):
+ widget_type = widgets.Text
+
+class Button(GUIField):
+ widget_type = widgets.Button
