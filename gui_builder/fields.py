@@ -50,6 +50,9 @@ class GUIField(object):
   self.widget = self.widget_type(*self.widget_args, **widget_kwargs)
   self.widget.create_control()
 
+ def postrender(self):
+  self.widget.postrender()
+
 class Text(GUIField):
  widget_type = widgets.Text
 
