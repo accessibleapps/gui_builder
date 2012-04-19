@@ -5,19 +5,23 @@ class GUIField(object):
  creation_counter = 0
  widget_type = None
  __autolabel__ = True
+ widget_args = None
+ widget_kwargs = None
 
  def __init__(self, widget_type=None, label=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
-  if widget_type is None:
-   raise ValueError("Must provide a valid widget type")
+  if self.widget_args is None:
+   self.widget_args = []
+  if self.widget_kwargs is None:
+   self.widget_kwargs = {}
+  self.widget_type = widget_type
   GUIField.creation_counter += 1
   self.creation_counter = GUIField.creation_counter
   super(GUIField, self).__init__()
-  self.widget_type = widget_type
   self.control_label = label
-  self.widget_args = args
-  self.widget_kwargs = kwargs
+  self.widget_args.extend(args)
+  self.widget_kwargs.update(kwargs)
   self.parent = None
   self.bound_name = None
   self.widget = None
@@ -31,12 +35,19 @@ class GUIField(object):
  def label(self):
   if self.control_label is not None:
    return self.control_label
-  if self.__autolabel__:
+  if self.__autolabel__ and self.bound_name:
    return self.bound_name.replace("_", " ").title()
 
- 
+
  def render(self):
-  self.widget = self.widget_type(label=self.label, parent=self.parent.widget, *self.widget_args, **self.widget_kwargs)
+  if self.widget_type is None:
+   raise RuntimeError("Must set a widget_type for %r" % self)
+  widget_kwargs = self.widget_kwargs
+  if self.label is not None:
+   widget_kwargs['label'] = self.label
+  if self.parent is not None:
+   widget_kwargs['parent'] = self.parent.widget
+  self.widget = self.widget_type(*self.widget_args, **widget_kwargs)
   self.widget.create_control()
 
 class Text(GUIField):
