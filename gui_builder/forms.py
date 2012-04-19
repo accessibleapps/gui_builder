@@ -2,6 +2,7 @@ from .fields import GUIField
 from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
+ __autolabel__ = False
  
  def __init__(self, fields, *args, **kwargs):
   super(BaseForm, self).__init__(*args, **kwargs)
@@ -33,6 +34,12 @@ class BaseForm(GUIField):
   super(BaseForm, self).render()
   for field in self:
    field.render()
+  self.postrender()
+
+ def postrender(self):
+  super(BaseForm, self).postrender()
+  for field in self:
+   field.postrender()
 
 class FormMeta(type):
 
@@ -94,3 +101,13 @@ class SizedFrame(Form):
 
 class SizedPanel(Form):
  widget_type = widgets.SizedPanel
+
+
+class AutoSizedDialog(Form):
+ widget_type = widgets.AutoSizedDialog
+
+class AutoSizedFrame(Form):
+ widget_type = widgets.AutoSizedFrame
+
+class AutoSizedPanel(Form):
+ widget_type = widgets.AutoSizedPanel

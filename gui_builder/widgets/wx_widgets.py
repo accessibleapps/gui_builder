@@ -1,6 +1,8 @@
 from .widget import Widget
 import wx
 from wx.lib import sized_controls as sc
+import wx_autosizing
+
 LABELED_CONTROLS = (wx.Button, wx.CheckBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
@@ -23,14 +25,20 @@ class WXWidget(Widget):
 
  def create_control(self):
   if self.control_type in LABELED_CONTROLS:
-   super(WXWidget, self).create_control(parent=self.parent.control, label=self.label)
+   super(WXWidget, self).create_control(parent=self.parent_control, label=self.label)
   else:
    if self.label:
-    self.label_control = wx.StaticText(parent=self.parent.control, label=self.label)
-   parent = getattr(self.parent, "control", None)
-   super(WXWidget, self).create_control(parent=parent)
+    self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
+   super(WXWidget, self).create_control(parent=self.parent_control)
   if self.DEFAULT_EVENT is not None and callable(self.callback):
    self.control.Bind(self.DEFAULT_EVENT, self.callback)
+
+ @property
+ def parent_control(self):
+  parent = getattr(self.parent, "control", None)
+  if isinstance(parent, (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)):
+   parent = parent.pane
+  return parent
 
  def translate_control_arguments(self, **kwargs):
   answer = dict(style=0)
@@ -38,7 +46,6 @@ class WXWidget(Widget):
    if self.STYLE_PREFIX:
     possible_style = "%s_%s" % (self.STYLE_PREFIX, k.upper().replace("_", ""))
     if hasattr(wx, possible_style) and v is True:
-
      answer['style'] |= getattr(wx, possible_style)
      continue
    if hasattr(wx, k.upper()) and v is True: #It's unprefixed, I.E. wx.WANTS_CHARS
@@ -120,3 +127,17 @@ class Dialog(BaseContainer):
 
 class Panel(BaseContainer):
  control_type = wx.Panel
+
+class AutoSizedContainer(BaseContainer):
+
+ def postrender(self):
+  self.control.fit()
+
+class AutoSizedPanel(BaseContainer): #doesn't require fitting
+ control_type = wx_autosizing.AutoSizedPanel
+
+class AutoSizedFrame(AutoSizedContainer):
+ control_type = wx_autosizing.AutoSizedFrame
+
+class AutoSizedDialog(AutoSizedContainer):
+ control_type = wx_autosizing.AutoSizedDialog

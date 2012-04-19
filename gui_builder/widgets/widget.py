@@ -15,3 +15,7 @@ class Widget(object):
   control_args = self.translate_control_arguments(**self.control_kwargs)
   control_args.update(runtime_kwargs)
   self.control = self.control_type(**control_args)
+
+ def postrender(self):
+  """Called once rendering completes to handle fitting etc."""
+  pass
