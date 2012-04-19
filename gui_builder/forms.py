@@ -84,3 +84,16 @@ class Form(BaseForm):
   for name, _ in self._unbound_fields:
    if name in self._fields:
     yield self._fields[name]
+
+class Frame(Form):
+ widget_type = widgets.Frame
+
+class Dialog(Form):
+ widget_type = widgets.Dialog
+
+class SizedDialog(Form):
+ widget_type = widgets.SizedDialog
+
+class SizedFrame(Form):
+ widget_type = widgets.SizedFrame
+
