@@ -1,7 +1,7 @@
 from .widget import Widget
 import wx
 from wx.lib import sized_controls as sc
-LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.Panel) #Controls that have their own labels
+LABELED_CONTROLS = (wx.Button, wx.CheckBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
 class WXWidget(Widget):
@@ -103,15 +103,20 @@ class BaseContainer(WXWidget):
   super(BaseContainer, self).create_control()
   self.control.Show()
 
-
 class SizedDialog(BaseContainer):
  control_type = sc.SizedDialog
 
 class SizedFrame(BaseContainer):
  control_type = sc.SizedFrame
 
+class SizedPanel(BaseContainer):
+ control_type = sc.SizedPanel
+
 class Frame(BaseContainer):
  control_type = wx.Frame
 
 class Dialog(BaseContainer):
  control_type = wx.Dialog
+
+class Panel(BaseContainer):
+ control_type = wx.Panel

@@ -1,5 +1,5 @@
-from fields import GUIField
-from widgets import wx_widgets as widgets
+from .fields import GUIField
+from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
  
@@ -83,9 +83,14 @@ class Frame(Form):
 class Dialog(Form):
  widget_type = widgets.Dialog
 
+class Panel(Form):
+ widget_type = widgets.Panel
+
 class SizedDialog(Form):
  widget_type = widgets.SizedDialog
 
 class SizedFrame(Form):
  widget_type = widgets.SizedFrame
 
+class SizedPanel(Form):
+ widget_type = widgets.SizedPanel
