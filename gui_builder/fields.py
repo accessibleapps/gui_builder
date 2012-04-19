@@ -58,3 +58,6 @@ class Text(GUIField):
 
 class Button(GUIField):
  widget_type = widgets.Button
+
+class CheckBox(GUIField):
+ widget_type = widgets.CheckBox
