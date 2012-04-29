@@ -56,6 +56,9 @@ class GUIField(object):
 class Text(GUIField):
  widget_type = widgets.Text
 
+class IntText(GUIField):
+ widget_type = widgets.IntText
+
 class Button(GUIField):
  widget_type = widgets.Button
 
