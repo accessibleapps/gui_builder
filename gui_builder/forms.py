@@ -5,13 +5,18 @@ class BaseForm(GUIField):
  __autolabel__ = False
  
  def __init__(self, fields, *args, **kwargs):
-  super(BaseForm, self).__init__(*args, **kwargs)
   self._fields = {}
   if hasattr(fields, 'items'):
    fields = fields.items()
   for name, unbound_field in fields:
    self[name] = unbound_field
-  
+  working_kwargs = dict(kwargs)
+  for key, value in working_kwargs.iteritems():
+   if hasattr(self, key):
+    self[key].set_value(value)
+    kwargs.pop(key)
+  super(BaseForm, self).__init__(*args, **kwargs)  
+
  def __iter__(self):
   return self._fields.itervalues()
 
