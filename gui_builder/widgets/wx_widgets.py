@@ -104,6 +104,29 @@ class SpinBox(WXWidget):
  STYLE_PREFIX = "SP"
  DEFAULT_EVENT = wx.EVT_SPINCTRL
 
+class ButtonSizer(WXWidget):
+
+ def translate_control_arguments(self, **kwargs):
+  new_kwargs = dict(flags=0)
+  for k, v in kwargs.iteritems():
+   if hasattr(wx, k.upper()) and v is True:
+    new_kwargs['flags'] |= getattr(wx, k.upper())
+   else:
+    new_kwargs[k] = v
+  if new_kwargs['flags'] == 0:
+   del new_kwargs['flags']
+  return new_kwargs
+
+ def create_control(self, **runtime_kwargs):
+  kwargs = self.control_kwargs
+  kwargs.update(runtime_kwargs)
+  translated_kwargs = self.translate_control_arguments(**kwargs)
+  self.control = self.parent.control.CreateStdDialogButtonSizer(**translated_kwargs)
+
+ def render(self):
+  self.parent.control.SetButtonSizer(self.control)
+
+
 class BaseContainer(WXWidget):
 
  def create_control(self):
@@ -127,6 +150,10 @@ class Dialog(BaseContainer):
 
 class Panel(BaseContainer):
  control_type = wx.Panel
+
+class Notebook(BaseContainer):
+ control_type = wx.Notebook
+
 
 class AutoSizedContainer(BaseContainer):
 

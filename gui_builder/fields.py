@@ -61,3 +61,9 @@ class Button(GUIField):
 
 class CheckBox(GUIField):
  widget_type = widgets.CheckBox
+
+class ButtonSizer(GUIField):
+ widget_type = widgets.ButtonSizer
+
+class ListBox(GUIField):
+ widget_type = widgets.ListBox
