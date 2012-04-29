@@ -1,5 +1,6 @@
 from .widget import Widget
 import wx
+from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 import wx_autosizing
 
@@ -8,7 +9,7 @@ UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which canno
 
 class WXWidget(Widget):
  STYLE_PREFIX = ""
- DEFAULT_EVENT = None #the default event which triggers this widget's callback
+ default_event = None #the default event which triggers this widget's callback
  callback = None
  label = None
 
@@ -30,8 +31,8 @@ class WXWidget(Widget):
    if self.label:
     self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
    super(WXWidget, self).create_control(parent=self.parent_control)
-  if self.DEFAULT_EVENT is not None and callable(self.callback):
-   self.control.Bind(self.DEFAULT_EVENT, self.callback)
+  if self.default_event is not None and callable(self.callback):
+   self.control.Bind(self.default_event, self.callback)
 
  @property
  def parent_control(self):
@@ -60,40 +61,44 @@ class WXWidget(Widget):
 class Text(WXWidget):
  control_type = wx.TextCtrl
  STYLE_PREFIX = "TE"
+ default_event = wx.EVT_CHAR
  
+class IntText(Text):
+ widget_type = intctrl.IntCtrl
+
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
- DEFAULT_EVENT = wx.EVT_CHECKBOX
+ default_event = wx.EVT_CHECKBOX
 
 class ComboBox(WXWidget):
  control_type = wx.ComboBox
  STYLE_PREFIX = "CB"
- DEFAULT_EVENT = wx.EVT_COMBOBOX
+ default_event = wx.EVT_COMBOBOX
 
 class Button(WXWidget):
  control_type = wx.Button
  STYLE_PREFIX = "BTN"
- DEFAULT_EVENT = wx.EVT_BUTTON
+ default_event = wx.EVT_BUTTON
 
 class Slider(wx.Slider):
  STYLE_PREFIX = "SL"
  control_type = wx.Slider
- DEFAULT_EVENT = wx.EVT_SLIDER
+ default_event = wx.EVT_SLIDER
 
 class ScrollBar(WXWidget):
  control_type = wx.ScrollBar
  STYLE_PREFIX = "SB"
- DEFAULT_EVENT = wx.EVT_SCROLLBAR
+ default_event = wx.EVT_SCROLLBAR
 
 class ListBox(WXWidget):
  control_type = wx.ListBox
  STYLE_PREFIX = "LB"
- DEFAULT_EVENT = wx.EVT_LISTBOX
+ default_event = wx.EVT_LISTBOX
 
 class ListView(WXWidget):
  control_type = wx.ListView
  STYLE_PREFIX = "SC"
- DEFAULT_EVENT = wx.EVT_LIST_ITEM_ACTIVATED
+ default_event = wx.EVT_LIST_ITEM_ACTIVATED
 
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
@@ -102,7 +107,7 @@ class ToolBar(WXWidget):
 class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  STYLE_PREFIX = "SP"
- DEFAULT_EVENT = wx.EVT_SPINCTRL
+ default_event = wx.EVT_SPINCTRL
 
 class ButtonSizer(WXWidget):
 
