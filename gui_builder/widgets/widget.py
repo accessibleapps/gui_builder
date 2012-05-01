@@ -20,3 +20,7 @@ class Widget(object):
  def postrender(self):
   """Called once rendering completes to handle fitting etc."""
   pass
+
+ def set_focus(self):
+  """Sets focus to this widget. Must be provided by subclasses."""
+  raise NotImplementedError

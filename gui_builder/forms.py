@@ -3,13 +3,21 @@ from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
  __autolabel__ = False
- 
- def __init__(self, fields, *args, **kwargs):
+ default_focus = None #If set to a field on this form, automatically sets focus to it.
+ #If set to a callable, calls it to determine its default focus
+
+ def __init__(self, fields, default_focus=None, *args, **kwargs):
   self._fields = {}
   if hasattr(fields, 'items'):
    fields = fields.items()
   for name, unbound_field in fields:
    self[name] = unbound_field
+  if default_focus is None:
+   default_focus = self.default_focus
+  if default_focus is None and fields:
+   default_focus = fields[0][1]
+  self.default_focus = default_focus
+
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
    if hasattr(self, key):
@@ -40,11 +48,22 @@ class BaseForm(GUIField):
   for field in self:
    field.render()
   self.postrender()
+  self.set_default_focus()
 
  def postrender(self):
   super(BaseForm, self).postrender()
   for field in self:
    field.postrender()
+
+ def set_default_focus(self):
+  focus = self.default_focus
+  if callable(focus):
+   focus = focus()
+  if focus is None:
+   return
+  focus.set_focus()
+
+
 
 class FormMeta(type):
 

@@ -59,6 +59,9 @@ class WXWidget(Widget):
   return answer
   
 
+ def set_focus(self):
+  self.control.SetFocus()
+
 class Text(WXWidget):
  control_type = wx.TextCtrl
  style_prefix = "TE"

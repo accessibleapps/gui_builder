@@ -21,7 +21,6 @@ class GUIField(object):
   super(GUIField, self).__init__()
   self.control_label = label
   self.widget_args.extend(args)
-  print parent, bound_name
   self.bind(parent, bound_name)
   self.widget_kwargs.update(kwargs)
   self.widget = None
@@ -38,7 +37,6 @@ class GUIField(object):
   if self.__autolabel__ and self.bound_name:
    return self.bound_name.replace("_", " ").title()
 
-
  def render(self):
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
@@ -52,6 +50,9 @@ class GUIField(object):
 
  def postrender(self):
   self.widget.postrender()
+
+ def set_focus(self):
+  self.widget.set_focus()
 
 class Text(GUIField):
  widget_type = widgets.Text
