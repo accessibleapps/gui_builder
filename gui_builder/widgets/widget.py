@@ -3,7 +3,8 @@ class Widget(object):
  """Base class which represents a common abstraction over UI elements."""
  control_type = None #the underlying control
 
- def __init__(self, **kwargs):
+ def __init__(self, field, **kwargs):
+  self.field = field
   self.control_kwargs = kwargs
   self.control = None
 

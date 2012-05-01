@@ -8,7 +8,7 @@ LABELED_CONTROLS = (wx.Button, wx.CheckBox)  #Controls that have their own label
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
 class WXWidget(Widget):
- STYLE_PREFIX = ""
+ style_prefix = ""
  default_event = None #the default event which triggers this widget's callback
  callback = None
  label = None
@@ -32,7 +32,8 @@ class WXWidget(Widget):
     self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
    super(WXWidget, self).create_control(parent=self.parent_control)
   if self.default_event is not None and callable(self.callback):
-   self.control.Bind(self.default_event, self.callback)
+   self.callback_wrapper = lambda *a, **k: self.callback(self.parent.field, *a, **k)
+   self.control.Bind(self.default_event, self.callback_wrapper)
 
  @property
  def parent_control(self):
@@ -44,8 +45,8 @@ class WXWidget(Widget):
  def translate_control_arguments(self, **kwargs):
   answer = dict(style=0)
   for k, v in kwargs.iteritems():
-   if self.STYLE_PREFIX:
-    possible_style = "%s_%s" % (self.STYLE_PREFIX, k.upper().replace("_", ""))
+   if self.style_prefix:
+    possible_style = "%s_%s" % (self.style_prefix, k.upper().replace("_", ""))
     if hasattr(wx, possible_style) and v is True:
      answer['style'] |= getattr(wx, possible_style)
      continue
@@ -60,7 +61,7 @@ class WXWidget(Widget):
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
- STYLE_PREFIX = "TE"
+ style_prefix = "TE"
  default_event = wx.EVT_CHAR
  
 class IntText(Text):
@@ -72,41 +73,41 @@ class CheckBox(WXWidget):
 
 class ComboBox(WXWidget):
  control_type = wx.ComboBox
- STYLE_PREFIX = "CB"
+ style_prefix = "CB"
  default_event = wx.EVT_COMBOBOX
 
 class Button(WXWidget):
  control_type = wx.Button
- STYLE_PREFIX = "BTN"
+ style_prefix = "BTN"
  default_event = wx.EVT_BUTTON
 
 class Slider(wx.Slider):
- STYLE_PREFIX = "SL"
+ style_prefix = "SL"
  control_type = wx.Slider
  default_event = wx.EVT_SLIDER
 
 class ScrollBar(WXWidget):
  control_type = wx.ScrollBar
- STYLE_PREFIX = "SB"
+ style_prefix = "SB"
  default_event = wx.EVT_SCROLLBAR
 
 class ListBox(WXWidget):
  control_type = wx.ListBox
- STYLE_PREFIX = "LB"
+ style_prefix = "LB"
  default_event = wx.EVT_LISTBOX
 
 class ListView(WXWidget):
  control_type = wx.ListView
- STYLE_PREFIX = "SC"
+ style_prefix = "SC"
  default_event = wx.EVT_LIST_ITEM_ACTIVATED
 
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
- STYLE_PREFIX = "TB"
+ style_prefix = "TB"
 
 class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
- STYLE_PREFIX = "SP"
+ style_prefix = "SP"
  default_event = wx.EVT_SPINCTRL
 
 class ButtonSizer(WXWidget):
@@ -173,3 +174,12 @@ class AutoSizedFrame(AutoSizedContainer):
 
 class AutoSizedDialog(AutoSizedContainer):
  control_type = wx_autosizing.AutoSizedDialog
+
+class RadioBox(WXWidget):
+ widget_type = wx.RadioBox
+ default_event = wx.EVT_RADIOBOX
+ style_prefix = "RA"
+
+class CheckListBox(ListBox):
+ default_event = wx.EVT_CHECKLISTBOX
+ widget_type = wx.CheckListBox
