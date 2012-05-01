@@ -8,7 +8,7 @@ class GUIField(object):
  widget_args = None
  widget_kwargs = None
 
- def __init__(self, widget_type=None, label=None, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   if self.widget_args is None:
@@ -21,12 +21,12 @@ class GUIField(object):
   super(GUIField, self).__init__()
   self.control_label = label
   self.widget_args.extend(args)
+  print parent, bound_name
+  self.bind(parent, bound_name)
   self.widget_kwargs.update(kwargs)
-  self.parent = None
-  self.bound_name = None
   self.widget = None
 
- def bind(self, parent, name):
+ def bind(self, parent, name=None):
   self.parent = parent
   self.bound_name = name
   return self
@@ -47,7 +47,7 @@ class GUIField(object):
    widget_kwargs['label'] = self.label
   if self.parent is not None:
    widget_kwargs['parent'] = self.parent.widget
-  self.widget = self.widget_type(*self.widget_args, **widget_kwargs)
+  self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   self.widget.create_control()
 
  def postrender(self):
@@ -70,3 +70,6 @@ class ButtonSizer(GUIField):
 
 class ListBox(GUIField):
  widget_type = widgets.ListBox
+
+class RadioButtonGroup(GUIField):
+ widget_type = widgets.RadioBox
