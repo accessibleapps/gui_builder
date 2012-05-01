@@ -4,7 +4,7 @@ from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 import wx_autosizing
 
-LABELED_CONTROLS = (wx.Button, wx.CheckBox)  #Controls that have their own labels
+LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
 class WXWidget(Widget):
@@ -176,10 +176,10 @@ class AutoSizedDialog(AutoSizedContainer):
  control_type = wx_autosizing.AutoSizedDialog
 
 class RadioBox(WXWidget):
- widget_type = wx.RadioBox
+ control_type = wx.RadioBox
  default_event = wx.EVT_RADIOBOX
  style_prefix = "RA"
 
 class CheckListBox(ListBox):
  default_event = wx.EVT_CHECKLISTBOX
- widget_type = wx.CheckListBox
+ control_type = wx.CheckListBox
