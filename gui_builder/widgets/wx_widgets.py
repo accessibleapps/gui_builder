@@ -34,6 +34,13 @@ class WXWidget(Widget):
   if self.default_event is not None and callable(self.callback):
    self.callback_wrapper = lambda *a, **k: self.callback(self.parent.field, *a, **k)
    self.control.Bind(self.default_event, self.callback_wrapper)
+  
+ def get_value(self):
+  """Returns the most Pythonic representation of this control's current value."""
+  return self.control.GetValue()
+
+ def set_value(self, value):
+  self.control.SetValue(value)
 
  @property
  def parent_control(self):
@@ -61,6 +68,15 @@ class WXWidget(Widget):
 
  def set_focus(self):
   self.control.SetFocus()
+
+class ChoiceWidget(WXWidget):
+
+ def get_items(self):
+  return self.control.GetItems()
+
+ def set_items(self, items):
+  return self.control.SetItems(items)
+
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
@@ -112,6 +128,8 @@ class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  style_prefix = "SP"
  default_event = wx.EVT_SPINCTRL
+
+
 
 class ButtonSizer(WXWidget):
 
@@ -182,6 +200,13 @@ class RadioBox(WXWidget):
  control_type = wx.RadioBox
  default_event = wx.EVT_RADIOBOX
  style_prefix = "RA"
+
+ def get_items(self):
+  return self.control.GetChoices()
+
+ def set_items(self, items):
+  return self.control.SetItems(items)
+
 
 class CheckListBox(ListBox):
  default_event = wx.EVT_CHECKLISTBOX
