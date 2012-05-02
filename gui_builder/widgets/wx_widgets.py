@@ -90,7 +90,7 @@ class CheckBox(WXWidget):
  control_type = wx.CheckBox
  default_event = wx.EVT_CHECKBOX
 
-class ComboBox(WXWidget):
+class ComboBox(ChoiceWidget):
  control_type = wx.ComboBox
  style_prefix = "CB"
  default_event = wx.EVT_COMBOBOX
@@ -110,7 +110,7 @@ class ScrollBar(WXWidget):
  style_prefix = "SB"
  default_event = wx.EVT_SCROLLBAR
 
-class ListBox(WXWidget):
+class ListBox(ChoiceWidget):
  control_type = wx.ListBox
  style_prefix = "LB"
  default_event = wx.EVT_LISTBOX
@@ -196,17 +196,22 @@ class AutoSizedFrame(AutoSizedContainer):
 class AutoSizedDialog(AutoSizedContainer):
  control_type = wx_autosizing.AutoSizedDialog
 
-class RadioBox(WXWidget):
+class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
  default_event = wx.EVT_RADIOBOX
  style_prefix = "RA"
+
+ def get_value(self):
+  return self.control.GetStringSelection()
+
+ def set_value(self, value):
+  self.control.SetStringSelection(value)
 
  def get_items(self):
   return self.control.GetChoices()
 
  def set_items(self, items):
   return self.control.SetItems(items)
-
 
 class CheckListBox(ListBox):
  default_event = wx.EVT_CHECKLISTBOX
