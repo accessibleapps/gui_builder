@@ -47,8 +47,8 @@ class BaseForm(GUIField):
   super(BaseForm, self).render()
   for field in self:
    field.render()
-  self.postrender()
   self.set_default_focus()
+  self.postrender()
 
  def postrender(self):
   super(BaseForm, self).postrender()
