@@ -54,6 +54,13 @@ class GUIField(object):
  def set_focus(self):
   self.widget.set_focus()
 
+ def get_value(self):
+  return self.widget.get_value()
+
+ def set_value(self, value):
+  return self.widget.set_value(value)
+
+
 class Text(GUIField):
  widget_type = widgets.Text
 
