@@ -7,6 +7,33 @@ import wx_autosizing
 LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
+def find_wx_attribute(prefix, attribute_name):
+ if prefix:
+  attribute_name = attribute_name.replace("_", "")
+  attr = "%s_%s" % (prefix, attribute_name)
+ else:
+  attr = attribute_name
+ attr = attr.upper()
+ return getattr(wx, attr)
+
+def wx_attributes(prefix="", result_key="style", **attrs):
+ answer = {result_key:0}
+ for k, v in attrs.iteritems():
+  if v is not True:
+   answer[k] = v
+  else:
+   try:
+    answer[result_key] |= find_wx_attribute(prefix, k)
+   except AttributeError:
+    try:
+     answer[result_key] |= find_wx_attribute("", k)
+    except AttributeError:
+     answer[k] = v
+ if result_key in answer and answer[result_key] == 0:
+  del answer[result_key]
+ return answer
+
+
 class WXWidget(Widget):
  style_prefix = ""
  default_event = None #the default event which triggers this widget's callback
@@ -50,22 +77,8 @@ class WXWidget(Widget):
   return parent
 
  def translate_control_arguments(self, **kwargs):
-  answer = dict(style=0)
-  for k, v in kwargs.iteritems():
-   if self.style_prefix:
-    possible_style = "%s_%s" % (self.style_prefix, k.upper().replace("_", ""))
-    if hasattr(wx, possible_style) and v is True:
-     answer['style'] |= getattr(wx, possible_style)
-     continue
-   if hasattr(wx, k.upper()) and v is True: #It's unprefixed, I.E. wx.WANTS_CHARS
-    answer['style'] |= getattr(wx, k.upper())
-    continue
-   answer[k] = v
-  if answer["style"] == 0:
-   del answer["style"]
-  return answer
-  
-
+  return wx_attributes(self.style_prefix, result_key="style", **kwargs)
+ 
  def set_focus(self):
   self.control.SetFocus()
 
@@ -100,7 +113,7 @@ class Button(WXWidget):
  style_prefix = "BTN"
  default_event = wx.EVT_BUTTON
 
-class Slider(wx.Slider):
+class Slider(WXWidget):
  style_prefix = "SL"
  control_type = wx.Slider
  default_event = wx.EVT_SLIDER
@@ -130,19 +143,11 @@ class SpinBox(WXWidget):
  default_event = wx.EVT_SPINCTRL
 
 
-
 class ButtonSizer(WXWidget):
 
  def translate_control_arguments(self, **kwargs):
-  new_kwargs = dict(flags=0)
-  for k, v in kwargs.iteritems():
-   if hasattr(wx, k.upper()) and v is True:
-    new_kwargs['flags'] |= getattr(wx, k.upper())
-   else:
-    new_kwargs[k] = v
-  if new_kwargs['flags'] == 0:
-   del new_kwargs['flags']
-  return new_kwargs
+  return wx_attributes("id", result_key="flags", **kwargs)
+
 
  def create_control(self, **runtime_kwargs):
   kwargs = self.control_kwargs
@@ -169,6 +174,14 @@ class SizedFrame(BaseContainer):
 class SizedPanel(BaseContainer):
  control_type = sc.SizedPanel
 
+ def __init__(self, sizer_type="vertical", *args, **kwargs):
+  super(SizedPanel, self).__init__(*args, **kwargs)
+  self.sizer_type = sizer_type
+
+ def postrender(self):
+  super(SizedPanel, self).postrender()
+  self.control.SetSizerType(self.sizer_type)
+
 class Frame(BaseContainer):
  control_type = wx.Frame
 
@@ -181,13 +194,16 @@ class Panel(BaseContainer):
 class Notebook(BaseContainer):
  control_type = wx.Notebook
 
+ def add_item(self, item):
+  """Adds a widget to this notebook"""
+
 
 class AutoSizedContainer(BaseContainer):
 
  def postrender(self):
   self.control.fit()
 
-class AutoSizedPanel(BaseContainer): #doesn't require fitting
+class AutoSizedPanel(SizedPanel): #doesn't require fitting
  control_type = wx_autosizing.AutoSizedPanel
 
 class AutoSizedFrame(AutoSizedContainer):

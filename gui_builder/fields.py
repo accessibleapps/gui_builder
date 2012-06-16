@@ -7,14 +7,17 @@ class GUIField(object):
  __autolabel__ = True
  widget_args = None
  widget_kwargs = None
+ callback = None
 
- def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   if self.widget_args is None:
    self.widget_args = []
   if self.widget_kwargs is None:
    self.widget_kwargs = {}
+  if callback is None:
+   callback = self.callback
   self.widget_type = widget_type
   GUIField.creation_counter += 1
   self.creation_counter = GUIField.creation_counter
@@ -23,6 +26,7 @@ class GUIField(object):
   self.widget_args.extend(args)
   self.bind(parent, bound_name)
   self.widget_kwargs.update(kwargs)
+  self.callback = callback
   self.widget = None
 
  def bind(self, parent, name=None):
@@ -45,6 +49,8 @@ class GUIField(object):
    widget_kwargs['label'] = self.label
   if self.parent is not None:
    widget_kwargs['parent'] = self.parent.widget
+  if self.callback is not None:
+   widget_kwargs['callback'] = self.callback
   self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   self.widget.create_control()
 
@@ -81,3 +87,9 @@ class ListBox(GUIField):
 
 class RadioButtonGroup(GUIField):
  widget_type = widgets.RadioBox
+
+class ListView(GUIField):
+ widget_type = widgets.ListView
+
+class Slider(GUIField):
+ widget_type = widgets.Slider
