@@ -144,7 +144,7 @@ class ListBox(ChoiceWidget):
 
 class ListView(WXWidget):
  control_type = wx.ListView
- style_prefix = "SC"
+ style_prefix = "LC"
  default_event = wx.EVT_LIST_ITEM_ACTIVATED
 
 class ToolBar(WXWidget):
