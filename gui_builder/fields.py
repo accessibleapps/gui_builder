@@ -51,7 +51,10 @@ class GUIField(object):
    widget_kwargs['parent'] = self.parent.widget
   if self.callback is not None:
    widget_kwargs['callback'] = self.callback
-  self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
+  try:
+   self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
+  except Exception as e:
+   raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.create_control()
 
  def postrender(self):
