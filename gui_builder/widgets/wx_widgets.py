@@ -40,7 +40,7 @@ class WXWidget(Widget):
  callback = None
  label = None
 
- def __init__(self, parent=None, label=None, callback=None, *args, **kwargs):
+ def __init__(self, parent=None, label=None, callback=None, min_size=(-1, -1), *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -49,6 +49,7 @@ class WXWidget(Widget):
    label = self.label
   self.label = label
   self.parent = parent
+  self.min_size = min_size
   self.label_control = None
 
  def create_control(self):
@@ -61,7 +62,11 @@ class WXWidget(Widget):
   if self.default_event is not None and callable(self.callback):
    self.callback_wrapper = lambda *a, **k: self.callback(self.parent.field, *a, **k)
    self.control.Bind(self.default_event, self.callback_wrapper)
-  
+
+ def postrender(self):
+  self.control.SetMinSize(self.min_size)
+  super(WXWidget, self).postrender()
+
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
   return self.control.GetValue()
@@ -112,6 +117,15 @@ class Button(WXWidget):
  control_type = wx.Button
  style_prefix = "BTN"
  default_event = wx.EVT_BUTTON
+
+ def __init__(self, default=False, *args, **kwargs):
+  super(Button, self).__init__(*args, **kwargs)
+  self.default = default
+
+ def postrender(self):
+  if self.default:
+   self.control.SetDefault()
+  super(Button, self).postrender()
 
 class Slider(WXWidget):
  style_prefix = "SL"
