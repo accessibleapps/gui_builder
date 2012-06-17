@@ -7,14 +7,18 @@ import wx_autosizing
 LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
 
-def find_wx_attribute(prefix, attribute_name):
+def find_wx_attribute(prefix, attr):
  if prefix:
-  attribute_name = attribute_name.replace("_", "")
-  attr = "%s_%s" % (prefix, attribute_name)
- else:
-  attr = attribute_name
- attr = attr.upper()
- return getattr(wx, attr)
+  prefix = "%s_" % prefix
+ underscore = "%s%s" % (prefix, attr)
+ no_underscore = "%s%s" % (prefix, attr.replace("_", ""))
+ underscore = underscore.upper()
+ no_underscore = no_underscore.upper()
+ val = getattr(wx, underscore, None)
+ if not val:
+  val = getattr(wx, no_underscore)
+ return val
+
 
 def wx_attributes(prefix="", result_key="style", **attrs):
  answer = {result_key:0}
