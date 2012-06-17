@@ -1,3 +1,4 @@
+import inspect
 from .widget import Widget
 import wx
 from wx.lib import intctrl
@@ -38,6 +39,7 @@ def wx_attributes(prefix="", result_key="style", **attrs):
  return answer
 
 
+
 class WXWidget(Widget):
  style_prefix = ""
  default_event = None #the default event which triggers this widget's callback
@@ -64,7 +66,14 @@ class WXWidget(Widget):
     self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
    super(WXWidget, self).create_control(parent=self.parent_control)
   if self.default_event is not None and callable(self.callback):
-   self.callback_wrapper = lambda *a, **k: self.callback(self.parent.field, *a, **k)
+   def callback_wrapper(evt, *a, **k):
+    a = list(a)
+    argspec = inspect.getargspec(self.callback).args
+    if argspec and argspec[0] == "self":
+     a.insert(0, self.parent.field)
+     self.callback(*a, **k)
+    evt.Skip()
+   self.callback_wrapper = callback_wrapper
    self.control.Bind(self.default_event, self.callback_wrapper)
 
  def postrender(self):
