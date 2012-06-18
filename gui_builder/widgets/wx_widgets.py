@@ -168,6 +168,15 @@ class ListView(WXWidget):
  style_prefix = "LC"
  default_event = wx.EVT_LIST_ITEM_ACTIVATED
 
+ def add_column(self, column_number, column_heading="", width=None, **format):
+  format = find_wx_attributes(format)
+  if not isinstance(format, (int, long)):
+   format = 0
+  self.control.InsertColumn(column_number, column_heading, width=width, format=format)
+
+ def delete_column(self, column_number):
+  self.control.DeleteColumn(column_number)
+
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
  style_prefix = "TB"
