@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger("gui_components.widgets.wx_widgets")
+
 import inspect
 from .widget import Widget
 import wx
@@ -7,6 +10,7 @@ import wx_autosizing
 
 LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
+AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
 
 def find_wx_attribute(prefix, attr):
  if prefix:
@@ -71,7 +75,11 @@ class WXWidget(Widget):
     argspec = inspect.getargspec(self.callback).args
     if argspec and argspec[0] == "self":
      a.insert(0, self.parent.field)
+    try:
      self.callback(*a, **k)
+    except:
+     logger.exception("Error calling callback")
+     raise
     evt.Skip()
    self.callback_wrapper = callback_wrapper
    self.control.Bind(self.default_event, self.callback_wrapper)
@@ -90,7 +98,7 @@ class WXWidget(Widget):
  @property
  def parent_control(self):
   parent = getattr(self.parent, "control", None)
-  if isinstance(parent, (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)):
+  if isinstance(parent, AUTOSIZED_CONTROLS):
    parent = parent.pane
   return parent
 
@@ -185,11 +193,16 @@ class ButtonSizer(WXWidget):
  def render(self):
   self.parent.control.SetButtonSizer(self.control)
 
-
 class BaseContainer(WXWidget):
 
- def create_control(self):
-  super(BaseContainer, self).create_control()
+ def __init__(self, top_level_window=False, *args, **kwargs):
+  super(BaseContainer, self).__init__(*args, **kwargs)
+  self.top_level_window = top_level_window
+
+ def postrender(self):
+  super(BaseContainer, self).postrender()
+  if self.top_level_window:
+   wx.GetApp().SetTopWindow(self.control)
   self.control.Show()
 
 class SizedDialog(BaseContainer):
