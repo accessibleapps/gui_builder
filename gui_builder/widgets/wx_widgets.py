@@ -243,9 +243,8 @@ class Panel(BaseContainer):
 class Notebook(BaseContainer):
  control_type = wx.Notebook
 
- def add_item(self, item):
-  """Adds a widget to this notebook"""
-
+ def add_item(self, name, item):
+  self.control.AddPage(item.control, name)
 
 class AutoSizedContainer(BaseContainer):
 
