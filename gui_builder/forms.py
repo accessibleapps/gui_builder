@@ -135,3 +135,10 @@ class AutoSizedFrame(Form):
 
 class AutoSizedPanel(Form):
  widget_type = widgets.AutoSizedPanel
+
+class Notebook(Form):
+ widget_type = widgets.Notebook
+
+ def postrender(self):
+  for field in self:
+   self.widget.add_item(field.label, field.widget)
