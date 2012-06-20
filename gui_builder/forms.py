@@ -48,12 +48,6 @@ class BaseForm(GUIField):
   for field in self:
    field.render()
   self.set_default_focus()
-  self.postrender()
-
- def postrender(self):
-  super(BaseForm, self).postrender()
-  for field in self:
-   field.postrender()
 
  def set_default_focus(self):
   focus = self.default_focus
@@ -139,7 +133,7 @@ class AutoSizedPanel(Form):
 class Notebook(Form):
  widget_type = widgets.Notebook
 
- def postrender(self):
+ def render(self):
+  super(Notebook, self).render()
   for field in self:
    self.widget.add_item(field.label, field.widget)
-  super(Notebook, self).postrender()

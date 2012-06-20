@@ -55,10 +55,7 @@ class GUIField(object):
    self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   except Exception as e:
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
-  self.widget.create_control()
-
- def postrender(self):
-  self.widget.postrender()
+  self.widget.render()
 
  def set_focus(self):
   self.widget.set_focus()
