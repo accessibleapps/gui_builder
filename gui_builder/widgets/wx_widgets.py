@@ -62,13 +62,13 @@ class WXWidget(Widget):
   self.min_size = min_size
   self.label_control = None
 
- def create_control(self):
+ def render(self):
   if self.control_type in LABELED_CONTROLS:
-   super(WXWidget, self).create_control(parent=self.parent_control, label=self.label)
+   super(WXWidget, self).render(parent=self.parent_control, label=self.label)
   else:
    if self.label:
     self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
-   super(WXWidget, self).create_control(parent=self.parent_control)
+   super(WXWidget, self).render(parent=self.parent_control)
   if self.default_event is not None and callable(self.callback):
    def callback_wrapper(evt, *a, **k):
     a = list(a)
@@ -83,10 +83,7 @@ class WXWidget(Widget):
     evt.Skip()
    self.callback_wrapper = callback_wrapper
    self.control.Bind(self.default_event, self.callback_wrapper)
-
- def postrender(self):
   self.control.SetMinSize(self.min_size)
-  super(WXWidget, self).postrender()
 
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
@@ -143,10 +140,10 @@ class Button(WXWidget):
   super(Button, self).__init__(*args, **kwargs)
   self.default = default
 
- def postrender(self):
+ def render(self):
+  super(Button, self).render()
   if self.default:
    self.control.SetDefault()
-  super(Button, self).postrender()
 
 class Slider(WXWidget):
  style_prefix = "SL"
@@ -208,8 +205,8 @@ class BaseContainer(WXWidget):
   super(BaseContainer, self).__init__(*args, **kwargs)
   self.top_level_window = top_level_window
 
- def postrender(self):
-  super(BaseContainer, self).postrender()
+ def render(self):
+  super(BaseContainer, self).render()
   if self.top_level_window:
    wx.GetApp().SetTopWindow(self.control)
   self.control.Show()
@@ -227,8 +224,8 @@ class SizedPanel(BaseContainer):
   super(SizedPanel, self).__init__(*args, **kwargs)
   self.sizer_type = sizer_type
 
- def postrender(self):
-  super(SizedPanel, self).postrender()
+ def render(self):
+  super(SizedPanel, self).render()
   self.control.SetSizerType(self.sizer_type)
 
 class Frame(BaseContainer):
@@ -248,7 +245,8 @@ class Notebook(BaseContainer):
 
 class AutoSizedContainer(BaseContainer):
 
- def postrender(self):
+ def render(self):
+  super(AutoSizedContainer, self).render()
   self.control.fit()
 
 class AutoSizedPanel(SizedPanel): #doesn't require fitting
