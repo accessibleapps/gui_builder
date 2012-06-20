@@ -142,3 +142,4 @@ class Notebook(Form):
  def postrender(self):
   for field in self:
    self.widget.add_item(field.label, field.widget)
+  super(Notebook, self).postrender()
