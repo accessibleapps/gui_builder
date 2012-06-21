@@ -113,6 +113,14 @@ class ChoiceWidget(WXWidget):
  def set_items(self, items):
   return self.control.SetItems(items)
 
+ def get_index(self):
+  return self.control.GetSelection()
+
+ def set_index(self, index):
+  return self.control.SetSelection(index)
+
+ def get_choice(self):
+  return self.get_items()[self.get_index()]
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
@@ -165,6 +173,12 @@ class ListView(WXWidget):
  style_prefix = "LC"
  default_event = wx.EVT_LIST_ITEM_ACTIVATED
 
+ def get_index(self):
+  return self.control.GetFirstSelected()
+
+ def set_index(self, index):
+  return self.control.Select(index)
+
  def add_column(self, column_number, column_heading="", width=None, **format):
   format = find_wx_attributes(format)
   if not isinstance(format, (int, long)):
@@ -173,6 +187,7 @@ class ListView(WXWidget):
 
  def delete_column(self, column_number):
   self.control.DeleteColumn(column_number)
+
 
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
