@@ -217,7 +217,6 @@ class ButtonSizer(WXWidget):
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
   translated_kwargs = self.translate_control_arguments(**kwargs)
-  logger.warning("Translated kwargs: %r" % translated_kwargs)
   self.control = self.parent.control.CreateStdDialogButtonSizer(**translated_kwargs)
 
  def render(self):
@@ -306,3 +305,6 @@ class RadioBox(ChoiceWidget):
 class CheckListBox(ListBox):
  default_event = wx.EVT_CHECKLISTBOX
  control_type = wx.CheckListBox
+
+class FilePicker(WXWidget):
+ control_type = wx.FilePickerCtrl

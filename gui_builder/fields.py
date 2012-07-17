@@ -99,3 +99,6 @@ class ListView(GUIField):
 
 class Slider(GUIField):
  widget_type = widgets.Slider
+
+class FilePicker(GUIField):
+ widget_type = widgets.FilePicker
