@@ -13,13 +13,21 @@ class Widget(object):
   return kwargs
 
  def render(self, **runtime_kwargs):
+  if self.control_type is None:
+   return
   control_args = self.translate_control_arguments(**self.control_kwargs)
   control_args.update(runtime_kwargs)
   try:
    self.control = self.control_type(**control_args)
   except Exception as e:
-   raise RuntimeError("Unable to render control type %r with parent %r" % (self.control_type, self.parent), e)
+   raise RuntimeError("Unable to render control type %r with parent %r for field %r" % (self.control_type, self.parent, self.field), e)
 
  def set_focus(self):
   """Sets focus to this widget. Must be provided by subclasses."""
+  raise NotImplementedError
+
+ def display(self):
+  raise NotImplementedError
+
+ def display_modal(self):
   raise NotImplementedError

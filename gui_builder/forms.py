@@ -17,13 +17,13 @@ class BaseForm(GUIField):
   if default_focus is None and fields:
    default_focus = fields[0][1]
   self.default_focus = default_focus
-
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
    if hasattr(self, key):
     self[key].set_value(value)
     kwargs.pop(key)
   super(BaseForm, self).__init__(*args, **kwargs)  
+  self.is_rendered = False
 
  def __iter__(self):
   return self._fields.itervalues()
@@ -46,8 +46,12 @@ class BaseForm(GUIField):
  def render(self):
   super(BaseForm, self).render()
   for field in self:
-   field.render()
+   try:
+    field.render()
+   except Exception as e:
+    raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_focus()
+  self.is_rendered = True
 
  def set_default_focus(self):
   focus = self.default_focus
@@ -57,7 +61,17 @@ class BaseForm(GUIField):
    return
   focus.set_focus()
 
+ def display(self):
+  self._predisplay()
+  self.widget.display()
 
+ def display_modal(self):
+  self._predisplay()
+  self.widget.display_modal()
+
+ def _predisplay(self):
+  if not self.is_rendered:
+   self.render()
 
 class FormMeta(type):
 
