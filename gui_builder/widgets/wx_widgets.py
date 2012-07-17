@@ -69,6 +69,8 @@ class WXWidget(Widget):
    if self.label:
     self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
    super(WXWidget, self).render(parent=self.parent_control)
+  if self.control is None:
+   return
   if self.default_event is not None and callable(self.callback):
    def callback_wrapper(evt, *a, **k):
     a = list(a)
@@ -84,6 +86,13 @@ class WXWidget(Widget):
    self.callback_wrapper = callback_wrapper
    self.control.Bind(self.default_event, self.callback_wrapper)
   self.control.SetMinSize(self.min_size)
+
+
+ def display(self):
+  self.control.Show()
+
+ def display_modal(self):
+  self.control.ShowModal()
 
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
@@ -202,16 +211,17 @@ class SpinBox(WXWidget):
 class ButtonSizer(WXWidget):
 
  def translate_control_arguments(self, **kwargs):
-  return wx_attributes("id", result_key="flags", **kwargs)
-
+  return wx_attributes("", result_key="flags", **kwargs)
 
  def create_control(self, **runtime_kwargs):
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
   translated_kwargs = self.translate_control_arguments(**kwargs)
+  logger.warning("Translated kwargs: %r" % translated_kwargs)
   self.control = self.parent.control.CreateStdDialogButtonSizer(**translated_kwargs)
 
  def render(self):
+  self.create_control()
   self.parent.control.SetButtonSizer(self.control)
 
 class BaseContainer(WXWidget):
@@ -224,7 +234,6 @@ class BaseContainer(WXWidget):
   super(BaseContainer, self).render()
   if self.top_level_window:
    wx.GetApp().SetTopWindow(self.control)
-  self.control.Show()
 
 class SizedDialog(BaseContainer):
  control_type = sc.SizedDialog
@@ -260,8 +269,12 @@ class Notebook(BaseContainer):
 
 class AutoSizedContainer(BaseContainer):
 
- def render(self):
-  super(AutoSizedContainer, self).render()
+ def display(self):
+  super(AutoSizedContainer, self).display()
+  self.control.fit()
+
+ def display_modal(self):
+  super(AutoSizedContainer, self).display_modal()
   self.control.fit()
 
 class AutoSizedPanel(SizedPanel): #doesn't require fitting

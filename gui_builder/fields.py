@@ -60,6 +60,12 @@ class GUIField(object):
  def set_focus(self):
   self.widget.set_focus()
 
+ def display(self):
+  self.widget.display()
+
+ def display_modal(self):
+  self.widget.display_modal()
+
  def get_value(self):
   return self.widget.get_value()
 
