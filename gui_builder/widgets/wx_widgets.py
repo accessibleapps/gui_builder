@@ -9,8 +9,9 @@ from wx.lib import sized_controls as sc
 import wx_autosizing
 
 LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
-UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel) #controls which cannot directly take focus
+UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, ) #controls which cannot directly take focus
 AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
+NONLABELED_CONTROLS = (wx.Menu, wx.MenuItem, wx.Panel, wx.Dialog, wx.Frame, sc.SizedPanel, sc.SizedDialog, sc.SizedFrame, wx_autosizing.AutoSizedPanel, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedFrame)
 
 def find_wx_attribute(prefix, attr):
  if prefix:
@@ -64,12 +65,18 @@ class WXWidget(Widget):
 
  def create_control(self, **kwargs):
   label = kwargs.pop('label', getattr(self, 'label', ''))
+  logger.debug("label: %r" % label)
   if label:
    kwargs['label'] = label
-  if label and self.control_type not in LABELED_CONTROLS:
+  if label and self.control_type is not None and self.control_type not in LABELED_CONTROLS and self.control_type not in NONLABELED_CONTROLS:
    label = kwargs.pop('label')
-   self.label_control = wx.StaticText(parent=self.parent_control, label=label)
+   try:
+    self.label_control = wx.StaticText(parent=self.parent_control, label=label)
+   except:
+    logger.exception("Error creating label for control %r" % self.control_type)
+    raise
   super(WXWidget, self).create_control(parent=self.parent_control, **kwargs)
+  self.control.SetMinSize(self.min_size)
 
  def render(self, **runtime_kwargs):
   super(WXWidget, self).render(**runtime_kwargs)
@@ -89,8 +96,7 @@ class WXWidget(Widget):
     evt.Skip()
    self.callback_wrapper = callback_wrapper
    self.control.Bind(self.default_event, self.callback_wrapper)
-  self.control.SetMinSize(self.min_size)
-
+ 
 
  def display(self):
   self.control.Show()
@@ -117,6 +123,10 @@ class WXWidget(Widget):
  
  def set_focus(self):
   self.control.SetFocus()
+
+ @classmethod
+ def can_be_focused(cls):
+  return cls.control_type not in UNFOCUSABLE_CONTROLS
 
 class ChoiceWidget(WXWidget):
 
@@ -316,6 +326,12 @@ class FilePicker(WXWidget):
 class MenuBar(WXWidget):
  control_type = wx.MenuBar
 
+
+ def create_control(self, **kwargs):
+  self.control = wx.MenuBar()
+  wx.GetApp().GetTopWindow().SetMenuBar(self.control)
+
+
  def add_item(self, name=None, item=None):
   if item is None:
    raise TypeError("Must provide a MenuItem")
@@ -326,21 +342,28 @@ class MenuBar(WXWidget):
 class Menu(WXWidget):
  control_type = wx.Menu
 
-
- def add_item(self, name=None, menu_item=None):
-  if menu_item is None:
-   self.control.AppendSeparator()
-   return
-  name = name or menu_item.name
-  id = wx.NewId()
-  if isinstance(menu_item, SubMenu):
-   self.control.AppendSubMenu(menu_item.control, name)
-  elif isinstance(menu_item, MenuItem):
-   self.control.Append 
-
-
+ def create_control(self, **kwargs):
+  label = kwargs.get('label', self.label)
+  self.control = wx.Menu()
+  self.parent_control.Append(self.control, title=label)
 
 class MenuItem(WXWidget):
  control_type = wx.MenuItem
  default_event = wx.EVT_MENU
+
+ def __init__(self, hotkey=None, help_message="", **kwargs):
+  self.hotkey = hotkey
+  self.help_message = help_message
+  super(MenuItem, self).__init__(**kwargs)
+
+ def create_control(self, **kwargs):
+  label = kwargs.get('label', self.label)
+  if self.hotkey is not None:
+   label = "%s\t%s" % (label, self.hotkey)
+  self.control = self.parent_control.Append(wx.NewId(), text=label, help=self.help_message)
+
+class SubMenu(WXWidget):
+ def create_control(self, **kwargs):
+  label = kwargs.get('label', self.label)
+  self.control = self.parent_control.Parent.AppendSubMenu(self.parent_control, label=label)
 

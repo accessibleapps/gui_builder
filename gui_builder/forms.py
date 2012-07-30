@@ -14,8 +14,11 @@ class BaseForm(GUIField):
    self[name] = unbound_field
   if default_focus is None:
    default_focus = self.default_focus
-  if default_focus is None and fields:
-   default_focus = fields[0][1]
+  if default_focus is None:
+   for name, field in fields:
+    if field.can_be_focused():
+     default_focus = field
+     break
   self.default_focus = default_focus
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
@@ -151,3 +154,12 @@ class Notebook(Form):
   super(Notebook, self).render()
   for field in self:
    self.widget.add_item(field.label, field.widget)
+
+class MenuBar(Form):
+ widget_type = widgets.MenuBar
+
+class Menu(Form):
+ widget_type = widgets.Menu
+
+class SubMenu(Form):
+ widget_type = widgets.SubMenu
