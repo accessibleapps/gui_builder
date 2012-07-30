@@ -12,15 +12,19 @@ class Widget(object):
   """This method should be implemented on subfields to translate arguments to the particular UI backend being supported."""
   return kwargs
 
- def render(self, **runtime_kwargs):
+ def create_control(self, **kwargs):
   if self.control_type is None:
-   return
-  control_args = self.translate_control_arguments(**self.control_kwargs)
-  control_args.update(runtime_kwargs)
+   raise RuntimeError("No control type provided")
   try:
-   self.control = self.control_type(**control_args)
+   self.control = self.control_type(**kwargs)
   except Exception as e:
    raise RuntimeError("Unable to render control type %r with parent %r for field %r" % (self.control_type, self.parent, self.field), e)
+
+ def render(self, **runtime_kwargs):
+  control_args = self.translate_control_arguments(**self.control_kwargs)
+  control_args.update(self.translate_control_arguments(**runtime_kwargs))
+  self.create_control(**control_args)
+  #super(Widget, self).render()
 
  def set_focus(self):
   """Sets focus to this widget. Must be provided by subclasses."""

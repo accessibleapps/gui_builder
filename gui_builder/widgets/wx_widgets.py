@@ -48,27 +48,31 @@ class WXWidget(Widget):
  style_prefix = ""
  default_event = None #the default event which triggers this widget's callback
  callback = None
- label = None
+ label = ""
 
- def __init__(self, parent=None, label=None, callback=None, min_size=(-1, -1), *args, **kwargs):
+ def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
   self.callback = callback
-  if label is None:
+  if label == "":
    label = self.label
   self.label = label
   self.parent = parent
   self.min_size = min_size
   self.label_control = None
 
- def render(self):
-  if self.control_type in LABELED_CONTROLS:
-   super(WXWidget, self).render(parent=self.parent_control, label=self.label)
-  else:
-   if self.label:
-    self.label_control = wx.StaticText(parent=self.parent_control, label=self.label)
-   super(WXWidget, self).render(parent=self.parent_control)
+ def create_control(self, **kwargs):
+  label = kwargs.pop('label', getattr(self, 'label', ''))
+  if label:
+   kwargs['label'] = label
+  if label and self.control_type not in LABELED_CONTROLS:
+   label = kwargs.pop('label')
+   self.label_control = wx.StaticText(parent=self.parent_control, label=label)
+  super(WXWidget, self).create_control(parent=self.parent_control, **kwargs)
+
+ def render(self, **runtime_kwargs):
+  super(WXWidget, self).render(**runtime_kwargs)
   if self.control is None:
    return
   if self.default_event is not None and callable(self.callback):
@@ -308,3 +312,35 @@ class CheckListBox(ListBox):
 
 class FilePicker(WXWidget):
  control_type = wx.FilePickerCtrl
+
+class MenuBar(WXWidget):
+ control_type = wx.MenuBar
+
+ def add_item(self, name=None, item=None):
+  if item is None:
+   raise TypeError("Must provide a MenuItem")
+  name = name or item.name
+  control = item.control
+  self.control.Append(control, name)
+
+class Menu(WXWidget):
+ control_type = wx.Menu
+
+
+ def add_item(self, name=None, menu_item=None):
+  if menu_item is None:
+   self.control.AppendSeparator()
+   return
+  name = name or menu_item.name
+  id = wx.NewId()
+  if isinstance(menu_item, SubMenu):
+   self.control.AppendSubMenu(menu_item.control, name)
+  elif isinstance(menu_item, MenuItem):
+   self.control.Append 
+
+
+
+class MenuItem(WXWidget):
+ control_type = wx.MenuItem
+ default_event = wx.EVT_MENU
+
