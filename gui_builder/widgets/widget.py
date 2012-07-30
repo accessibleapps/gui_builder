@@ -30,8 +30,12 @@ class Widget(object):
   """Sets focus to this widget. Must be provided by subclasses."""
   raise NotImplementedError
 
+ def can_be_focused(self):
+  raise NotImplementedError
+
  def display(self):
   raise NotImplementedError
 
  def display_modal(self):
   raise NotImplementedError
+

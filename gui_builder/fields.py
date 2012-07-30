@@ -60,6 +60,9 @@ class GUIField(object):
  def set_focus(self):
   self.widget.set_focus()
 
+ def can_be_focused(self):
+  return self.widget_type.can_be_focused()
+
  def display(self):
   self.widget.display()
 
@@ -102,3 +105,6 @@ class Slider(GUIField):
 
 class FilePicker(GUIField):
  widget_type = widgets.FilePicker
+
+class MenuItem(GUIField):
+ widget_type = widgets.MenuItem
