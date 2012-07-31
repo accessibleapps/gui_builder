@@ -137,7 +137,6 @@ class SizedFrame(Form):
 class SizedPanel(Form):
  widget_type = widgets.SizedPanel
 
-
 class AutoSizedDialog(Form):
  widget_type = widgets.AutoSizedDialog
 
