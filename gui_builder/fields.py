@@ -108,3 +108,6 @@ class FilePicker(GUIField):
 
 class MenuItem(GUIField):
  widget_type = widgets.MenuItem
+
+class StatusBar(GUIField):
+ widget_type = widgets.StatusBar
