@@ -82,21 +82,25 @@ class WXWidget(Widget):
   super(WXWidget, self).render(**runtime_kwargs)
   if self.control is None:
    return
-  if self.default_event is not None and callable(self.callback):
-   def callback_wrapper(evt, *a, **k):
-    a = list(a)
-    argspec = inspect.getargspec(self.callback).args
-    if argspec and argspec[0] == "self":
-     a.insert(0, self.parent.field)
-    try:
-     self.callback(*a, **k)
-    except:
-     logger.exception("Error calling callback")
-     raise
-    evt.Skip()
-   self.callback_wrapper = callback_wrapper
-   self.control.Bind(self.default_event, self.callback_wrapper)
- 
+  self.bind_callback()
+
+ def bind_callback(self, callback=None):
+  if self.default_event is None or not callable(self.callback):
+   return
+  def callback_wrapper(evt, *a, **k):
+   a = list(a)
+   argspec = inspect.getargspec(self.callback).args
+   if argspec and argspec[0] == "self":
+    a.insert(0, self.parent.field)
+   try:
+    self.callback(*a, **k)
+   except:
+    logger.exception("Error calling callback")
+    raise
+   evt.Skip()
+  self.callback_wrapper = callback_wrapper
+  self.control.Bind(self.default_event, self.callback_wrapper)
+
 
  def display(self):
   self.control.Show()
