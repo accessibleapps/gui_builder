@@ -367,3 +367,15 @@ class SubMenu(WXWidget):
   label = kwargs.get('label', self.label)
   self.control = self.parent_control.Parent.AppendSubMenu(self.parent_control, label=label)
 
+class StatusBar(WXWidget):
+ control_type = wx.StatusBar
+ style_prefix = 'SB'
+
+ def create_control(self, **kwargs):
+  self.control = self.parent.control.CreateStatusBar(**kwargs)
+
+ def set_value(self, value):
+  self.control.SetStatusText(value)
+
+ def get_value(self):
+  return self.control.GetStatusText()
