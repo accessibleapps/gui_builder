@@ -115,6 +115,11 @@ class WXWidget(Widget):
  def set_value(self, value):
   self.control.SetValue(value)
 
+ def populate(self, value):
+  """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
+  self.set_value(value)
+
+
  @property
  def parent_control(self):
   parent = getattr(self.parent, "control", None)
@@ -134,6 +139,10 @@ class WXWidget(Widget):
 
 class ChoiceWidget(WXWidget):
 
+ def __init__(self, default_index=0, *args, **kwargs):
+  super(ChoiceWidget, self).__init__(*args, **kwargs)
+  self.default_index = default_index
+
  def get_items(self):
   return self.control.GetItems()
 
@@ -148,6 +157,16 @@ class ChoiceWidget(WXWidget):
 
  def get_choice(self):
   return self.get_items()[self.get_index()]
+
+ def populate(self, value):
+  self.set_items(value)
+
+ def render(self):
+  super(ChoiceWidget, self).render()
+  self.set_index(self.default_index)
+
+ def get_count(self):
+  self.control.GetCount()
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
@@ -211,6 +230,10 @@ class ListView(WXWidget):
 
  def set_index(self, index):
   return self.control.Select(index)
+
+ def get_count(self):
+  return self.control.GetItemCount()
+
 
  def add_column(self, column_number, column_heading="", width=None, **format):
   format = find_wx_attributes(format)

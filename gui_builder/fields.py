@@ -60,11 +60,14 @@ class GUIField(object):
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
   if self.default_value is not None:
-   self.set_value(self.default_value)
+   self.populate(self.default_value)
 
 
  def set_focus(self):
   self.widget.set_focus()
+
+ def populate(self, value):
+  self.widget.populate(value)
 
  def can_be_focused(self):
   return self.widget_type.can_be_focused()
