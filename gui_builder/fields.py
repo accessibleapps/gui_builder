@@ -8,8 +8,9 @@ class GUIField(object):
  widget_args = None
  widget_kwargs = None
  callback = None
+ default_value = None
 
- def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   if self.widget_args is None:
@@ -18,6 +19,8 @@ class GUIField(object):
    self.widget_kwargs = {}
   if callback is None:
    callback = self.callback
+  if default_value is None:
+   default_value = self.default_value
   self.widget_type = widget_type
   GUIField.creation_counter += 1
   self.creation_counter = GUIField.creation_counter
@@ -56,6 +59,9 @@ class GUIField(object):
   except Exception as e:
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
+  if self.default_value is not None:
+   self.set_value(self.default_value)
+
 
  def set_focus(self):
   self.widget.set_focus()
@@ -74,7 +80,6 @@ class GUIField(object):
 
  def set_value(self, value):
   return self.widget.set_value(value)
-
 
 class Text(GUIField):
  widget_type = widgets.Text

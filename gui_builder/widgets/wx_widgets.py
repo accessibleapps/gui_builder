@@ -157,6 +157,12 @@ class Text(WXWidget):
 class IntText(Text):
  widget_type = intctrl.IntCtrl
 
+ def get_value(self):
+  return int(self.control.GetValue())
+
+ def set_value(self, value):
+  self.control.SetValue(unicode(value))
+
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
  default_event = wx.EVT_CHECKBOX
