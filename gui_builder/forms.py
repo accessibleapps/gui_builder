@@ -23,7 +23,7 @@ class BaseForm(GUIField):
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
    if hasattr(self, key):
-    self[key].set_value(value)
+    self[key].default_value = value
     kwargs.pop(key)
   super(BaseForm, self).__init__(*args, **kwargs)  
   self.is_rendered = False
