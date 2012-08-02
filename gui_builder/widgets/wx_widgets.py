@@ -163,7 +163,8 @@ class ChoiceWidget(WXWidget):
 
  def render(self):
   super(ChoiceWidget, self).render()
-  self.set_index(self.default_index)
+  if self.default_index is not None and self.get_count():
+   self.set_index(self.default_index)
 
  def get_count(self):
   self.control.GetCount()
