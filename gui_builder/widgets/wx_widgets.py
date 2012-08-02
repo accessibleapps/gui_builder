@@ -80,6 +80,9 @@ class WXWidget(Widget):
 
  def render(self, **runtime_kwargs):
   super(WXWidget, self).render(**runtime_kwargs)
+  if self.field.default_value is not None:
+   logger.info("default field value: %r" % self.field.default_value)
+   self.populate(self.field.default_value)
   if self.control is None:
    return
   self.bind_callback()
@@ -167,7 +170,7 @@ class ChoiceWidget(WXWidget):
    self.set_index(self.default_index)
 
  def get_count(self):
-  self.control.GetCount()
+  return self.control.GetCount()
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
