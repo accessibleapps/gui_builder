@@ -108,6 +108,12 @@ class ChoiceField(GUIField):
  def set_items(self, items):
   return self.widget.set_items(items)
 
+ def get_index(self):
+  return self.widget.get_index()
+
+ def set_index(self, index):
+  return self.widget.set_index(index)
+
 class ListBox(ChoiceField):
  widget_type = widgets.ListBox
 
