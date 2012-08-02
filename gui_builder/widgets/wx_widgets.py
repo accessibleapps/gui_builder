@@ -313,6 +313,7 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
  control_type = wx.Notebook
+ default_event = wx.EVT_NOTEBOOK_PAGE_CHANGED
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
