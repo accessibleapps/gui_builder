@@ -30,6 +30,7 @@ class GUIField(object):
   self.bind(parent, bound_name)
   self.widget_kwargs.update(kwargs)
   self.callback = callback
+  self.default_value = default_value
   self.widget = None
 
  def bind(self, parent, name=None):
@@ -59,9 +60,6 @@ class GUIField(object):
   except Exception as e:
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
-  if self.default_value is not None:
-   self.populate(self.default_value)
-
 
  def set_focus(self):
   self.widget.set_focus()
@@ -99,13 +97,24 @@ class CheckBox(GUIField):
 class ButtonSizer(GUIField):
  widget_type = widgets.ButtonSizer
 
-class ListBox(GUIField):
+class ChoiceField(GUIField):
+
+ def get_choice(self):
+  return self.widget.get_choice()
+
+ def get_items(self):
+  return self.widget.get_items()
+
+ def set_items(self, items):
+  return self.widget.set_items(items)
+
+class ListBox(ChoiceField):
  widget_type = widgets.ListBox
 
-class RadioButtonGroup(GUIField):
+class RadioButtonGroup(ChoiceField):
  widget_type = widgets.RadioBox
 
-class ListView(GUIField):
+class ListView(ChoiceField):
  widget_type = widgets.ListView
 
 class Slider(GUIField):
