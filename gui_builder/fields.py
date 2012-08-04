@@ -60,12 +60,18 @@ class GUIField(object):
   except Exception as e:
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
+  self.set_default_value()
 
  def set_focus(self):
   self.widget.set_focus()
 
  def populate(self, value):
   self.widget.populate(value)
+
+ def set_default_value(self):
+  if self.default_value is not None:
+   self.populate(self.default_value)
+
 
  def can_be_focused(self):
   return self.widget_type.can_be_focused()
@@ -99,6 +105,16 @@ class ButtonSizer(GUIField):
 
 class ChoiceField(GUIField):
 
+ def __init__(self, default_index=0, *args, **kwargs):
+  super(ChoiceField, self).__init__(*args, **kwargs)
+  self.default_index = default_index
+
+ def render(self):
+  super(ChoiceField, self).render()
+  self.set_default_index()
+
+
+
  def get_choice(self):
   return self.widget.get_choice()
 
@@ -113,6 +129,11 @@ class ChoiceField(GUIField):
 
  def set_index(self, index):
   return self.widget.set_index(index)
+
+ def set_default_index(self):
+  if self.default_index is not None:
+   self.set_index(self.default_index)
+
 
 class ListBox(ChoiceField):
  widget_type = widgets.ListBox

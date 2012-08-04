@@ -80,9 +80,6 @@ class WXWidget(Widget):
 
  def render(self, **runtime_kwargs):
   super(WXWidget, self).render(**runtime_kwargs)
-  if self.field.default_value is not None:
-   logger.info("default field value: %r" % self.field.default_value)
-   self.populate(self.field.default_value)
   if self.control is None:
    return
   self.bind_callback()
@@ -142,10 +139,6 @@ class WXWidget(Widget):
 
 class ChoiceWidget(WXWidget):
 
- def __init__(self, default_index=0, *args, **kwargs):
-  super(ChoiceWidget, self).__init__(*args, **kwargs)
-  self.default_index = default_index
-
  def get_items(self):
   return self.control.GetItems()
 
@@ -163,11 +156,6 @@ class ChoiceWidget(WXWidget):
 
  def populate(self, value):
   self.set_items(value)
-
- def render(self):
-  super(ChoiceWidget, self).render()
-  if self.default_index is not None and self.get_count():
-   self.set_index(self.default_index)
 
  def get_count(self):
   return self.control.GetCount()
