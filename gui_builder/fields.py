@@ -91,7 +91,20 @@ class GUIField(object):
 class Text(GUIField):
  widget_type = widgets.Text
 
-class IntText(GUIField):
+ def render(self):
+  super(Text, self).render()
+  self.select_all()
+
+ def select_range(self, start, end):
+  self.widget.select_range(start, end)
+
+ def get_length(self):
+  return self.widget.get_length()
+
+ def select_all(self):
+  self.select_range(0, self.get_length())
+
+class IntText(Text):
  widget_type = widgets.IntText
 
 class Button(GUIField):

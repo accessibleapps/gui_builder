@@ -164,7 +164,18 @@ class Text(WXWidget):
  control_type = wx.TextCtrl
  style_prefix = "TE"
  default_event = wx.EVT_CHAR
- 
+
+ def select_range(self, start, end):
+  self.control.SetSelection(start, end)
+
+
+ def get_length(self):
+  #this annoys me
+  val = self.get_value()
+  length = len(val)
+  del val
+  return length
+
 class IntText(Text):
  widget_type = intctrl.IntCtrl
 
