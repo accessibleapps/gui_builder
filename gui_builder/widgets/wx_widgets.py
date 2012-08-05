@@ -165,6 +165,15 @@ class Text(WXWidget):
  style_prefix = "TE"
  default_event = wx.EVT_CHAR
 
+ def translate_control_arguments(self, **kwargs):
+  res = super(Text, self).translate_control_arguments(**kwargs)
+  if 'style' not in res:
+   return {}
+  if res['style'] | wx.TE_READONLY == res['style']:
+   res['style'] |= wx.TE_MULTILINE
+  return res
+
+
  def select_range(self, start, end):
   self.control.SetSelection(start, end)
 
