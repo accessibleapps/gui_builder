@@ -8,7 +8,7 @@ from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 import wx_autosizing
 
-LABELED_CONTROLS = (wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
+LABELED_CONTROLS = (wx.HyperlinkCtrl, wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, ) #controls which cannot directly take focus
 AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
 NONLABELED_CONTROLS = (wx.Menu, wx.MenuItem, wx.Panel, wx.Dialog, wx.Frame, sc.SizedPanel, sc.SizedDialog, sc.SizedFrame, wx_autosizing.AutoSizedPanel, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedFrame)
@@ -425,3 +425,7 @@ class StatusBar(WXWidget):
 
  def get_value(self):
   return self.control.GetStatusText()
+
+class Link(WXWidget):
+ control_type = wx.HyperlinkCtrl
+ default_event = wx.EVT_HYPERLINK
