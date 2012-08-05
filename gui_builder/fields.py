@@ -168,3 +168,6 @@ class MenuItem(GUIField):
 
 class StatusBar(GUIField):
  widget_type = widgets.StatusBar
+
+class Link(GUIField):
+ widget_type = widgets.Link
