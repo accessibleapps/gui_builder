@@ -127,7 +127,6 @@ class ChoiceField(GUIField):
   self.set_default_index()
 
 
-
  def get_choice(self):
   return self.widget.get_choice()
 
