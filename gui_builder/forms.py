@@ -31,6 +31,15 @@ class BaseForm(GUIField):
  def __iter__(self):
   return self._fields.itervalues()
 
+ get_children = __iter__
+
+ def get_all_children(self):
+  for field in self:
+   if not hasattr(field, 'get_all_children'):
+    yield field
+   for subfield in field.get_all_children():
+    yield subfield
+
  def __getitem__(self, name):
   return self._fields[name]
 
@@ -118,6 +127,13 @@ class Form(BaseForm):
   for name, _ in self._unbound_fields:
    if name in self._fields:
     yield self._fields[name]
+
+class UIForm(Form):
+
+ def display_modal(self):
+  super(UIForm, self).display_modal()
+
+
 
 class Frame(Form):
  widget_type = widgets.Frame

@@ -35,7 +35,3 @@ class Widget(object):
 
  def display(self):
   raise NotImplementedError
-
- def display_modal(self):
-  raise NotImplementedError
-

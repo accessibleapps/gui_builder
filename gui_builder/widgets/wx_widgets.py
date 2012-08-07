@@ -105,9 +105,6 @@ class WXWidget(Widget):
  def display(self):
   self.control.Show()
 
- def display_modal(self):
-  self.control.ShowModal()
-
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
   return self.control.GetValue()
@@ -188,9 +185,6 @@ class Text(WXWidget):
 class IntText(Text):
  widget_type = intctrl.IntCtrl
 
- def get_value(self):
-  return int(self.control.GetValue())
-
  def set_value(self, value):
   self.control.SetValue(unicode(value))
 
@@ -268,6 +262,7 @@ class SpinBox(WXWidget):
 
 
 class ButtonSizer(WXWidget):
+ control_type = wx.StdDialogButtonSizer
 
  def translate_control_arguments(self, **kwargs):
   return wx_attributes("", result_key="flags", **kwargs)
@@ -293,7 +288,22 @@ class BaseContainer(WXWidget):
   if self.top_level_window:
    wx.GetApp().SetTopWindow(self.control)
 
-class SizedDialog(BaseContainer):
+class BaseDialog(BaseContainer):
+
+ def __init__(self, *args, **kwargs):
+  super(BaseDialog, self).__init__(*args, **kwargs)
+  self._modal_result = None
+
+ def display_modal(self):
+  self._modal_result = self.control.ShowModal()
+  return self.get_modal_result()
+
+ def get_modal_result(self):
+  if self._modal_result is None:
+   raise RuntimeError("%r has not yet been displayed modally, hence no result is available." % self)
+  return self.control.FindWindowById(self._modal_result)
+
+class SizedDialog(BaseDialog):
  control_type = sc.SizedDialog
 
 class SizedFrame(BaseContainer):
@@ -313,7 +323,7 @@ class SizedPanel(BaseContainer):
 class Frame(BaseContainer):
  control_type = wx.Frame
 
-class Dialog(BaseContainer):
+class Dialog(BaseDialog):
  control_type = wx.Dialog
 
 class Panel(BaseContainer):
@@ -332,18 +342,20 @@ class AutoSizedContainer(BaseContainer):
   super(AutoSizedContainer, self).display()
   self.control.fit()
 
- def display_modal(self):
-  super(AutoSizedContainer, self).display_modal()
-  self.control.fit()
-
 class AutoSizedPanel(SizedPanel): #doesn't require fitting
  control_type = wx_autosizing.AutoSizedPanel
 
 class AutoSizedFrame(AutoSizedContainer):
  control_type = wx_autosizing.AutoSizedFrame
 
-class AutoSizedDialog(AutoSizedContainer):
+class AutoSizedDialog(AutoSizedContainer, BaseDialog):
  control_type = wx_autosizing.AutoSizedDialog
+
+ def display_modal(self):
+  res = super(AutoSizedDialog, self).display_modal()
+  self.control.fit()
+  return res
+
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
