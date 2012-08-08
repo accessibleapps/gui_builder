@@ -9,7 +9,7 @@ from wx.lib import sized_controls as sc
 import wx_autosizing
 
 LABELED_CONTROLS = (wx.HyperlinkCtrl, wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
-UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, ) #controls which cannot directly take focus
+UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedPanel) #controls which cannot directly take focus
 AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
 NONLABELED_CONTROLS = (wx.Menu, wx.MenuItem, wx.Panel, wx.Dialog, wx.Frame, sc.SizedPanel, sc.SizedDialog, sc.SizedFrame, wx_autosizing.AutoSizedPanel, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedFrame)
 
@@ -24,7 +24,6 @@ def find_wx_attribute(prefix, attr):
  if not val:
   val = getattr(wx, no_underscore)
  return val
-
 
 def wx_attributes(prefix="", result_key="style", **attrs):
  answer = {result_key:0}
@@ -42,7 +41,6 @@ def wx_attributes(prefix="", result_key="style", **attrs):
  if result_key in answer and answer[result_key] == 0:
   del answer[result_key]
  return answer
-
 
 
 class WXWidget(Widget):
@@ -75,6 +73,8 @@ class WXWidget(Widget):
    except:
     logger.exception("Error creating label for control %r" % self.control_type)
     raise
+  if 'label' in kwargs and self.control_type in NONLABELED_CONTROLS:
+   del kwargs['label']
   super(WXWidget, self).create_control(parent=self.parent_control, **kwargs)
   self.control.SetMinSize(self.min_size)
 
