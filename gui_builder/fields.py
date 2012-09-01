@@ -150,6 +150,9 @@ class ChoiceField(GUIField):
   if self.get_items() and self.default_index is not None:
    self.set_index(self.default_index)
 
+ def get_count(self):
+  return self.widget.get_count()
+
 
 class ListBox(ChoiceField):
  widget_type = widgets.ListBox
