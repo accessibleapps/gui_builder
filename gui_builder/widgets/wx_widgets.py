@@ -102,6 +102,9 @@ class WXWidget(Widget):
   self.control.Bind(self.default_event, self.callback_wrapper)
 
 
+ def hide(self):
+  self.control.Hide()
+
  def display(self):
   self.control.Show()
 
