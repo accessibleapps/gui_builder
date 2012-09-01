@@ -143,7 +143,7 @@ class ChoiceField(GUIField):
   return self.widget.set_index(index)
 
  def set_default_index(self):
-  if self.default_value is not None and self.default_index is not None:
+  if self.get_items() and self.default_index is not None:
    self.set_index(self.default_index)
 
 
