@@ -243,6 +243,12 @@ class ListView(WXWidget):
  def get_count(self):
   return self.control.GetItemCount()
 
+ def get_items(self):
+  res = []
+  for num in xrange(self.get_count()):
+   res.append(self.get_item(num))
+   return res
+
 
  def add_column(self, column_number, column_heading="", width=None, **format):
   format = find_wx_attributes(format)
