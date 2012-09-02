@@ -1,12 +1,16 @@
+from collections import defaultdict
 
 class Widget(object):
  """Base class which represents a common abstraction over UI elements."""
  control_type = None #the underlying control
 
+
  def __init__(self, field, **kwargs):
   self.field = field
   self.control_kwargs = kwargs
   self.control = None
+  self.callbacks = defaultdict(list)
+
 
  def translate_control_arguments(self, **kwargs):
   """This method should be implemented on subfields to translate arguments to the particular UI backend being supported."""
@@ -25,6 +29,13 @@ class Widget(object):
   control_args.update(self.translate_control_arguments(**runtime_kwargs))
   self.create_control(**control_args)
   #super(Widget, self).render()
+
+ def register_callback(self, callback_type=None, callback=None):
+  self.callbacks[callback_type].append(callback)
+
+ def unregister_callback(self, callback_type, callback):
+  self.callbacks[callback_type].remove(callback)
+
 
  def set_focus(self):
   """Sets focus to this widget. Must be provided by subclasses."""

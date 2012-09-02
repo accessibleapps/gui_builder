@@ -45,7 +45,7 @@ def wx_attributes(prefix="", result_key="style", **attrs):
 
 class WXWidget(Widget):
  style_prefix = ""
- default_event = None #the default event which triggers this widget's callback
+ default_callback_type = None #the default event which triggers this widget's callback
  callback = None
  label = ""
 
@@ -63,7 +63,6 @@ class WXWidget(Widget):
 
  def create_control(self, **kwargs):
   label = kwargs.pop('label', getattr(self, 'label', ''))
-  logger.debug("label: %r" % label)
   if label:
    kwargs['label'] = label
   if label and self.control_type is not None and self.control_type not in LABELED_CONTROLS and self.control_type not in NONLABELED_CONTROLS:
@@ -82,25 +81,42 @@ class WXWidget(Widget):
   super(WXWidget, self).render(**runtime_kwargs)
   if self.control is None:
    return
-  self.bind_callback()
+  self.register_callback()
 
- def bind_callback(self, callback=None):
-  if self.default_event is None or not callable(self.callback):
+ def register_callback(self, callback_type=None, callback=None):
+  if callback_type is None:
+   callback_type = self.default_callback_type
+  if callback is None:
+   callback = self.callback
+  if callback_type is None:
    return
+  callback_event = self.resolve_callback_type(callback_type)
+  print "%r: %r" % (self, callback_event)
+  if callback_event is None or not callable(callback):
+   print "bind issue"
+   return
+
   def callback_wrapper(evt, *a, **k):
    a = list(a)
-   argspec = inspect.getargspec(self.callback).args
+   argspec = inspect.getargspec(callback).args
    if argspec and argspec[0] == "self":
     a.insert(0, self.parent.field)
    try:
-    self.callback(*a, **k)
+    callback(*a, **k)
    except:
     logger.exception("Error calling callback")
     raise
    evt.Skip()
-  self.callback_wrapper = callback_wrapper
-  self.control.Bind(self.default_event, self.callback_wrapper)
 
+  super(WXWidget, self).register_callback(callback_type, callback_wrapper)
+  self.control.Bind(callback_event, callback_wrapper)
+
+ def resolve_callback_type(self, callback_type):
+  if isinstance(callback_type, wx.PyEventBinder):
+   return callback_type
+  return find_wx_attribute("EVT", callback_type)
+
+   
 
  def hide(self):
   self.control.Hide()
@@ -163,7 +179,8 @@ class ChoiceWidget(WXWidget):
 class Text(WXWidget):
  control_type = wx.TextCtrl
  style_prefix = "TE"
- default_event = wx.EVT_CHAR
+ default_callback_type = "char"
+
 
  def translate_control_arguments(self, **kwargs):
   res = super(Text, self).translate_control_arguments(**kwargs)
@@ -193,17 +210,17 @@ class IntText(Text):
 
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
- default_event = wx.EVT_CHECKBOX
+ default_callback_type = "checkbox"
 
 class ComboBox(ChoiceWidget):
  control_type = wx.ComboBox
  style_prefix = "CB"
- default_event = wx.EVT_COMBOBOX
+ default_callback_type = wx.EVT_COMBOBOX
 
 class Button(WXWidget):
  control_type = wx.Button
  style_prefix = "BTN"
- default_event = wx.EVT_BUTTON
+ default_callback_type = "button"
 
  def __init__(self, default=False, *args, **kwargs):
   super(Button, self).__init__(*args, **kwargs)
@@ -217,22 +234,22 @@ class Button(WXWidget):
 class Slider(WXWidget):
  style_prefix = "SL"
  control_type = wx.Slider
- default_event = wx.EVT_SLIDER
+ default_callback_type = "slider"
 
 class ScrollBar(WXWidget):
  control_type = wx.ScrollBar
  style_prefix = "SB"
- default_event = wx.EVT_SCROLLBAR
+ default_callback_type = "scrollbar"
 
 class ListBox(ChoiceWidget):
  control_type = wx.ListBox
  style_prefix = "LB"
- default_event = wx.EVT_LISTBOX
+ default_callback_type = wx.EVT_LISTBOX
 
 class ListView(WXWidget):
  control_type = wx.ListView
  style_prefix = "LC"
- default_event = wx.EVT_LIST_ITEM_ACTIVATED
+ default_callback_type = wx.EVT_LIST_ITEM_ACTIVATED
 
  def get_index(self):
   return self.control.GetFirstSelected()
@@ -267,7 +284,7 @@ class ToolBar(WXWidget):
 class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  style_prefix = "SP"
- default_event = wx.EVT_SPINCTRL
+ default_callback_type = wx.EVT_SPINCTRL
 
 
 class ButtonSizer(WXWidget):
@@ -340,7 +357,7 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
  control_type = wx.Notebook
- default_event = wx.EVT_NOTEBOOK_PAGE_CHANGED
+ default_callback_type = wx.EVT_NOTEBOOK_PAGE_CHANGED
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
@@ -368,7 +385,7 @@ class AutoSizedDialog(AutoSizedContainer, BaseDialog):
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
- default_event = wx.EVT_RADIOBOX
+ default_callback_type = wx.EVT_RADIOBOX
  style_prefix = "RA"
 
  def get_value(self):
@@ -384,7 +401,7 @@ class RadioBox(ChoiceWidget):
   return self.control.SetItems(items)
 
 class CheckListBox(ListBox):
- default_event = wx.EVT_CHECKLISTBOX
+ default_callback_type = wx.EVT_CHECKLISTBOX
  control_type = wx.CheckListBox
 
 class FilePicker(WXWidget):
@@ -416,7 +433,7 @@ class Menu(WXWidget):
 
 class MenuItem(WXWidget):
  control_type = wx.MenuItem
- default_event = wx.EVT_MENU
+ default_callback_type = wx.EVT_MENU
 
  def __init__(self, hotkey=None, help_message="", **kwargs):
   self.hotkey = hotkey
@@ -449,4 +466,4 @@ class StatusBar(WXWidget):
 
 class Link(WXWidget):
  control_type = wx.HyperlinkCtrl
- default_event = wx.EVT_HYPERLINK
+ default_callback_type = wx.EVT_HYPERLINK
