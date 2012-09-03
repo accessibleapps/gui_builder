@@ -5,11 +5,15 @@ class Widget(object):
  control_type = None #the underlying control
 
 
- def __init__(self, field, **kwargs):
+ def __init__(self, field, callbacks=None, **kwargs):
   self.field = field
   self.control_kwargs = kwargs
   self.control = None
   self.callbacks = defaultdict(list)
+  if callbacks is None:
+   callbacks = {}
+  for key, value in callbacks.iteritems():
+   self.register_callback(key, value)
 
 
  def translate_control_arguments(self, **kwargs):

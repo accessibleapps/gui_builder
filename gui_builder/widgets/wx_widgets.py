@@ -91,12 +91,11 @@ class WXWidget(Widget):
   if callback_type is None:
    return
   callback_event = self.resolve_callback_type(callback_type)
-  print "%r: %r" % (self, callback_event)
   if callback_event is None or not callable(callback):
-   print "bind issue"
    return
 
   def callback_wrapper(evt, *a, **k):
+   evt.Skip(True)
    a = list(a)
    argspec = inspect.getargspec(callback).args
    if argspec and argspec[0] == "self":
@@ -106,7 +105,6 @@ class WXWidget(Widget):
    except:
     logger.exception("Error calling callback")
     raise
-   evt.Skip()
 
   super(WXWidget, self).register_callback(callback_type, callback_wrapper)
   self.control.Bind(callback_event, callback_wrapper)
