@@ -213,7 +213,7 @@ class CheckBox(WXWidget):
 class ComboBox(ChoiceWidget):
  control_type = wx.ComboBox
  style_prefix = "CB"
- default_callback_type = wx.EVT_COMBOBOX
+ default_callback_type = "combobox"
 
 class Button(WXWidget):
  control_type = wx.Button
@@ -242,12 +242,13 @@ class ScrollBar(WXWidget):
 class ListBox(ChoiceWidget):
  control_type = wx.ListBox
  style_prefix = "LB"
- default_callback_type = wx.EVT_LISTBOX
+ default_callback_type = "listbox"
+
 
 class ListView(WXWidget):
  control_type = wx.ListView
  style_prefix = "LC"
- default_callback_type = wx.EVT_LIST_ITEM_ACTIVATED
+ default_callback_type = "LIST_ITEM_SELECTED"
 
  def get_index(self):
   return self.control.GetFirstSelected()
@@ -282,8 +283,7 @@ class ToolBar(WXWidget):
 class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  style_prefix = "SP"
- default_callback_type = wx.EVT_SPINCTRL
-
+ default_callback_type = "SPINCTRL"
 
 class ButtonSizer(WXWidget):
  control_type = wx.StdDialogButtonSizer
@@ -355,7 +355,7 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
  control_type = wx.Notebook
- default_callback_type = wx.EVT_NOTEBOOK_PAGE_CHANGED
+ default_callback_type = "notebook_page_changed"
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
@@ -383,7 +383,7 @@ class AutoSizedDialog(AutoSizedContainer, BaseDialog):
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
- default_callback_type = wx.EVT_RADIOBOX
+ default_callback_type = "RADIOBOX"
  style_prefix = "RA"
 
  def get_value(self):
@@ -399,7 +399,7 @@ class RadioBox(ChoiceWidget):
   return self.control.SetItems(items)
 
 class CheckListBox(ListBox):
- default_callback_type = wx.EVT_CHECKLISTBOX
+ default_callback_type = "CHECKLISTBOX"
  control_type = wx.CheckListBox
 
 class FilePicker(WXWidget):
@@ -431,7 +431,7 @@ class Menu(WXWidget):
 
 class MenuItem(WXWidget):
  control_type = wx.MenuItem
- default_callback_type = wx.EVT_MENU
+ default_callback_type = "MENU"
 
  def __init__(self, hotkey=None, help_message="", **kwargs):
   self.hotkey = hotkey
@@ -464,4 +464,4 @@ class StatusBar(WXWidget):
 
 class Link(WXWidget):
  control_type = wx.HyperlinkCtrl
- default_callback_type = wx.EVT_HYPERLINK
+ default_callback_type = "hyperlink"
