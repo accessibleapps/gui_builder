@@ -149,7 +149,7 @@ class WXWidget(Widget):
 
  @classmethod
  def can_be_focused(cls):
-  return cls.control_type not in UNFOCUSABLE_CONTROLS
+  return cls.control_type is not None and cls.control_type not in UNFOCUSABLE_CONTROLS
 
 class ChoiceWidget(WXWidget):
 
@@ -159,6 +159,9 @@ class ChoiceWidget(WXWidget):
  def set_items(self, items):
   return self.control.SetItems(items)
 
+ def get_item(self, index):
+  return self.control.get_string(index)
+
  def get_index(self):
   return self.control.GetSelection()
 
@@ -166,7 +169,7 @@ class ChoiceWidget(WXWidget):
   return self.control.SetSelection(index)
 
  def get_choice(self):
-  return self.get_items()[self.get_index()]
+  return self.get_item(self.get_index())
 
  def populate(self, value):
   self.set_items(value)
@@ -245,19 +248,28 @@ class ListBox(ChoiceWidget):
  default_callback_type = "listbox"
 
 
-class ListView(WXWidget):
+class ListView(ChoiceWidget):
  control_type = wx.ListView
  style_prefix = "LC"
  default_callback_type = "LIST_ITEM_SELECTED"
 
+ def __init__(self, **kwargs):
+  super(ListView, self).__init__(**kwargs)
+  self._last_added_column = -1
+
  def get_index(self):
-  return self.control.GetFirstSelected()
+  return self.control.GetFirstSelected() - 1
 
  def set_index(self, index):
-  return self.control.Select(index)
+  print "Setting index of %r to %r" % (self, index)
+  self.control.Select(index)
+  self.control.Focus(index)
 
  def get_count(self):
   return self.control.GetItemCount()
+
+ def get_item(self, index):
+  return self.control.GetItem(index)
 
  def get_items(self):
   res = []
@@ -265,15 +277,39 @@ class ListView(WXWidget):
    res.append(self.get_item(num))
    return res
 
+ def set_items(self, items):
+  print "Setting items in %r to %r" % (self, items)
+  self.control.DeleteAllItems()
+  for item in items:
+   self.control.Append(item)
 
- def add_column(self, column_number, column_heading="", width=None, **format):
-  format = find_wx_attributes(format)
+ def add_column(self, column_number=None, label="", width=None, **format):
+  if column_number is None:
+   column_number = self._last_added_column + 1
+  if width is None:
+   width = -1
+  format = wx_attributes(format)
   if not isinstance(format, (int, long)):
-   format = 0
-  self.control.InsertColumn(column_number, column_heading, width=width, format=format)
+   format = wx.LIST_FORMAT_LEFT
+  self.control.InsertColumn(column_number, label, width=width, format=format)
+  self._last_added_column = column_number
 
  def delete_column(self, column_number):
   self.control.DeleteColumn(column_number)
+
+class ListViewColumn(WXWidget):
+
+ def create_control(self, **runtime_kwargs):
+  kwargs = self.control_kwargs
+  kwargs.update(runtime_kwargs)
+  kwargs['label'] = self.label
+  translated_kwargs = self.translate_control_arguments(**kwargs)
+  print "Adding ListView Column with kwargs %r" % kwargs
+  self.control = self.parent.add_column(**translated_kwargs)
+
+ def render(self):
+  print "Rendering ListView column"
+  self.create_control()
 
 
 class ToolBar(WXWidget):
@@ -290,12 +326,6 @@ class ButtonSizer(WXWidget):
 
  def translate_control_arguments(self, **kwargs):
   return wx_attributes("", result_key="flags", **kwargs)
-
- def create_control(self, **runtime_kwargs):
-  kwargs = self.control_kwargs
-  kwargs.update(runtime_kwargs)
-  translated_kwargs = self.translate_control_arguments(**kwargs)
-  self.control = self.parent.control.CreateStdDialogButtonSizer(**translated_kwargs)
 
  def render(self):
   self.create_control()
