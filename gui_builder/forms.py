@@ -1,4 +1,4 @@
-from .fields import GUIField
+from .fields import GUIField, ChoiceField
 from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
@@ -22,9 +22,12 @@ class BaseForm(GUIField):
   self.default_focus = default_focus
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
-   if hasattr(self, key):
+
+   try:
     self[key].default_value = value
     kwargs.pop(key)
+   except KeyError:
+    pass
   super(BaseForm, self).__init__(*args, **kwargs)  
   self.is_rendered = False
 
@@ -62,6 +65,7 @@ class BaseForm(GUIField):
     field.render()
    except Exception as e:
     raise RuntimeError("Failed to render field %r" % field, e)
+  self.set_default_value()
   self.set_default_focus()
   self.is_rendered = True
 
@@ -72,6 +76,11 @@ class BaseForm(GUIField):
   if focus is None:
    return
   focus.set_focus()
+
+ def set_default_value(self):
+  super(BaseForm, self).set_default_value()
+  for field in self:
+   field.set_default_value()
 
  def display(self):
   self._predisplay()
@@ -178,3 +187,6 @@ class Menu(Form):
 
 class SubMenu(Form):
  widget_type = widgets.SubMenu
+
+class ListView(Form, ChoiceField):
+ widget_type = widgets.ListView
