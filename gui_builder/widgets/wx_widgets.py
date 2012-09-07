@@ -342,6 +342,12 @@ class BaseContainer(WXWidget):
   if self.top_level_window:
    wx.GetApp().SetTopWindow(self.control)
 
+ def set_title(self, title):
+  self.control.SetTitle(title)
+
+ def get_title(self):
+  return self.control.GetTitle()
+
 class BaseDialog(BaseContainer):
 
  def __init__(self, *args, **kwargs):

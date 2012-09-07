@@ -139,39 +139,45 @@ class Form(BaseForm):
 
 class UIForm(Form):
 
+ def get_title(self):
+  return self.widget.get_title()
+
+ def set_title(self, title):
+  return self.widget.set_title(title)
+
  def display_modal(self):
   super(UIForm, self).display_modal()
 
 
 
-class Frame(Form):
+class Frame(UIForm):
  widget_type = widgets.Frame
 
-class Dialog(Form):
+class Dialog(UIForm):
  widget_type = widgets.Dialog
 
-class Panel(Form):
+class Panel(UIForm):
  widget_type = widgets.Panel
 
-class SizedDialog(Form):
+class SizedDialog(UIForm):
  widget_type = widgets.SizedDialog
 
-class SizedFrame(Form):
+class SizedFrame(UIForm):
  widget_type = widgets.SizedFrame
 
-class SizedPanel(Form):
+class SizedPanel(UIForm):
  widget_type = widgets.SizedPanel
 
-class AutoSizedDialog(Form):
+class AutoSizedDialog(UIForm):
  widget_type = widgets.AutoSizedDialog
 
-class AutoSizedFrame(Form):
+class AutoSizedFrame(UIForm):
  widget_type = widgets.AutoSizedFrame
 
-class AutoSizedPanel(Form):
+class AutoSizedPanel(UIForm):
  widget_type = widgets.AutoSizedPanel
 
-class Notebook(Form):
+class Notebook(UIForm):
  widget_type = widgets.Notebook
 
  def render(self):
@@ -179,14 +185,14 @@ class Notebook(Form):
   for field in self:
    self.widget.add_item(field.label, field.widget)
 
-class MenuBar(Form):
+class MenuBar(UIForm):
  widget_type = widgets.MenuBar
 
-class Menu(Form):
+class Menu(UIForm):
  widget_type = widgets.Menu
 
-class SubMenu(Form):
+class SubMenu(UIForm):
  widget_type = widgets.SubMenu
 
-class ListView(Form, ChoiceField):
+class ListView(UIForm, ChoiceField):
  widget_type = widgets.ListView
