@@ -327,6 +327,12 @@ class ButtonSizer(WXWidget):
  def translate_control_arguments(self, **kwargs):
   return wx_attributes("", result_key="flags", **kwargs)
 
+ def create_control(self, **runtime_kwargs):
+  kwargs = self.control_kwargs
+  kwargs.update(runtime_kwargs)
+  control_kwargs = self.translate_control_arguments(**kwargs)
+  self.control = self.parent.control.CreateStdDialogButtonSizer(**control_kwargs)
+
  def render(self):
   self.create_control()
   self.parent.control.SetButtonSizer(self.control)
