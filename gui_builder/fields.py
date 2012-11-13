@@ -138,6 +138,9 @@ class ChoiceField(GUIField):
  def set_items(self, items):
   return self.widget.set_items(items)
 
+ def delete_item(self, item):
+  return self.widget.delete_item(item)
+
  def get_index(self):
   return self.widget.get_index()
 

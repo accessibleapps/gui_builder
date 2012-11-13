@@ -162,6 +162,9 @@ class ChoiceWidget(WXWidget):
  def get_item(self, index):
   return self.control.get_string(index)
 
+ def __getitem___(self, index):
+  return self.get_item(index)
+
  def get_index(self):
   return self.control.GetSelection()
 
@@ -176,6 +179,9 @@ class ChoiceWidget(WXWidget):
 
  def get_count(self):
   return self.control.GetCount()
+
+ def delete_item(self, index):
+  self.control.Delete(index)
 
 class Text(WXWidget):
  control_type = wx.TextCtrl
@@ -261,7 +267,6 @@ class ListView(ChoiceWidget):
   return self.control.GetFirstSelected() - 1
 
  def set_index(self, index):
-  print "Setting index of %r to %r" % (self, index)
   self.control.Select(index)
   self.control.Focus(index)
 
@@ -278,10 +283,13 @@ class ListView(ChoiceWidget):
    return res
 
  def set_items(self, items):
-  print "Setting items in %r to %r" % (self, items)
   self.control.DeleteAllItems()
   for item in items:
    self.control.Append(item)
+
+ def delete_item(self, index):
+  self.control.DeleteItem(index)
+
 
  def add_column(self, column_number=None, label="", width=None, **format):
   if column_number is None:
