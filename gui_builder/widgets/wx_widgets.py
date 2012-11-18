@@ -43,6 +43,23 @@ def wx_attributes(prefix="", result_key="style", **attrs):
  return answer
 
 
+
+def callback_wrapper(widget, callback):
+ def wrapper(evt, *a, **k):
+  evt.Skip(True)
+  a = list(a)
+  argspec = inspect.getargspec(callback).args
+  if argspec and argspec[0] == "self":
+   a.insert(0, widget.parent.field)
+  try:
+   callback(*a, **k)
+  except:
+   logger.exception("Error calling callback")
+   raise
+ return wrapper
+
+  
+
 class WXWidget(Widget):
  style_prefix = ""
  default_callback_type = None #the default event which triggers this widget's callback
@@ -94,20 +111,9 @@ class WXWidget(Widget):
   if callback_event is None or not callable(callback):
    return
 
-  def callback_wrapper(evt, *a, **k):
-   evt.Skip(True)
-   a = list(a)
-   argspec = inspect.getargspec(callback).args
-   if argspec and argspec[0] == "self":
-    a.insert(0, self.parent.field)
-   try:
-    callback(*a, **k)
-   except:
-    logger.exception("Error calling callback")
-    raise
-
-  super(WXWidget, self).register_callback(callback_type, callback_wrapper)
-  self.control.Bind(callback_event, callback_wrapper)
+  wrapped_callback = callback_wrapper(self, callback)
+  super(WXWidget, self).register_callback(callback_type, wrapped_callback)
+  self.control.Bind(callback_event, wrapped_callback)
 
  def resolve_callback_type(self, callback_type):
   if isinstance(callback_type, wx.PyEventBinder):
@@ -124,7 +130,8 @@ class WXWidget(Widget):
 
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
-  return self.control.GetValue()
+  if hasattr(self.control, 'GetValue'):
+   return self.control.GetValue()
 
  def set_value(self, value):
   self.control.SetValue(value)
@@ -312,11 +319,10 @@ class ListViewColumn(WXWidget):
   kwargs.update(runtime_kwargs)
   kwargs['label'] = self.label
   translated_kwargs = self.translate_control_arguments(**kwargs)
-  print "Adding ListView Column with kwargs %r" % kwargs
   self.control = self.parent.add_column(**translated_kwargs)
 
  def render(self):
-  print "Rendering ListView column"
+  logger.debug("Rendering ListView column")
   self.create_control()
 
 
@@ -336,10 +342,27 @@ class ButtonSizer(WXWidget):
   return wx_attributes("", result_key="flags", **kwargs)
 
  def create_control(self, **runtime_kwargs):
+  callbacks = {}
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
+  for kwarg, val in kwargs.items():
+   if callable(val):
+    kwargs[kwarg] = True
+    try:
+     logger.debug("Finding id for kwarg %s" % kwarg)
+     callbacks[kwarg] = (find_wx_attribute("ID", kwarg), val)
+     logger.debug("Found callback %s" % str(callbacks[kwarg]))
+    except AttributeError:
+      pass
   control_kwargs = self.translate_control_arguments(**kwargs)
   self.control = self.parent.control.CreateStdDialogButtonSizer(**control_kwargs)
+  for control_id, callback in callbacks.itervalues():
+   for child_sizer in self.control.GetChildren():
+    window = child_sizer.GetWindow()
+    if window is not None and window.GetId() == control_id:
+     window.Bind(wx.EVT_BUTTON, callback_wrapper(self, callback))
+     logger.debug("Bound callback %s" % str(callback))
+     break
 
  def render(self):
   self.create_control()

@@ -45,7 +45,7 @@ class GUIField(object):
   if self.__autolabel__ and self.bound_name:
    return self.bound_name.replace("_", " ").title()
 
- def render(self):
+ def render(self, **runtime_kwargs):
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
   widget_kwargs = self.widget_kwargs
@@ -55,6 +55,7 @@ class GUIField(object):
    widget_kwargs['parent'] = self.parent.widget
   if self.callback is not None:
    widget_kwargs['callback'] = self.callback
+  widget_kwargs.update(runtime_kwargs)
   try:
    self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   except Exception as e:
@@ -91,6 +92,9 @@ class GUIField(object):
  def set_value(self, value):
   return self.widget.set_value(value)
 
+ def get_default_value(self):
+  return self.default_value
+
 class Text(GUIField):
  widget_type = widgets.Text
 
@@ -121,13 +125,25 @@ class ButtonSizer(GUIField):
 
 class ChoiceField(GUIField):
 
- def __init__(self, default_index=0, *args, **kwargs):
+ def __init__(self, default_index=0, choices=None, *args, **kwargs):
   super(ChoiceField, self).__init__(*args, **kwargs)
   self.default_index = default_index
+  if choices is None:
+   choices = []
+  self.choices = choices
+
+ def render(self, **runtime_kwargs):
+  runtime_kwargs.setdefault('choices', self.choices)
+  super(ChoiceField, self).render(**runtime_kwargs)
+
 
  def set_default_value(self):
   super(ChoiceField, self).set_default_value()
   self.set_default_index()
+
+ def get_default_choice(self):
+  if self.choices:
+   return self.choices[self.default_index]
 
  def get_choice(self):
   return self.widget.get_choice()
