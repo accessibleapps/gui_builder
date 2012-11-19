@@ -266,8 +266,11 @@ class ListView(ChoiceWidget):
  style_prefix = "LC"
  default_callback_type = "LIST_ITEM_SELECTED"
 
- def __init__(self, **kwargs):
+ def __init__(self, choices=None, **kwargs):
   super(ListView, self).__init__(**kwargs)
+  if choices is None:
+   choices = []
+  self.choices = choices
   self._last_added_column = -1
 
  def get_index(self):
@@ -296,6 +299,10 @@ class ListView(ChoiceWidget):
 
  def delete_item(self, index):
   self.control.DeleteItem(index)
+
+ def render(self, **kwargs):
+  super(ListView, self).render(**kwargs)
+  self.set_items(self.choices)
 
 
  def add_column(self, column_number=None, label="", width=None, **format):
