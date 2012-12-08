@@ -149,6 +149,9 @@ class UIForm(Form):
   super(UIForm, self).display_modal()
 
 
+ def close(self):
+  self.widget.close()
+
 
 class Frame(UIForm):
  widget_type = widgets.Frame
