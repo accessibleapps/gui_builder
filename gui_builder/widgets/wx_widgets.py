@@ -113,6 +113,9 @@ class WXWidget(Widget):
 
   wrapped_callback = callback_wrapper(self, callback)
   super(WXWidget, self).register_callback(callback_type, wrapped_callback)
+  self.bind_event(callback_event, wrapped_callback)
+
+ def bind_event(self, callback_event, wrapped_callback):
   self.control.Bind(callback_event, wrapped_callback)
 
  def resolve_callback_type(self, callback_type):
@@ -523,6 +526,11 @@ class MenuItem(WXWidget):
   if self.hotkey is not None:
    label = "%s\t%s" % (label, self.hotkey)
   self.control = self.parent_control.Append(wx.NewId(), text=label, help=self.help_message)
+
+
+ def bind_event(self, callback_event, wrapped_callback):
+  self.parent.control.Bind(callback_event, wrapped_callback)
+
 
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
