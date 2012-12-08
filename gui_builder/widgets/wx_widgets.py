@@ -280,7 +280,7 @@ class ListBox(ChoiceWidget):
 class ListView(ChoiceWidget):
  control_type = wx.ListView
  style_prefix = "LC"
- default_callback_type = "LIST_ITEM_SELECTED"
+ default_callback_type = "LIST_ITEM_FOCUSED"
 
  def __init__(self, choices=None, **kwargs):
   super(ListView, self).__init__(**kwargs)
