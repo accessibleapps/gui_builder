@@ -123,7 +123,20 @@ class WXWidget(Widget):
    return callback_type
   return find_wx_attribute("EVT", callback_type)
 
-   
+
+ @property
+ def enabled(self):
+  return self.control.Enabled
+
+ @enabled.setter
+ def enabled(self, val):
+  self.control.Enabled = bool(val)
+
+ def enable(self):
+  self.enabled = True
+
+ def disable(self):
+  self.enabled = False
 
  def hide(self):
   self.control.Hide()

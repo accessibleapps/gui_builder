@@ -76,8 +76,15 @@ class GUIField(object):
  def can_be_focused(self):
   return self.widget_type.can_be_focused()
 
+ def disable(self):
+  return self.widget.disable()
+
+ def enable(self):
+  return self.widget.enable()
+
  def hide(self):
   return self.widget.hide()
+
 
 
  def display(self):
