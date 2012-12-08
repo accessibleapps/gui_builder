@@ -66,7 +66,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), *args, **kwargs):
+ def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), enabled=True, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -77,6 +77,7 @@ class WXWidget(Widget):
   self.parent = parent
   self.min_size = min_size
   self.label_control = None
+  self.control_enabled = enabled
 
  def create_control(self, **kwargs):
   label = kwargs.pop('label', getattr(self, 'label', ''))
@@ -99,6 +100,7 @@ class WXWidget(Widget):
   if self.control is None:
    return
   self.register_callback()
+  self.enabled = self.control_enabled
 
  def register_callback(self, callback_type=None, callback=None):
   if callback_type is None:
@@ -407,6 +409,9 @@ class BaseContainer(WXWidget):
 
  def get_title(self):
   return self.control.GetTitle()
+
+ def close(self):
+  self.control.Close()
 
 class BaseDialog(BaseContainer):
 
