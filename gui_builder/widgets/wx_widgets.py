@@ -60,7 +60,7 @@ def callback_wrapper(widget, callback):
   evt.Skip(True)
   a = list(a)
   argspec = inspect.getargspec(callback).args
-  if argspec and argspec[0] == "self":
+  if argspec and argspec[0] == "self" and not hasattr(callback, "im_self"):
    a.insert(0, widget.parent.field)
   try:
    callback(*a, **k)
