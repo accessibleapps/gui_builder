@@ -45,6 +45,7 @@ class GUIField(object):
   if self.__autolabel__ and self.bound_name:
    return self.bound_name.replace("_", " ").title()
 
+
  def render(self, **runtime_kwargs):
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
@@ -61,6 +62,13 @@ class GUIField(object):
   except Exception as e:
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
+
+ def register_callback(self, trigger, callback):
+  self.widget.register_callback(trigger, callback)
+
+ def unregister_callback(self, trigger, callback):
+  self.widget.unregister_callback(trigger, callback)
+
 
  def set_focus(self):
   self.widget.set_focus()
