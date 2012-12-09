@@ -185,9 +185,13 @@ class ChoiceField(GUIField):
  def get_count(self):
   return self.widget.get_count()
 
+class ComboBox(ChoiceField):
+ widget_type = widgets.ComboBox
+
 
 class ListBox(ChoiceField):
  widget_type = widgets.ListBox
+
 
 class RadioButtonGroup(ChoiceField):
  widget_type = widgets.RadioBox
