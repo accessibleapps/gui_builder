@@ -13,6 +13,17 @@ UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, 
 AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
 NONLABELED_CONTROLS = (wx.Menu, wx.MenuItem, wx.Panel, wx.Dialog, wx.Frame, sc.SizedPanel, sc.SizedDialog, sc.SizedFrame, wx_autosizing.AutoSizedPanel, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedFrame)
 
+is_labeled = lambda control: is_subclass_or_instance(control, LABELED_CONTROLS)
+is_focusable = lambda control: not is_subclass_or_instance(control, UNFOCUSABLE_CONTROLS)
+is_autosized = lambda control: is_subclass_or_instance(control, AUTOSIZED_CONTROLS)
+should_be_labeled = lambda control: not is_subclass_or_instance(control, NONLABELED_CONTROLS)
+
+def is_subclass_or_instance(unknown, possible):
+ try:
+  return issubclass(unknown, possible)
+ except TypeError:
+  return isinstance(unknown, possible)
+
 def find_wx_attribute(prefix, attr):
  if prefix:
   prefix = "%s_" % prefix
@@ -83,14 +94,14 @@ class WXWidget(Widget):
   label = kwargs.pop('label', getattr(self, 'label', ''))
   if label:
    kwargs['label'] = label
-  if label and self.control_type is not None and self.control_type not in LABELED_CONTROLS and self.control_type not in NONLABELED_CONTROLS:
+  if label is not None and should_be_labeled(self.control_type) and not is_labeled(self.control_type):
    label = kwargs.pop('label')
    try:
     self.label_control = wx.StaticText(parent=self.parent_control, label=label)
    except:
     logger.exception("Error creating label for control %r" % self.control_type)
     raise
-  if 'label' in kwargs and self.control_type in NONLABELED_CONTROLS:
+  if 'label' in kwargs and not should_be_labeled(self.control_type):
    del kwargs['label']
   super(WXWidget, self).create_control(parent=self.parent_control, **kwargs)
   self.control.SetMinSize(self.min_size)
