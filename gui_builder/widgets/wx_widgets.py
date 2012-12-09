@@ -563,6 +563,18 @@ class MenuItem(WXWidget):
  def bind_event(self, callback_event, wrapped_callback):
   self.parent.control.Bind(callback_event, wrapped_callback, self.control)
 
+ def render(self):
+  super(MenuItem, self).render()
+  if not self.control_enabled:
+   self.disable()
+
+
+ def enable(self):
+  self.control.Enable(True)
+
+ def disable(self):
+  self.control.Enable(False)
+
 
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
