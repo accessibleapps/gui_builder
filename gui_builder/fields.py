@@ -4,7 +4,7 @@ class GUIField(object):
  _GUI_FIELD = True
  creation_counter = 0
  widget_type = None
- __autolabel__ = True
+ __autolabel__ = False
  widget_args = None
  widget_kwargs = None
  callback = None
