@@ -289,7 +289,6 @@ class ListBox(ChoiceWidget):
  style_prefix = "LB"
  default_callback_type = "listbox"
 
-
 class ListView(ChoiceWidget):
  control_type = wx.ListView
  style_prefix = "LC"
@@ -332,7 +331,6 @@ class ListView(ChoiceWidget):
  def render(self, **kwargs):
   super(ListView, self).render(**kwargs)
   self.set_items(self.choices)
-
 
  def add_column(self, column_number=None, label="", width=None, **format):
   if column_number is None:
@@ -548,14 +546,18 @@ class MenuItem(WXWidget):
  def __init__(self, hotkey=None, help_message="", **kwargs):
   self.hotkey = hotkey
   self.help_message = help_message
+  self.control_id = None
   super(MenuItem, self).__init__(**kwargs)
 
  def create_control(self, **kwargs):
   label = kwargs.get('label', self.label)
+  if not label: #This menu item is a separator
+   self.control = self.parent_control.AppendSeparator()
+   return
   if self.hotkey is not None:
    label = "%s\t%s" % (label, self.hotkey)
-  self.control = self.parent_control.Append(wx.NewId(), text=label, help=self.help_message)
-
+  self.control_id = wx.NewId()
+  self.control = self.parent_control.Append(id=self.control_id, text=label, help=self.help_message)
 
  def bind_event(self, callback_event, wrapped_callback):
   self.parent.control.Bind(callback_event, wrapped_callback)
