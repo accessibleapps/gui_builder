@@ -64,8 +64,9 @@ def callback_wrapper(widget, callback):
    a.insert(0, widget.parent.field)
   try:
    callback(*a, **k)
-  except:
-   logger.exception("Error calling callback")
+  except Exception as e:
+   if not isinstance(e, SystemExit):
+    logger.exception("Error calling callback")
    raise
  return wrapper
 
