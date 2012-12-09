@@ -560,7 +560,7 @@ class MenuItem(WXWidget):
   self.control = self.parent_control.Append(id=self.control_id, text=label, help=self.help_message)
 
  def bind_event(self, callback_event, wrapped_callback):
-  self.parent.control.Bind(callback_event, wrapped_callback)
+  self.parent.control.Bind(callback_event, wrapped_callback, self.control)
 
 
 class SubMenu(WXWidget):
