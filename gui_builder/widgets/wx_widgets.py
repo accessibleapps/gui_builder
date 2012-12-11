@@ -158,6 +158,18 @@ class WXWidget(Widget):
  def display(self):
   self.control.Show()
 
+ def get_label(self):
+  if self.label_control is not None:
+   return self.label_control.GetLabel()
+  return self.control.GetLabel()
+
+ def set_label(self, label):
+  if self.label_control is not None:
+   self.label_control.SetLabel(label)
+  else:
+   self.control.SetLabel(label)
+
+
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
   if hasattr(self.control, 'GetValue'):
