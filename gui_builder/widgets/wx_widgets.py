@@ -275,7 +275,6 @@ class ComboBox(ChoiceWidget):
 
 class Button(WXWidget):
  control_type = wx.Button
- style_prefix = "BTN"
  default_callback_type = "button"
 
  def __init__(self, default=False, *args, **kwargs):
@@ -286,6 +285,9 @@ class Button(WXWidget):
   super(Button, self).render()
   if self.default:
    self.control.SetDefault()
+
+ def translate_control_arguments(self, **kwargs):
+  return wx_attributes("ID", result_key="id", **kwargs)
 
 class Slider(WXWidget):
  style_prefix = "SL"
