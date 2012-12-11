@@ -101,6 +101,12 @@ class GUIField(object):
  def display_modal(self):
   self.widget.display_modal()
 
+ def get_label(self):
+  return self.widget.get_label()
+
+ def set_label(self, label):
+  return self.widget.set_label(label)
+
  def get_value(self):
   return self.widget.get_value()
 
