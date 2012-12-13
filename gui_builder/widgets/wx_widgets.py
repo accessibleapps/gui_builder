@@ -317,7 +317,7 @@ class ListView(ChoiceWidget):
   self._last_added_column = -1
 
  def get_index(self):
-  return self.control.GetFirstSelected() - 1
+  return self.control.GetFirstSelected()
 
  def set_index(self, index):
   self.control.Select(index)
