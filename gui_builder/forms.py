@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger('gui_builder.forms')
+
 from .fields import GUIField, ChoiceField
 from .widgets import wx_widgets as widgets
 
@@ -60,10 +63,13 @@ class BaseForm(GUIField):
 
  def render(self):
   super(BaseForm, self).render()
+  logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
   for field in self:
+   logger.debug("Rendering field %r" % field)
    try:
     field.render()
    except Exception as e:
+    logger.exception("Failed rendering field %r" % field)
     raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_value()
   self.set_default_focus()
