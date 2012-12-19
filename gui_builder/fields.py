@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger('gui_builder.fields')
+
 from widgets import wx_widgets as widgets
 
 class GUIField(object):
@@ -34,6 +37,7 @@ class GUIField(object):
   self.widget = None
 
  def bind(self, parent, name=None):
+  logger.debug("Binding field %r to parent %r with name %r" % (self, parent, name))
   self.parent = parent
   self.bound_name = name
   return self
@@ -49,6 +53,7 @@ class GUIField(object):
  def render(self, **runtime_kwargs):
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
+  logger.debug("Rendering field %r with widget %r" % (self, self.widget))
   widget_kwargs = self.widget_kwargs
   if self.label is not None:
    widget_kwargs['label'] = self.label
@@ -60,10 +65,12 @@ class GUIField(object):
   try:
    self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   except Exception as e:
+   logger.exception("Error creating widget.")
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
 
  def register_callback(self, trigger, callback):
+  logger.debug("Registering callback %r with trigger %r to field %r" % (callback, trigger, self))
   self.widget.register_callback(trigger, callback)
 
  def unregister_callback(self, trigger, callback):
@@ -78,6 +85,7 @@ class GUIField(object):
 
  def set_default_value(self):
   if self.default_value is not None:
+   logger.debug("Setting default value of field %r to %r" % (self, self.default_value))
    self.populate(self.default_value)
 
 
