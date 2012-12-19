@@ -64,7 +64,10 @@ class BaseForm(GUIField):
  def render(self):
   super(BaseForm, self).render()
   logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
+  logger.debug("The fields inside this form are %r" % self._fields)
   for field in self:
+   self[field.bound_name] = field   #this is an ugly hack, why does it work?
+
    logger.debug("Rendering field %r" % field)
    try:
     field.render()
