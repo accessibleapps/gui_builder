@@ -40,6 +40,16 @@ class AutoSizedPanel(AutoFittingMixin, sc.SizedPanel):
    sizer.Add(child)
 
 
+ def SetButtonSizer(self, sizer):
+  self.GetSizer().Add(sizer, 0, wx.EXPAND | wx.BOTTOM | wx.RIGHT, self.GetDialogBorder())
+    # Temporary hack to fix button ordering problems.
+  cancel = self.FindWindowById(wx.ID_CANCEL)
+  no = self.FindWindowById(wx.ID_NO)
+  if no and cancel:
+   cancel.MoveAfterInTabOrder(no)
+   
+
+
 class AutoSizedMixin(AutoFittingMixin):
  
  def __init__(self, parent=None, size=None, *args, **kwargs):
