@@ -94,10 +94,13 @@ class GUIField(object):
   self.widget.populate(value)
 
  def set_default_value(self):
-  if self.default_value is not None:
-   logger.debug("Setting default value of field %r to %r" % (self, self.default_value))
-   self.populate(self.default_value)
-
+  if self.default_value is None:
+   return
+  default = self.default_value
+  while callable(default):
+   default = default(self)
+  logger.debug("Setting default value of field %r to %r" % (self, default))
+  self.populate(default)
 
  def can_be_focused(self):
   return self.widget_type.can_be_focused()
@@ -111,7 +114,11 @@ class GUIField(object):
  def hide(self):
   return self.widget.hide()
 
+ def destroy(self):
+  self.widget.destroy()
 
+ def __del__(self):
+  self.destroy()
 
  def display(self):
   self.widget.display()
