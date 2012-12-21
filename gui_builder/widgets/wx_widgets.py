@@ -152,6 +152,9 @@ class WXWidget(Widget):
  def disable(self):
   self.enabled = False
 
+ def destroy(self):
+  self.control.Destroy()
+
  def hide(self):
   self.control.Hide()
 

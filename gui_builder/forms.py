@@ -160,7 +160,7 @@ class UIForm(Form):
 
  def close(self):
   self.widget.close()
-
+  self.destroy()
 
 class Frame(UIForm):
  widget_type = widgets.Frame
