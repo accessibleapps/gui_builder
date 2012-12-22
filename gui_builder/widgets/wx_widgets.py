@@ -159,6 +159,7 @@ class WXWidget(Widget):
   self.control.Hide()
 
  def display(self):
+  self.control.Raise()
   self.control.Show()
 
  def get_label(self):
