@@ -392,6 +392,8 @@ class DataView(ListView):
  def add_item(self, item):
   self.control.AppendItem(item)
 
+ def get_count(self):
+  return len(self.get_items())
 
  def create_column(self, column_number, label, width, format):
   self.control.AppendTextColumn(label, align=format, width=width)
