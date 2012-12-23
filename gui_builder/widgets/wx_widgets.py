@@ -394,8 +394,8 @@ class DataView(ListView):
 
 
  def create_column(self, column_number, label, width, format):
-  column = wx.dataview.DataViewColumn(label, self.control, model_column=column_number, width=width, align=format)
-  self.control.InsertColumn(column_number, column)
+  self.control.InsertTextColumn(label, format=format, width=width)
+
 
 
 class ToolBar(WXWidget):
