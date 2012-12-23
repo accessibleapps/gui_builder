@@ -391,7 +391,7 @@ class DataView(ListView):
  control_type = wx.dataview.DataViewListCtrl
  event_prefix = 'EVT_DATAVIEW'
  event_module = wx.dataview
- default_callback = 'selection_changed'
+ default_callback_type = 'selection_changed'
 
  def add_item(self, item):
   self.control.AppendItem(item)
