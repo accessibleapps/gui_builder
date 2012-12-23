@@ -395,6 +395,12 @@ class DataView(ListView):
  def get_count(self):
   return self.control.GetStore().GetCount()
 
+ def get_index(self):
+  return self.control.GetSelectedRow()
+
+ def set_index(self, index):
+  self.control.SelectRow(index)
+
  def create_column(self, column_number, label, width, format):
   self.control.AppendTextColumn(label, align=format, width=width)
 
