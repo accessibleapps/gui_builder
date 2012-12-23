@@ -391,6 +391,7 @@ class ListViewColumn(WXWidget):
 class DataView(ListView):
  control_type = wx.dataview.DataViewListCtrl
  event_prefix = 'EVT_DATAVIEW'
+ style_prefix = ""
  event_module = wx.dataview
  default_callback_type = 'selection_changed'
 
