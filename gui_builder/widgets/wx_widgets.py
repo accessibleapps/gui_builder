@@ -75,7 +75,7 @@ def callback_wrapper(widget, callback):
 
 class WXWidget(Widget):
  style_prefix = ''
- event_prefix = ' EVT'
+ event_prefix = 'EVT'
  event_module = wx
  default_callback_type = None #the default event which triggers this widget's callback
  callback = None
