@@ -4,6 +4,7 @@ logger = getLogger("gui_components.widgets.wx_widgets")
 import inspect
 from .widget import Widget
 import wx
+import wx.dataview
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 import wx_autosizing
