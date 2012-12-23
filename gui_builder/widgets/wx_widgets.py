@@ -8,6 +8,8 @@ import wx.dataview
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 import wx_autosizing
+import platform
+
 
 LABELED_CONTROLS = (wx.HyperlinkCtrl, wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedPanel) #controls which cannot directly take focus
@@ -575,6 +577,10 @@ class MenuBar(WXWidget):
   self.control = wx.MenuBar()
   wx.GetApp().GetTopWindow().SetMenuBar(self.control)
 
+ def render(self):
+  super(MenuBar, self).render()
+  if platform.system() == 'Darwin':
+   wx.MenuBar.MacSetCommonMenuBar(self.control)
 
  def add_item(self, name=None, item=None):
   if item is None:
