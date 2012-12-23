@@ -339,10 +339,13 @@ class ListView(ChoiceWidget):
    res.append(self.get_item(num))
    return res
 
+ def add_item(self, item):
+  self.control.Append(item)
+
  def set_items(self, items):
   self.control.DeleteAllItems()
   for item in items:
-   self.control.Append(item)
+   self.add_item(item)
 
  def delete_item(self, index):
   self.control.DeleteItem(index)
@@ -358,9 +361,12 @@ class ListView(ChoiceWidget):
    width = -1
   format = wx_attributes(format)
   if not isinstance(format, (int, long)):
-   format = wx.LIST_FORMAT_LEFT
+   format = wx.ALIGN_LEFT
   self.control.InsertColumn(column_number, label, width=width, format=format)
   self._last_added_column = column_number
+
+ def create_column(self, column_number, label, width, format):
+  self.control.InsertColumn(column_number, label, width=width, format=format)
 
  def delete_column(self, column_number):
   self.control.DeleteColumn(column_number)
@@ -377,6 +383,18 @@ class ListViewColumn(WXWidget):
  def render(self):
   logger.debug("Rendering ListView column")
   self.create_control()
+
+
+class DataView(ListView):
+ control_type = wx.dataview.DataViewListCtrl
+
+ def add_item(self, item):
+  self.control.AppendItem(item)
+
+
+ def create_column(self, column_number, label, width, format):
+  column = dataview.Column(label, self.control, column_number, width=width, align=format)
+  self.control.InsertColumn(column_number, column)
 
 
 class ToolBar(WXWidget):

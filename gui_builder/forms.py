@@ -207,4 +207,7 @@ class SubMenu(UIForm):
  widget_type = widgets.SubMenu
 
 class ListView(UIForm, ChoiceField):
- widget_type = widgets.ListView
+ if platform.system() == 'Windows':
+  widget_type = widgets.ListView
+ else:
+  widget_type = widgets.DataView
