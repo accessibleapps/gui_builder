@@ -25,29 +25,29 @@ def is_subclass_or_instance(unknown, possible):
  except TypeError:
   return isinstance(unknown, possible)
 
-def find_wx_attribute(prefix, attr):
+def find_wx_attribute(prefix, attr, module=wx):
  if prefix:
   prefix = "%s_" % prefix
  underscore = "%s%s" % (prefix, attr)
  no_underscore = "%s%s" % (prefix, attr.replace("_", ""))
  underscore = underscore.upper()
  no_underscore = no_underscore.upper()
- val = getattr(wx, underscore, None)
+ val = getattr(module, underscore, None)
  if not val:
-  val = getattr(wx, no_underscore)
+  val = getattr(module, no_underscore)
  return val
 
-def wx_attributes(prefix="", result_key="style", **attrs):
+def wx_attributes(prefix="", result_key="style", module=wx, **attrs):
  answer = {result_key:0}
  for k, v in attrs.iteritems():
   if v is not True:
    answer[k] = v
   else:
    try:
-    answer[result_key] |= find_wx_attribute(prefix, k)
+    answer[result_key] |= find_wx_attribute(prefix, k, module=module)
    except AttributeError:
     try:
-     answer[result_key] |= find_wx_attribute("", k)
+     answer[result_key] |= find_wx_attribute("", k, module=module)
     except AttributeError:
      answer[k] = v
  if result_key in answer and answer[result_key] == 0:
@@ -74,7 +74,9 @@ def callback_wrapper(widget, callback):
   
 
 class WXWidget(Widget):
- style_prefix = ""
+ style_prefix = ''
+ event_prefix = ' EVT'
+ event_module = wx
  default_callback_type = None #the default event which triggers this widget's callback
  callback = None
  label = ""
@@ -136,8 +138,7 @@ class WXWidget(Widget):
  def resolve_callback_type(self, callback_type):
   if isinstance(callback_type, wx.PyEventBinder):
    return callback_type
-  return find_wx_attribute("EVT", callback_type)
-
+  return find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
 
  @property
  def enabled(self):
@@ -388,6 +389,9 @@ class ListViewColumn(WXWidget):
 
 class DataView(ListView):
  control_type = wx.dataview.DataViewListCtrl
+ event_prefix = 'EVT_DATAVIEW'
+ event_module = wx.dataview
+ default_callback = 'selection_changed'
 
  def add_item(self, item):
   self.control.AppendItem(item)
