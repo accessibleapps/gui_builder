@@ -394,7 +394,7 @@ class DataView(ListView):
 
 
  def create_column(self, column_number, label, width, format):
-  self.control.AppendTextColumn(label, format=format, width=width)
+  self.control.AppendTextColumn(label, align=format, width=width)
 
 
 
