@@ -363,7 +363,7 @@ class ListView(ChoiceWidget):
   format = wx_attributes(format)
   if not isinstance(format, (int, long)):
    format = wx.ALIGN_LEFT
-  self.create_control(column_number, label, width=width, format=format)
+  self.create_column(column_number, label, width=width, format=format)
   self._last_added_column = column_number
 
  def create_column(self, column_number, label, width, format):
