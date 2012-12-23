@@ -386,7 +386,7 @@ class ListViewColumn(WXWidget):
 
 
 class DataView(ListView):
- control_type = wx.dataview.DataViewListCtrl
+ control_type = wx.dataview.DataView
 
  def add_item(self, item):
   self.control.AppendItem(item)
