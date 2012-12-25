@@ -212,3 +212,9 @@ class ListView(UIForm, ChoiceField):
   widget_type = widgets.ListView
  else:
   widget_type = widgets.DataView
+
+ def get_item_column(self, index, column):
+  return self.widget.get_item_column(index, column)
+
+ def set_item_column(self, index, column, data):
+  return self.widget.set_item_column(index, column, data)

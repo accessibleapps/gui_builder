@@ -335,17 +335,35 @@ class ListView(ChoiceWidget):
  def get_count(self):
   return self.control.GetItemCount()
 
+ def get_column_count(self):
+  return self.control.GetColumnCount()
+
  def get_item(self, index):
-  return self.control.GetItem(index)
+  res = []
+  for column in xrange(self.get_column_count()):
+   res.append(self.get_item_column(index, column))
+  return tuple(res)
 
  def get_items(self):
   res = []
   for num in xrange(self.get_count()):
    res.append(self.get_item(num))
-   return res
+  return res
+
+
+ def get_item_column(self, index, column):
+  return self.control.GetItemText(index, column)
+
+
+ def set_item_column(self, index, column, data):
+  self.control.SetStringItem(index, column, data)
 
  def add_item(self, item):
   self.control.Append(item)
+
+ def set_item(self, index, item):
+  for column, subitem in enumerate(item):
+   self.set_item_column(index, column, subitem)
 
  def set_items(self, items):
   self.control.DeleteAllItems()
@@ -389,6 +407,10 @@ class ListViewColumn(WXWidget):
   logger.debug("Rendering ListView column")
   self.create_control()
 
+ def set_item(self, index, item):
+  for column, subitem in enumerate(item):
+   self.control.SetStringItem(index, column, subitem)
+
 
 class DataView(ListView):
  control_type = wx.dataview.DataViewListCtrl
@@ -403,6 +425,9 @@ class DataView(ListView):
  def get_count(self):
   return self.control.GetStore().GetCount()
 
+ def get_column_count(self):
+  return self.control.GetStore().GetColumnCount()
+
  def get_index(self):
   return self.control.GetSelectedRow()
 
@@ -412,7 +437,11 @@ class DataView(ListView):
  def create_column(self, column_number, label, width, format):
   self.control.AppendTextColumn(label, align=format, width=width)
 
+ def get_item_column(self, index, column):
+  return self.control.GetTextValue(index, column)
 
+ def set_item_column(self, index, column, data):
+  self.control.SetTextValue(data, index, column)
 
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
