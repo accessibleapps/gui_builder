@@ -240,6 +240,9 @@ class ChoiceWidget(WXWidget):
  def delete_item(self, index):
   self.control.Delete(index)
 
+ def clear(self):
+  self.control.Clear()
+
 class Text(WXWidget):
  control_type = wx.TextCtrl
  style_prefix = "TE"
@@ -372,6 +375,9 @@ class ListView(ChoiceWidget):
 
  def delete_item(self, index):
   self.control.DeleteItem(index)
+
+ def clear(self):
+  self.control.DeleteAllItems()
 
  def render(self, **kwargs):
   super(ListView, self).render(**kwargs)

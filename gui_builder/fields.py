@@ -203,6 +203,9 @@ class ChoiceField(GUIField):
  def delete_item(self, item):
   return self.widget.delete_item(item)
 
+ def clear(self):
+  return self.widget.clear()
+
  def get_index(self):
   return self.widget.get_index()
 
