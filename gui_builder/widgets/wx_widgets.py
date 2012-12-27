@@ -200,9 +200,13 @@ class WXWidget(Widget):
 
  def translate_control_arguments(self, **kwargs):
   return wx_attributes(self.style_prefix, result_key="style", **kwargs)
- 
+
+ def is_focused(self):
+  return self.control.HasFocus()
+
  def set_focus(self):
   self.control.SetFocus()
+
 
  @classmethod
  def can_be_focused(cls):
