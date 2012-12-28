@@ -7,19 +7,25 @@ import wx
 import wx.dataview
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
-import wx_autosizing
 import platform
 
+UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, ) #controls which cannot directly take focus
 
-LABELED_CONTROLS = (wx.HyperlinkCtrl, wx.Button, wx.CheckBox, wx.RadioBox)  #Controls that have their own labels
-UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, wx.Panel, wx.MenuBar, wx.Menu, wx.MenuItem, wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedPanel) #controls which cannot directly take focus
-AUTOSIZED_CONTROLS = (wx_autosizing.AutoSizedFrame, wx_autosizing.AutoSizedDialog)
-NONLABELED_CONTROLS = (wx.Menu, wx.MenuItem, wx.Panel, wx.Dialog, wx.Frame, sc.SizedPanel, sc.SizedDialog, sc.SizedFrame, wx_autosizing.AutoSizedPanel, wx_autosizing.AutoSizedDialog, wx_autosizing.AutoSizedFrame)
+def inheritors(klass):
+ subclasses = set()
+ work = [klass]
+ while work:
+  parent = work.pop()
+  for child in parent.__subclasses__():
+   if child not in subclasses:
+    subclasses.add(child)
+    work.append(child)
+ return subclasses
 
-is_labeled = lambda control: is_subclass_or_instance(control, LABELED_CONTROLS)
-is_focusable = lambda control: not is_subclass_or_instance(control, UNFOCUSABLE_CONTROLS)
-is_autosized = lambda control: is_subclass_or_instance(control, AUTOSIZED_CONTROLS)
-should_be_labeled = lambda control: not is_subclass_or_instance(control, NONLABELED_CONTROLS)
+is_labeled = lambda control: is_subclass_or_instance(control, [cls for cls in inheriters(WXWidget) if cls.selflabeled])
+
+
+
 
 def is_subclass_or_instance(unknown, possible):
  try:
@@ -79,6 +85,9 @@ class WXWidget(Widget):
  style_prefix = ''
  event_prefix = 'EVT'
  event_module = wx
+ selflabeled = False
+ unlabeled = False
+ focusable = True
  default_callback_type = None #the default event which triggers this widget's callback
  callback = None
  label = ""
@@ -97,19 +106,20 @@ class WXWidget(Widget):
   self.control_enabled = enabled
 
  def create_control(self, **kwargs):
+  logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
   label = kwargs.pop('label', getattr(self, 'label', ''))
   if label:
    kwargs['label'] = label
-  if label is not None and should_be_labeled(self.control_type) and not is_labeled(self.control_type):
+  if label is not None and not self.unlabeled and not self.selflabeled:
    label = kwargs.pop('label')
    try:
-    self.label_control = wx.StaticText(parent=self.parent_control, label=label)
+    self.label_control = wx.StaticText(parent=self.get_parent_control(), label=label)
    except:
     logger.exception("Error creating label for control %r" % self.control_type)
     raise
-  if 'label' in kwargs and not should_be_labeled(self.control_type):
+  if 'label' in kwargs and self.unlabeled:
    del kwargs['label']
-  super(WXWidget, self).create_control(parent=self.parent_control, **kwargs)
+  super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
   self.control.SetMinSize(self.min_size)
 
  def render(self, **runtime_kwargs):
@@ -166,6 +176,14 @@ class WXWidget(Widget):
   self.control.Raise()
   self.control.Show()
 
+
+ def get_control(self):
+  return self.control
+
+ def get_parent_control(self):
+  if self.parent is not None:
+   return self.parent.get_control()
+
  def get_label(self):
   if self.label_control is not None:
    return self.label_control.GetLabel()
@@ -189,15 +207,6 @@ class WXWidget(Widget):
  def populate(self, value):
   """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
   self.set_value(value)
-
-
- @property
- def parent_control(self):
-  parent = getattr(self.parent, "control", None)
-  if isinstance(parent, AUTOSIZED_CONTROLS):
-   parent = parent.pane
-  return parent
-
  def translate_control_arguments(self, **kwargs):
   return wx_attributes(self.style_prefix, result_key="style", **kwargs)
 
@@ -210,7 +219,7 @@ class WXWidget(Widget):
 
  @classmethod
  def can_be_focused(cls):
-  return cls.control_type is not None and cls.control_type not in UNFOCUSABLE_CONTROLS
+  return cls.control_type is not None and cls.focusable
 
 class ChoiceWidget(WXWidget):
 
@@ -282,6 +291,8 @@ class IntText(Text):
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
  default_callback_type = "checkbox"
+ selflabeled = True
+
 
 class ComboBox(ChoiceWidget):
  control_type = wx.ComboBox
@@ -291,6 +302,7 @@ class ComboBox(ChoiceWidget):
 class Button(WXWidget):
  control_type = wx.Button
  default_callback_type = "button"
+ selflabeled = True
 
  def __init__(self, default=False, *args, **kwargs):
   super(Button, self).__init__(*args, **kwargs)
@@ -496,6 +508,7 @@ class ButtonSizer(WXWidget):
   self.parent.control.SetButtonSizer(self.control)
 
 class BaseContainer(WXWidget):
+ unlabeled = True
 
  def __init__(self, top_level_window=False, *args, **kwargs):
   super(BaseContainer, self).__init__(*args, **kwargs)
@@ -538,6 +551,7 @@ class SizedFrame(BaseContainer):
 
 class SizedPanel(BaseContainer):
  control_type = sc.SizedPanel
+ focusable = False
 
  def __init__(self, sizer_type="vertical", *args, **kwargs):
   super(SizedPanel, self).__init__(*args, **kwargs)
@@ -555,6 +569,8 @@ class Dialog(BaseDialog):
 
 class Panel(BaseContainer):
  control_type = wx.Panel
+ focusable = False
+
 
 class Notebook(BaseContainer):
  control_type = wx.Notebook
@@ -563,30 +579,10 @@ class Notebook(BaseContainer):
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
 
-class AutoSizedContainer(BaseContainer):
-
- def display(self):
-  super(AutoSizedContainer, self).display()
-  self.control.fit()
-
-class AutoSizedPanel(SizedPanel): #doesn't require fitting
- control_type = wx_autosizing.AutoSizedPanel
-
-class AutoSizedFrame(AutoSizedContainer):
- control_type = wx_autosizing.AutoSizedFrame
-
-class AutoSizedDialog(AutoSizedContainer, BaseDialog):
- control_type = wx_autosizing.AutoSizedDialog
-
- def display_modal(self):
-  res = super(AutoSizedDialog, self).display_modal()
-  self.control.fit()
-  return res
-
-
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
  default_callback_type = "RADIOBOX"
+ selflabeled = True
  style_prefix = "RA"
 
  def get_value(self):
@@ -610,7 +606,8 @@ class FilePicker(WXWidget):
 
 class MenuBar(WXWidget):
  control_type = wx.MenuBar
-
+ focusable = False
+ unlabeled = True
 
  def create_control(self, **kwargs):
   self.control = wx.MenuBar()
@@ -630,15 +627,18 @@ class MenuBar(WXWidget):
 
 class Menu(WXWidget):
  control_type = wx.Menu
+ focusable = False
 
  def create_control(self, **kwargs):
   label = kwargs.get('label', self.label)
   self.control = wx.Menu()
-  self.parent_control.Append(self.control, title=label)
+  self.get_parent_control().Append(self.control, title=label)
 
 class MenuItem(WXWidget):
  control_type = wx.MenuItem
  default_callback_type = "MENU"
+ focusable = False
+ unlabled = True
 
  def __init__(self, hotkey=None, help_message="", **kwargs):
   self.hotkey = hotkey
@@ -649,12 +649,12 @@ class MenuItem(WXWidget):
  def create_control(self, **kwargs):
   label = kwargs.get('label', self.label)
   if not label: #This menu item is a separator
-   self.control = self.parent_control.AppendSeparator()
+   self.control = self.get_parent_control().AppendSeparator()
    return
   if self.hotkey is not None:
    label = "%s\t%s" % (label, self.hotkey)
   self.control_id = wx.NewId()
-  self.control = self.parent_control.Append(id=self.control_id, text=label, help=self.help_message)
+  self.control = self.get_parent_control().Append(id=self.control_id, text=label, help=self.help_message)
 
  def bind_event(self, callback_event, wrapped_callback):
   self.parent.control.Bind(callback_event, wrapped_callback, self.control)
@@ -675,7 +675,7 @@ class MenuItem(WXWidget):
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
   label = kwargs.get('label', self.label)
-  self.control = self.parent_control.Parent.AppendSubMenu(self.parent_control, label=label)
+  self.control = self.get_parent_control().Parent.AppendSubMenu(self.get_parent_control(), label=label)
 
 class StatusBar(WXWidget):
  control_type = wx.StatusBar
@@ -693,3 +693,4 @@ class StatusBar(WXWidget):
 class Link(WXWidget):
  control_type = wx.HyperlinkCtrl
  default_callback_type = "hyperlink"
+ selflabled = True
