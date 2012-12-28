@@ -181,15 +181,6 @@ class SizedFrame(UIForm):
 class SizedPanel(UIForm):
  widget_type = widgets.SizedPanel
 
-class AutoSizedDialog(UIForm):
- widget_type = widgets.AutoSizedDialog
-
-class AutoSizedFrame(UIForm):
- widget_type = widgets.AutoSizedFrame
-
-class AutoSizedPanel(UIForm):
- widget_type = widgets.AutoSizedPanel
-
 class Notebook(UIForm):
  widget_type = widgets.Notebook
 
