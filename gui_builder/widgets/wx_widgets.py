@@ -81,6 +81,11 @@ def callback_wrapper(widget, callback):
 
   
 
+def translate_none(val):
+ if val == -1:
+  val = None
+ return val
+
 class WXWidget(Widget):
  style_prefix = ''
  event_prefix = 'EVT'
@@ -236,7 +241,7 @@ class ChoiceWidget(WXWidget):
   return self.get_item(index)
 
  def get_index(self):
-  return self.control.GetSelection()
+  return translate_none(self.control.GetSelection())
 
  def set_index(self, index):
   return self.control.SetSelection(index)
@@ -345,7 +350,7 @@ class ListView(ChoiceWidget):
   self._last_added_column = -1
 
  def get_index(self):
-  return self.control.GetFirstSelected()
+  return translate_none(self.control.GetFirstSelected())
 
  def set_index(self, index):
   self.control.Select(index)
@@ -451,8 +456,8 @@ class DataView(ListView):
   return self.control.GetStore().GetColumnCount()
 
  def get_index(self):
-  return self.control.GetSelectedRow()
-
+  return translate_none(self.control.GetSelectedRow())
+ 
  def set_index(self, index):
   self.control.SelectRow(index)
 
