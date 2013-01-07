@@ -258,6 +258,13 @@ class ChoiceWidget(WXWidget):
  def delete_item(self, index):
   self.control.Delete(index)
 
+ def insert_item(self, index, item):
+  return self.control.InsertItems([item], index)
+
+ def update_item(self, index, item):
+  self.delete_item(index)
+  self.insert_item(index, item)
+
  def clear(self):
   self.control.Clear()
 
@@ -378,7 +385,6 @@ class ListView(ChoiceWidget):
  def get_item_column(self, index, column):
   return self.control.GetItemText(index, column)
 
-
  def set_item_column(self, index, column, data):
   self.control.SetStringItem(index, column, data)
 
@@ -389,10 +395,16 @@ class ListView(ChoiceWidget):
   for column, subitem in enumerate(item):
    self.set_item_column(index, column, subitem)
 
+ def update_item(self, index, item):
+  self.set_item(index, item)
+
  def set_items(self, items):
   self.control.DeleteAllItems()
   for item in items:
    self.add_item(item)
+
+ def insert_item(self, index, item):
+  self.control.InsertStringItem(index, item)
 
  def delete_item(self, index):
   self.control.DeleteItem(index)
@@ -448,6 +460,9 @@ class DataView(ListView):
 
  def add_item(self, item):
   self.control.AppendItem(item)
+
+ def insert_item(self, index, item):
+  return self.control.InsertItem(index, item)
 
  def get_count(self):
   return self.control.GetStore().GetCount()
