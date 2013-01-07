@@ -218,6 +218,18 @@ class ChoiceField(GUIField):
   if self.default_value and self.default_index is not None:
    self.set_index(self.default_index)
 
+ def find_index(self, item):
+  for num, current_item in enumerate(self.get_items()):
+   if item == current_item:
+    return num
+  raise ValueError('%r not in %r' % (item, self))
+
+ def insert_item(self, index, item):
+  return self.widget.insert_item(index, item)
+
+ def update_item(self, index, new_item):
+  return self.widget.update_item(index, new_item)
+
  def get_count(self):
   return self.widget.get_count()
 
