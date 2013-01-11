@@ -70,7 +70,10 @@ def callback_wrapper(widget, callback):
   a = list(a)
   argspec = inspect.getargspec(callback).args
   if argspec and argspec[0] == "self" and not hasattr(callback, "im_self"):
-   a.insert(0, widget.parent.field)
+   parent = widget.parent
+   if parent is None:
+    parent = widget
+   a.insert(0, parent.field)
   try:
    callback(*a, **k)
   except Exception as e:
