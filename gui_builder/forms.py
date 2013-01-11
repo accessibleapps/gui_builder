@@ -7,26 +7,15 @@ from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
  __autolabel__ = False
- default_focus = None #If set to a field on this form, automatically sets focus to it.
- #If set to a callable, calls it to determine its default focus
 
- def __init__(self, fields, default_focus=None, *args, **kwargs):
+ def __init__(self, fields, *args, **kwargs):
   self._fields = {}
   if hasattr(fields, 'items'):
    fields = fields.items()
   for name, unbound_field in fields:
    self[name] = unbound_field
-  if default_focus is None:
-   default_focus = self.default_focus
-  if default_focus is None:
-   for name, field in fields:
-    if field.can_be_focused():
-     default_focus = field
-     break
-  self.default_focus = default_focus
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
-
    try:
     self[key].default_value = value
     kwargs.pop(key)
@@ -76,16 +65,7 @@ class BaseForm(GUIField):
     logger.exception("Failed rendering field %r" % field)
     raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_value()
-  self.set_default_focus()
   self.is_rendered = True
-
- def set_default_focus(self):
-  focus = self.default_focus
-  if callable(focus):
-   focus = focus()
-  if focus is None:
-   return
-  focus.set_focus()
 
  def set_default_value(self):
   super(BaseForm, self).set_default_value()
