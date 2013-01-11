@@ -27,7 +27,10 @@ class BaseForm(GUIField):
  def __iter__(self):
   return self._fields.itervalues()
 
- get_children = __iter__
+ def get_children(self):
+  for child in self:
+   yield child
+
 
  def get_all_children(self):
   for field in self:
@@ -35,6 +38,9 @@ class BaseForm(GUIField):
     yield field
    for subfield in field.get_all_children():
     yield subfield
+
+ def get_first_child(self):
+  return self.get_children().next()
 
  def __getitem__(self, name):
   return self._fields[name]
@@ -135,8 +141,10 @@ class UIForm(Form):
  def set_title(self, title):
   return self.widget.set_title(title)
 
- def display_modal(self):
-  super(UIForm, self).display_modal()
+ def get_first_focusable_child(self):
+  for child in self.get_children():
+   if child.can_be_focused():
+    return child
 
 
  def close(self):
