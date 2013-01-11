@@ -272,3 +272,6 @@ class StatusBar(GUIField):
 
 class Link(GUIField):
  widget_type = widgets.Link
+
+class StaticText(GUIField):
+ widget_type = widgets.StaticText
