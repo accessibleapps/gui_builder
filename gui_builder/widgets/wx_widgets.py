@@ -189,8 +189,9 @@ class WXWidget(Widget):
   return self.control
 
  def get_parent_control(self):
-  if self.parent is not None:
+  if isinstance(self.parent, Widget):
    return self.parent.get_control()
+  return self.parent
 
  def get_label(self):
   if self.label_control is not None:
