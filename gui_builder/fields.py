@@ -15,7 +15,7 @@ class GUIField(object):
  extra_callbacks = None
  default_value = None
 
- def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, default_focus=False, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   widget_kwargs = {}
@@ -41,6 +41,7 @@ class GUIField(object):
   self.widget_kwargs.update(kwargs)
   self.callback = callback
   self.default_value = default_value
+  self.default_focus = default_focus
   self.widget = None
 
  def bind(self, parent, name=None):
@@ -83,6 +84,9 @@ class GUIField(object):
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
   self.register_extra_callbacks()
+  if self.default_focus:
+   self.set_focus()
+
 
  def register_extra_callbacks(self):
   if self.extra_callbacks is None:
