@@ -62,11 +62,12 @@ class GUIField(object):
   widget_kwargs = self.widget_kwargs
   if self.label is not None:
    widget_kwargs['label'] = self.label
-  if self.parent is not None:
-   logger.debug("The parent of this field is %r and parent of this widget is %r" % (self.parent, self.parent.widget))
-   if self.parent.widget is None:
-    logger.warning("Parent provided without a rendered widget. Traceback follows:\n%s" % traceback.format_stack())
-   widget_kwargs['parent'] = self.parent.widget
+  if hasattr(self.parent, '_GUI_FIELD'):
+   if self.parent is not None:
+    logger.debug("The parent of this field is %r and parent of this widget is %r" % (self.parent, self.parent.widget))
+    if self.parent.widget is None:
+     logger.warning("Parent provided without a rendered widget. Traceback follows:\n%s" % traceback.format_stack())
+    widget_kwargs['parent'] = self.parent.widget
   if self.callback is not None:
    widget_kwargs['callback'] = self.callback
   logger.debug("Passed in runtime kwargs: %r" % runtime_kwargs)
