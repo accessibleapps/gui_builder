@@ -12,6 +12,7 @@ class GUIField(object):
  widget_args = ()
  widget_kwargs = {}
  callback = None
+ extra_callbacks = None
  default_value = None
 
  def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, *args, **kwargs):
@@ -79,6 +80,14 @@ class GUIField(object):
    logger.exception("Error creating widget.")
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
+  self.register_extra_callbacks()
+
+ def register_extra_callbacks(self):
+  if self.extra_callbacks is None:
+   return
+  for callback_set in self.extra_callbacks:
+   self.register_callback(*callback_set)
+
 
  def register_callback(self, trigger, callback):
   logger.debug("Registering callback %r with trigger %r to field %r" % (callback, trigger, self))
