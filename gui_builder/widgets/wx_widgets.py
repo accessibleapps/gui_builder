@@ -303,6 +303,10 @@ class IntText(Text):
  def set_value(self, value):
   self.control.SetValue(unicode(value))
 
+class StaticText(WXWidget):
+ control_type = wx.StaticText
+ selflabeled = True
+
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
  default_callback_type = "checkbox"
