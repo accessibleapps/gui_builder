@@ -71,7 +71,6 @@ class BaseForm(GUIField):
     logger.exception("Failed rendering field %r" % field)
     raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_value()
-  self.set_default_focus()
   self.is_rendered = True
 
  def set_default_value(self):
@@ -97,6 +96,7 @@ class BaseForm(GUIField):
  def _predisplay(self):
   if not self.is_rendered:
    self.render()
+  self.set_default_focus()
 
 class FormMeta(type):
 
