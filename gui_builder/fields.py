@@ -84,9 +84,6 @@ class GUIField(object):
    raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
   self.widget.render()
   self.register_extra_callbacks()
-  if self.can_be_focused() and (self.default_focus or hasattr(self.parent, 'get_first_focusable_child') and self.parent.get_first_focusable_child() is self):
-   self.set_focus()
-
 
  def register_extra_callbacks(self):
   if self.extra_callbacks is None:

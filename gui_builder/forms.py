@@ -71,12 +71,20 @@ class BaseForm(GUIField):
     logger.exception("Failed rendering field %r" % field)
     raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_value()
+  self.set_default_focus()
   self.is_rendered = True
 
  def set_default_value(self):
   super(BaseForm, self).set_default_value()
   for field in self:
    field.set_default_value()
+
+ def set_default_focus(self):
+  for field in self:
+   if field.default_focus and field.can_be_focused():
+    field.set_focus()
+  else:
+   self.get_first_focusable_child().set_focus()
 
  def display(self):
   self._predisplay()
