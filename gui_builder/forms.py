@@ -34,8 +34,9 @@ class BaseForm(GUIField):
 
  def get_all_children(self):
   for field in self:
+   yield field
    if not hasattr(field, 'get_all_children'):
-    yield field
+    continue
    for subfield in field.get_all_children():
     yield subfield
 
@@ -150,7 +151,7 @@ class UIForm(Form):
   return self.widget.set_title(title)
 
  def get_first_focusable_child(self):
-  for child in self.get_children():
+  for child in self.get_all_children():
    if child.can_be_focused():
     return child
 
