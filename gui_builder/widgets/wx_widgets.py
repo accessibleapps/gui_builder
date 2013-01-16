@@ -368,6 +368,8 @@ class ListView(ChoiceWidget):
   return translate_none(self.control.GetFirstSelected())
 
  def set_index(self, index):
+  if index is None:
+   index = -1
   self.control.Select(index)
   self.control.Focus(index)
 
@@ -482,6 +484,8 @@ class DataView(ListView):
   return translate_none(self.control.GetSelectedRow())
  
  def set_index(self, index):
+  if index is None:
+   index = -1
   self.control.SelectRow(index)
 
  def create_column(self, column_number, label, width, format):
