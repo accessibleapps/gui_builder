@@ -485,7 +485,7 @@ class DataView(ListView):
  
  def set_index(self, index):
   if index is None:
-   index = -1
+   return
   self.control.SelectRow(index)
 
  def create_column(self, column_number, label, width, format):
