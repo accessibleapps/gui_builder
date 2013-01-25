@@ -216,6 +216,7 @@ class WXWidget(Widget):
  def populate(self, value):
   """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
   self.set_value(value)
+
  def translate_control_arguments(self, **kwargs):
   return wx_attributes(self.style_prefix, result_key="style", **kwargs)
 
@@ -486,7 +487,7 @@ class DataView(ListView):
  def set_index(self, index):
   if index is None:
    return
-  self.control.SelectRow(index)
+  self.control.SelectRow(int(index))
 
  def create_column(self, column_number, label, width, format):
   self.control.AppendTextColumn(label, align=format, width=width)
