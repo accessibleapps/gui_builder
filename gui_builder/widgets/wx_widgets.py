@@ -688,7 +688,7 @@ class MenuItem(WXWidget):
   if self.hotkey is not None:
    label = "%s\t%s" % (label, self.hotkey)
   self.control_id = wx.NewId()
-  self.control = self.get_parent_control().Append(id=self.control_id, text=label, help=self.help_message)
+  self.control = self.get_parent_control().Append(self.control_id, label, self.help_message, )
 
  def bind_event(self, callback_event, wrapped_callback):
   self.parent.control.Bind(callback_event, wrapped_callback, self.control)
