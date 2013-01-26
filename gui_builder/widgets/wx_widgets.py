@@ -7,6 +7,7 @@ import wx
 import wx.dataview
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
+from wx.lib.agw import hyperlink
 import platform
 
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, ) #controls which cannot directly take focus
@@ -724,6 +725,6 @@ class StatusBar(WXWidget):
   return self.control.GetStatusText()
 
 class Link(WXWidget):
- control_type = wx.HyperlinkCtrl
+ control_type = hyperlink.HyperLinkCtrl
  default_callback_type = "hyperlink"
- selflabled = True
+ selflabeled = True
