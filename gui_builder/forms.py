@@ -84,7 +84,12 @@ class BaseForm(GUIField):
    if field.default_focus and field.can_be_focused():
     field.set_focus()
   else:
-   self.get_first_focusable_child().set_focus()
+   child = self.get_first_focusable_child()
+   if child is not None:
+    child.set_focus()
+    return
+   self.set_focus()
+
 
  def display(self):
   self._predisplay()
