@@ -129,6 +129,9 @@ class GUIField(object):
  def hide(self):
   return self.widget.hide()
 
+ def show(self):
+  return self.widget.show()
+
  def destroy(self):
   self.widget.destroy()
 
