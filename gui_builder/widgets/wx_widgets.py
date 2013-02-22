@@ -101,7 +101,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), enabled=True, *args, **kwargs):
+ def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), enabled=True, hidden=False, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -113,6 +113,7 @@ class WXWidget(Widget):
   self.min_size = min_size
   self.label_control = None
   self.control_enabled = enabled
+  self.control_hidden = hidden
 
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
@@ -137,6 +138,9 @@ class WXWidget(Widget):
    return
   self.register_callback()
   self.enabled = self.control_enabled
+  if self.control_hidden:
+   self.hide()
+
 
  def register_callback(self, callback_type=None, callback=None):
   if callback_type is None:
@@ -181,9 +185,12 @@ class WXWidget(Widget):
  def hide(self):
   self.control.Hide()
 
+ def show(self):
+  self.control.Show()
+
  def display(self):
   self.control.Raise()
-  self.control.Show()
+  self.show()
 
 
  def get_control(self):
