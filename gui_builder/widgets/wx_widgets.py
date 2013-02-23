@@ -452,6 +452,13 @@ class ListView(ChoiceWidget):
  def delete_column(self, column_number):
   self.control.DeleteColumn(column_number)
 
+ def get_value(self):
+  return self.get_items()
+
+ def set_value(self, value):
+  return self.set_items(value)
+
+
 class ListViewColumn(WXWidget):
 
  def create_control(self, **runtime_kwargs):
