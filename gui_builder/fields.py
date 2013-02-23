@@ -249,6 +249,12 @@ class ChoiceField(GUIField):
  def get_count(self):
   return self.widget.get_count()
 
+ def get_item(self, index):
+  return self.widget.get_item(index)
+
+ def set_item(self, index, item):
+  return self.widget.set_item(index, item)
+
 class ComboBox(ChoiceField):
  widget_type = widgets.ComboBox
 
