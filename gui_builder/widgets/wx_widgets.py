@@ -418,7 +418,7 @@ class ListView(ChoiceWidget):
   self.set_item(index, item)
 
  def set_items(self, items):
-  self.control.DeleteAllItems()
+  self.clear()
   for item in items:
    self.add_item(item)
 
