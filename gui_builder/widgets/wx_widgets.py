@@ -340,10 +340,14 @@ class Button(WXWidget):
  def render(self):
   super(Button, self).render()
   if self.default:
-   self.control.SetDefault()
+   self.make_default()
 
  def translate_control_arguments(self, **kwargs):
   return wx_attributes("ID", result_key="id", **kwargs)
+
+ def make_default(self):
+  self.control.SetDefault()
+
 
 class Slider(WXWidget):
  style_prefix = "SL"
