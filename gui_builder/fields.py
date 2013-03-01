@@ -181,6 +181,9 @@ class IntText(Text):
 class Button(GUIField):
  widget_type = widgets.Button
 
+ def make_default(self):
+  return self.widget.make_default()
+
 class CheckBox(GUIField):
  widget_type = widgets.CheckBox
 
