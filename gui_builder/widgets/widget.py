@@ -12,8 +12,13 @@ class Widget(object):
   self.callbacks = defaultdict(list)
   if callbacks is None:
    callbacks = {}
-  for key, value in callbacks.iteritems():
+  self.unregistered_callbacks = callbacks
+
+
+ def register_unregistered_callbacks(self):
+  for key, value in dict(self.unregistered_callbacks).iteritems():
    self.register_callback(key, value)
+   del self.unregistered_callbacks[key]
 
 
  def translate_control_arguments(self, **kwargs):
@@ -32,6 +37,7 @@ class Widget(object):
   control_args = self.translate_control_arguments(**self.control_kwargs)
   control_args.update(self.translate_control_arguments(**runtime_kwargs))
   self.create_control(**control_args)
+  self.register_unregistered_callbacks()
   #super(Widget, self).render()
 
  def register_callback(self, callback_type=None, callback=None):

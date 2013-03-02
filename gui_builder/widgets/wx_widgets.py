@@ -163,7 +163,10 @@ class WXWidget(Widget):
  def resolve_callback_type(self, callback_type):
   if isinstance(callback_type, wx.PyEventBinder):
    return callback_type
-  return find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
+  res = find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
+  if res is None:
+   res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=self.event_module)
+  return res
 
  @property
  def enabled(self):
@@ -286,11 +289,10 @@ class Text(WXWidget):
  style_prefix = "TE"
  default_callback_type = "char"
 
-
  def translate_control_arguments(self, **kwargs):
   res = super(Text, self).translate_control_arguments(**kwargs)
   if 'style' not in res:
-   return {}
+   return res
   if res['style'] | wx.TE_READONLY == res['style']:
    res['style'] |= wx.TE_MULTILINE
   return res
