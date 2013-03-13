@@ -635,6 +635,22 @@ class Notebook(BaseContainer):
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
+  #Now, we shall have much hackyness to work around WX bug 11909
+  children = list(item.field.get_all_children())
+  first_child = children[0]
+  last_child = children[-1]
+  last_child._was_focused = False
+  def on_focus(evt):
+   evt.Skip()
+   last_child._was_focused = True
+  def on_navigation_key(evt):
+   if evt.GetDirection() and last_child._was_focused:
+    self.set_focus()
+   else:
+    evt.Skip()
+   last_child._was_focused = False
+  last_child.widget.control.Bind(wx.EVT_SET_FOCUS, on_focus)
+  first_child.widget.control.Bind(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
