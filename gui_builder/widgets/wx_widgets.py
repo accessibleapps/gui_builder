@@ -635,6 +635,15 @@ class Notebook(BaseContainer):
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, name)
+  last_child = list(item.field.get_all_children())[-1]
+  control = last_child.widget.control
+  print "Binding to control %r" % control
+  def on_key_down(evt):
+   evt.Skip()
+   print "On keydown. Keycode: %r" % evt.GetKeyCode()
+   if evt.GetKeyCode() == wx.WXK_TAB:
+    self.SetFocus()
+  control.Bind(wx.EVT_KEY_DOWN, on_key_down)
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
