@@ -31,7 +31,6 @@ class BaseForm(GUIField):
   for child in self:
    yield child
 
-
  def get_all_children(self):
   for field in self:
    yield field
@@ -47,7 +46,10 @@ class BaseForm(GUIField):
   return self._fields[name]
 
  def __setitem__(self, name, value):
-  self._fields[name] = value.bind(self, name)
+  self.add_child(name, value)
+
+ def add_child(self, field_name, field):
+  self._fields[field_name] = field.bind(self, field_name)
 
  def __delitem__(self, name):
   del self._fields[name]
@@ -63,7 +65,7 @@ class BaseForm(GUIField):
   logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
   logger.debug("The fields inside this form are %r" % self._fields)
   for field in self:
-   self[field.bound_name] = field   #this is an ugly hack, why does it work?
+   #self[field.bound_name] = field   #this is an ugly hack, why does it work?
 
    logger.debug("Rendering field %r" % field)
    try:
@@ -137,13 +139,21 @@ class Form(BaseForm):
  __metaclass__ = FormMeta
 
  def __init__(self, *args, **kwargs):
+  self._extra_unbound_fields = []
   super(Form, self).__init__(self._unbound_fields, *args, **kwargs)
   for name, field in self._fields.items():
    setattr(self, name, field)
 
+ def add_child(self, field_name, field):
+  super(Form, self).add_child(field_name, field)
+  item = (field_name, field)
+  setattr(self, field_name, field)
+  if item not in self._unbound_fields:
+   self._extra_unbound_fields.append(item)
+
  def __iter__(self):
   """ Iterate form fields in their order of definition on the form. """
-  for name, _ in self._unbound_fields:
+  for name, _ in self._unbound_fields + self._extra_unbound_fields:
    if name in self._fields:
     yield self._fields[name]
 
