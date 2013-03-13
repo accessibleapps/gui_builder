@@ -290,3 +290,6 @@ class Link(GUIField):
 
 class StaticText(GUIField):
  widget_type = widgets.StaticText
+
+class DatePicker(GUIField):
+ widget_type = widgets.DatePicker

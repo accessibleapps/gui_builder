@@ -751,3 +751,7 @@ class Link(WXWidget):
  control_type = hyperlink.HyperLinkCtrl
  default_callback_type = "hyperlink"
  selflabeled = True
+
+class DatePicker(WXWidget):
+ control_type = wx.DatePickerCtrl
+
