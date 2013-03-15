@@ -117,20 +117,24 @@ class WXWidget(Widget):
 
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
-  label = kwargs.pop('label', getattr(self, 'label', ''))
-  if label:
-   kwargs['label'] = label
-  if label is not None and not self.unlabeled and not self.selflabeled:
-   label = kwargs.pop('label')
-   try:
-    self.label_control = wx.StaticText(parent=self.get_parent_control(), label=label)
-   except:
-    logger.exception("Error creating label for control %r" % self.control_type)
-    raise
-  if 'label' in kwargs and self.unlabeled:
-   del kwargs['label']
+  kwargs = self.create_label_control(**kwargs)
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
   self.control.SetMinSize(self.min_size)
+
+ def create_label_control(self, label=None, **kwargs):
+  if label is None:
+   label = self.label
+  if self.unlabeled:
+   return kwargs
+  if self.selflabeled:
+   kwargs['label'] = label
+   return kwargs
+  try:
+   self.label_control = wx.StaticText(parent=self.get_parent_control(), label=label)
+  except:
+   logger.exception("Error creating label for control %r" % self.control_type)
+   raise
+  return kwargs
 
  def render(self, **runtime_kwargs):
   super(WXWidget, self).render(**runtime_kwargs)
@@ -439,7 +443,7 @@ class ListView(ChoiceWidget):
 
  def render(self, **kwargs):
   super(ListView, self).render(**kwargs)
-  self.set_items(self.choices)
+  self.set_value(self.choices)
 
  def add_column(self, column_number=None, label="", width=None, **format):
   if column_number is None:
