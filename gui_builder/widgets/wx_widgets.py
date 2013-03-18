@@ -377,6 +377,11 @@ class ListView(ChoiceWidget):
  default_callback_type = "ITEM_FOCUSED"
 
  def __init__(self, choices=None, **kwargs):
+  if 'virtual' in kwargs:
+   del kwargs['virtual']
+   self.control_type = VirtualListView
+   kwargs['style'] = kwargs.get('style', 0)
+   kwargs['style'] |= wx.LC_VIRTUAL|wx.LC_REPORT
   super(ListView, self).__init__(**kwargs)
   if choices is None:
    choices = []
@@ -775,3 +780,18 @@ class Link(WXWidget):
 class DatePicker(WXWidget):
  control_type = wx.DatePickerCtrl
 
+class VirtualListView(wx.ListCtrl):
+ def __init__(self, *args, **kwargs):
+  super(VirtualListView, self).__init__(*args, **kwargs)
+  self.items = []
+
+ def Append(self, item):
+  self.items.append(item)
+  self.SetItemCount(len(self.items))
+
+ def OnGetItemText(self, item, col):
+  return self.items[item][col]
+
+ def DeleteAllItems(self):
+  self.items = []
+  self.SetItemCount(0)
