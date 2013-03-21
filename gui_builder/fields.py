@@ -137,6 +137,7 @@ class GUIField(object):
 
  def __del__(self):
   self.destroy()
+  del self.widget
 
  def display(self):
   self.widget.display()
