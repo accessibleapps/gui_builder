@@ -712,7 +712,7 @@ class Menu(WXWidget):
  focusable = False
 
  def create_control(self, **kwargs):
-  label = kwargs.get('label', self.label)
+  label = unicode(kwargs.get('label', self.label))
   self.control = wx.Menu()
   self.get_parent_control().Append(self.control, title=label)
 
