@@ -159,7 +159,8 @@ class Form(BaseForm):
   except ValueError:
    self._extra_unbound_fields.remove((name, field))
   setattr(self, name, None)
-  delattr(self.__class__, name)
+  if hasattr(self.__class__, 'name'):
+   delattr(self.__class__, name)
   super(Form, self).delete_child(name)
 
  def __delattr__(self, name):
