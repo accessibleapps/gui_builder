@@ -51,7 +51,7 @@ class BaseForm(GUIField):
  def add_child(self, field_name, field):
   self._fields[field_name] = field.bind(self, field_name)
 
- def __delitem__(self, name):
+ def delete_child(self, name):
   del self._fields[name]
 
  def get_value(self):
@@ -129,10 +129,12 @@ class FormMeta(type):
    cls._unbound_fields = None
   type.__setattr__(cls, name, value)
 
- def __delattr__(self, name):
+ """
+ def __delattr__(cls, name):
   if not name.startswith('_'):
    cls._unbound_fields = None
   type.__delattr__(cls, name)
+ """
 
 class Form(BaseForm):
  __metaclass__ = FormMeta
@@ -149,6 +151,19 @@ class Form(BaseForm):
   setattr(self, field_name, field)
   if item not in self._unbound_fields:
    self._extra_unbound_fields.append(item)
+
+ def delete_child(self, name):
+  field = self._fields[name]
+  try:
+   self._unbound_fields.remove((name, field))
+  except ValueError:
+   self._extra_unbound_fields.remove((name, field))
+  setattr(self, name, None)
+  delattr(self.__class__, name)
+  super(Form, self).delete_child(name)
+
+ def __delattr__(self, name):
+  self.delete_child(name)
 
  def __iter__(self):
   """ Iterate form fields in their order of definition on the form. """

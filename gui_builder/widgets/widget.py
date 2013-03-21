@@ -1,4 +1,6 @@
 from collections import defaultdict
+import weakref
+
 
 class Widget(object):
  """Base class which represents a common abstraction over UI elements."""
@@ -6,7 +8,7 @@ class Widget(object):
 
 
  def __init__(self, field, callbacks=None, **kwargs):
-  self.field = field
+  self.field = weakref.proxy(field)
   self.control_kwargs = kwargs
   self.control = None
   self.callbacks = defaultdict(list)
