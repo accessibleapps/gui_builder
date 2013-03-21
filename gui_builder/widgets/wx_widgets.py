@@ -127,10 +127,10 @@ class WXWidget(Widget):
   if self.unlabeled:
    return kwargs
   if self.selflabeled:
-   kwargs['label'] = label
+   kwargs['label'] = unicode(label)
    return kwargs
   try:
-   self.label_control = wx.StaticText(parent=self.get_parent_control(), label=label)
+   self.label_control = wx.StaticText(parent=self.get_parent_control(), label=unicode(label))
   except:
    logger.exception("Error creating label for control %r" % self.control_type)
    raise
@@ -479,7 +479,7 @@ class ListViewColumn(WXWidget):
  def create_control(self, **runtime_kwargs):
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
-  kwargs['label'] = self.label
+  kwargs['label'] = unicode(self.label)
   translated_kwargs = self.translate_control_arguments(**kwargs)
   self.control = self.parent.add_column(**translated_kwargs)
 
