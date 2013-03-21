@@ -756,7 +756,7 @@ class MenuItem(WXWidget):
 
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
-  label = kwargs.get('label', self.label)
+  label = unicode(kwargs.get('label', self.label))
   self.control = self.get_parent_control().Parent.AppendSubMenu(self.get_parent_control(), label=label)
 
 class StatusBar(WXWidget):
