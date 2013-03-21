@@ -729,7 +729,7 @@ class MenuItem(WXWidget):
   super(MenuItem, self).__init__(**kwargs)
 
  def create_control(self, **kwargs):
-  label = kwargs.get('label', self.label)
+  label = unicode(kwargs.get('label', self.label))
   if not label: #This menu item is a separator
    self.control = self.get_parent_control().AppendSeparator()
    return
