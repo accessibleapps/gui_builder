@@ -429,7 +429,7 @@ class ListView(ChoiceWidget):
 
  def set_item(self, index, item):
   for column, subitem in enumerate(item):
-   self.set_item_column(index, column, subitem)
+   self.set_item_column(index, column, unicode(subitem))
 
  def update_item(self, index, item):
   self.set_item(index, item)
