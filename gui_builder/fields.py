@@ -136,6 +136,8 @@ class GUIField(object):
   self.widget.destroy()
 
  def __del__(self):
+  if self.widget is None:
+   return
   self.destroy()
   del self.widget
 
