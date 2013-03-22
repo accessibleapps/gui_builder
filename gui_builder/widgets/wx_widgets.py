@@ -379,8 +379,8 @@ class ListView(ChoiceWidget):
  default_callback_type = "ITEM_FOCUSED"
 
  def __init__(self, choices=None, **kwargs):
-  if 'virtual' in kwargs:
-   del kwargs['virtual']
+  self.virtual = kwargs.pop('virtual', False)
+  if self.virtual:
    self.control_type = VirtualListView
    kwargs['style'] = kwargs.get('style', 0)
    kwargs['style'] |= wx.LC_VIRTUAL|wx.LC_REPORT
@@ -435,6 +435,9 @@ class ListView(ChoiceWidget):
   self.set_item(index, item)
 
  def set_items(self, items):
+  if self.virtual:
+   self.control.SetItems(list(items))
+   return
   self.clear()
   for item in items:
    self.add_item(item)
@@ -791,6 +794,9 @@ class VirtualListView(wx.ListCtrl):
   self.items.append(item)
   self.SetItemCount(len(self.items))
 
+ def SetItems(self, items):
+  self.items = items
+  self.SetItemCount(len(self.items))
  def OnGetItemText(self, item, col):
   return self.items[item][col]
 
