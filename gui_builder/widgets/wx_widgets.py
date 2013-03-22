@@ -118,6 +118,8 @@ class WXWidget(Widget):
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
   kwargs = self.create_label_control(**kwargs)
+  if 'title' in kwargs:
+   kwargs['title'] = unicode(kwargs['title'])
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
   self.control.SetMinSize(self.min_size)
 
@@ -252,7 +254,7 @@ class ChoiceWidget(WXWidget):
   return self.control.GetItems()
 
  def set_items(self, items):
-  return self.control.SetItems(items)
+  return self.control.SetItems([unicode(item) for item in items])
 
  def get_item(self, index):
   return self.control.get_string(index)
