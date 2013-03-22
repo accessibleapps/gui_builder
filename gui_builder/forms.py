@@ -32,7 +32,7 @@ class BaseForm(GUIField):
    yield child
 
  def get_all_children(self):
-  for field in self:
+  for field in self.get_children():
    yield field
    if not hasattr(field, 'get_all_children'):
     continue
@@ -234,6 +234,9 @@ class ListView(UIForm, ChoiceField):
    self.widget_type = widgets.DataView
    virtual = False
   super(ListView, self).__init__(self, virtual=virtual, *args, **kwargs)
+
+ def get_children(self):
+  return []
 
  def get_item_column(self, index, column):
   return self.widget.get_item_column(index, column)
