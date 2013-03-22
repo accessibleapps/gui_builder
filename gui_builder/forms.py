@@ -226,10 +226,13 @@ class SubMenu(UIForm):
  widget_type = widgets.SubMenu
 
 class ListView(UIForm, ChoiceField):
- if platform.system() == 'Windows':
-  widget_type = widgets.ListView
- else:
-  widget_type = widgets.DataView
+
+ def __init__(self, virtual=False, *args, **kwargs):
+  if platform.system() == 'Windows' or virtual:
+   self.widget_type = widgets.ListView
+  else:
+   self.widget_type = widgets.DataView
+  super(ListView, self).__init__(self, virtual=virtual, *args, **kwargs)
 
  def get_item_column(self, index, column):
   return self.widget.get_item_column(index, column)
