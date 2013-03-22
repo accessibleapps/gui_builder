@@ -648,7 +648,7 @@ class Notebook(BaseContainer):
  default_callback_type = "notebook_page_changed"
 
  def add_item(self, name, item):
-  self.control.AddPage(item.control, name)
+  self.control.AddPage(item.control, unicode(name))
   #Now, we shall have much hackyness to work around WX bug 11909
   children = list(item.field.get_all_children())
   first_child = children[0]
