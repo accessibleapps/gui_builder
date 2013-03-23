@@ -376,7 +376,7 @@ class ListView(ChoiceWidget):
  control_type = wx.ListView
  style_prefix = "LC"
  event_prefix = 'EVT_LIST'
- default_callback_type = "ITEM_FOCUSED"
+ default_callback_type = 'ITEM_SELECTED'
 
  def __init__(self, choices=None, **kwargs):
   self.virtual = kwargs.pop('virtual', False)
