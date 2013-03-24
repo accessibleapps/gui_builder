@@ -189,7 +189,10 @@ class WXWidget(Widget):
   self.enabled = False
 
  def destroy(self):
-  self.control.Destroy()
+  try:
+   self.control.Destroy()
+  except wx._core.PyDeadObjectError:
+   pass
 
  def hide(self):
   self.control.Hide()
