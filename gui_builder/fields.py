@@ -139,7 +139,7 @@ class GUIField(object):
   if self.widget is None:
    return
   self.destroy()
-  del self.widget
+  self.widget = None
 
  def display(self):
   self.widget.display()
