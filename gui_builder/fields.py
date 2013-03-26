@@ -296,3 +296,15 @@ class StaticText(GUIField):
 
 class DatePicker(GUIField):
  widget_type = widgets.DatePicker
+
+class TreeView(GUIField):
+ widget_type = widgets.TreeView
+
+ def add_root(self, text, data=None):
+  self.widget.add_root(text, data=data)
+
+ def get_root_item(self):
+  return self.widget.get_root_item()
+
+ def append_item(self, parent, text, data=None):
+  self.widget.append_item(parent, text, data)

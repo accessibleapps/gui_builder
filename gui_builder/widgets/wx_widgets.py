@@ -809,9 +809,19 @@ class VirtualListView(wx.ListCtrl):
   self.items = []
   self.SetItemCount(0)
 
-
  def SetStringItem(self, index, column, data):
   row = list(self.items[index])
   row[column] = data
   self.items[index] = row
 
+class TreeView(WXWidget):
+ control_type = wx.TreeCtrl
+
+ def add_root(self, text, data=None):
+  self.control.AddRoot(text, data=data)
+
+ def get_root_item(self):
+  return self.control.GetRootItem()
+
+ def append_item(self, parent, text, data):
+  self.control.AppendItem(parent, text, data=data)
