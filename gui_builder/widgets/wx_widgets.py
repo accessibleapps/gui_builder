@@ -818,12 +818,27 @@ class VirtualListView(wx.ListCtrl):
 
 class TreeView(WXWidget):
  control_type = wx.TreeCtrl
+ style_prefix = "TR"
+ event_prefix = 'EVT_TREE'
+ default_callback_type = 'SEL_CHANGED'
 
- def add_root(self, text, data=None):
-  self.control.AddRoot(text, data=data)
+ def add_root(self, text, image, selected_image, data):
+  return self.control.AddRoot(text, image, selected_image, data)
 
  def get_root_item(self):
   return self.control.GetRootItem()
 
- def append_item(self, parent, text, data):
-  self.control.AppendItem(parent, text, data=data)
+ def append_item(self, parent, text, image, selected_image, data):
+  return self.control.AppendItem(parent, text, image, selected_image, data)
+
+ def clear(self):
+  self.control.DeleteAllItems()
+
+ def delete(self, item):
+  self.control.Delete(item)
+
+ def get_selection(self):
+  return self.control.GetSelection()
+
+ def select_item(self, item):
+  self.control.SelectItem(item)
