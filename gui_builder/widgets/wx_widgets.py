@@ -147,7 +147,6 @@ class WXWidget(Widget):
   if self.control_hidden:
    self.hide()
 
-
  def register_callback(self, callback_type=None, callback=None):
   if callback_type is None:
    callback_type = self.default_callback_type
@@ -156,6 +155,7 @@ class WXWidget(Widget):
   if callback_type is None:
    return
   callback_event = self.resolve_callback_type(callback_type)
+  logger.debug("Resolved %r to %r" % (callback_type, callback_event))
   if callback_event is None or not callable(callback):
    return
 
@@ -172,6 +172,8 @@ class WXWidget(Widget):
   res = find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
   if res is None:
    res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=self.event_module)
+  if res is None:
+   res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=WXWidget.event_module)
   return res
 
  @property
