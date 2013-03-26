@@ -789,6 +789,7 @@ class DatePicker(WXWidget):
  control_type = wx.DatePickerCtrl
 
 class VirtualListView(wx.ListCtrl):
+
  def __init__(self, *args, **kwargs):
   super(VirtualListView, self).__init__(*args, **kwargs)
   self.items = []
@@ -800,9 +801,17 @@ class VirtualListView(wx.ListCtrl):
  def SetItems(self, items):
   self.items = items
   self.SetItemCount(len(self.items))
+
  def OnGetItemText(self, item, col):
   return self.items[item][col]
 
  def DeleteAllItems(self):
   self.items = []
   self.SetItemCount(0)
+
+
+ def SetStringItem(self, index, column, data):
+  row = list(self.items[index])
+  row[column] = data
+  self.items[index] = row
+
