@@ -190,6 +190,12 @@ class WXWidget(Widget):
  def disable(self):
   self.enabled = False
 
+ def freeze(self):
+  self.control.freeze()
+
+ def thaw(self):
+  self.control.thaw()
+
  def destroy(self):
   try:
    self.control.Destroy()
@@ -650,7 +656,8 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
  control_type = wx.Notebook
- default_callback_type = "notebook_page_changed"
+ event_prefix = 'EVT_NOTEBOOK'
+ default_callback_type = 'page_changed'
 
  def add_item(self, name, item):
   self.control.AddPage(item.control, unicode(name))
