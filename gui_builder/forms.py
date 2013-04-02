@@ -211,10 +211,19 @@ class SizedPanel(UIForm):
 class Notebook(UIForm):
  widget_type = widgets.Notebook
 
+ def add_item(self, label, item):
+  self.widget.add_item(label, item.widget)
+
  def render(self):
   super(Notebook, self).render()
   for field in self:
    self.widget.add_item(field.label, field.widget)
+
+ def get_selection(self):
+  return self.widget.get_selection()
+
+ def set_selection(self, selection):
+  return self.widget.set_selection(selection)
 
 class MenuBar(UIForm):
  widget_type = widgets.MenuBar

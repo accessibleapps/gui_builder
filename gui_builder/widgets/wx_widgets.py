@@ -191,10 +191,10 @@ class WXWidget(Widget):
   self.enabled = False
 
  def freeze(self):
-  self.control.freeze()
+  self.control.Freeze()
 
  def thaw(self):
-  self.control.thaw()
+  self.control.Thaw()
 
  def destroy(self):
   try:
@@ -705,6 +705,12 @@ class Notebook(BaseContainer):
    last_child._was_focused = False
   last_child.widget.control.Bind(wx.EVT_SET_FOCUS, on_focus)
   first_child.widget.control.Bind(wx.EVT_NAVIGATION_KEY, on_navigation_key)
+
+ def get_selection(self):
+  return self.control.GetSelection()
+
+ def set_selection(self, selection):
+  return self.control.SetSelection(selection)
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
