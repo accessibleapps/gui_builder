@@ -178,8 +178,20 @@ class Text(GUIField):
  def select_range(self, start, end):
   self.widget.select_range(start, end)
 
+ def get_insertion_point(self):
+  return self.widget.get_insertion_point()
+
+ def set_insertion_point(self, insertion_point):
+  self.widget.set_insertion_point(insertion_point)
+
  def get_length(self):
   return self.widget.get_length()
+
+ def get_insertion_point_from_x_y(self, x, y):
+  return self.widget.get_insertion_point_from_x_y(x, y)
+
+ def get_x_y_from_insertion_point(self, insertion_point):
+  return self.widget.get_x_y_from_insertion_point(insertion_point)
 
  def select_all(self):
   self.select_range(0, self.get_length())
@@ -284,6 +296,12 @@ class ListViewColumn(GUIField):
 
 class Slider(GUIField):
  widget_type = widgets.Slider
+
+ def get_page_size(self):
+  return self.widget.get_page_size()
+
+ def set_page_size(self, page_size):
+  return self.widget.set_page_size(page_size)
 
 class FilePicker(GUIField):
  widget_type = widgets.FilePicker
