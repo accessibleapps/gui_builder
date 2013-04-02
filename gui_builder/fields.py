@@ -324,11 +324,23 @@ class DatePicker(GUIField):
 class TreeView(GUIField):
  widget_type = widgets.TreeView
 
- def add_root(self, text, data=None):
-  self.widget.add_root(text, data=data)
+ def add_root(self, text, image=-1, selected_image=-1, data=None):
+  return self.widget.add_root(text, image, selected_image, data=data)
 
  def get_root_item(self):
   return self.widget.get_root_item()
 
- def append_item(self, parent, text, data=None):
-  self.widget.append_item(parent, text, data)
+ def append_item(self, parent, text, image=-1, selected_image=-1, data=None):
+  return self.widget.append_item(parent, text, image, selected_image, data)
+
+ def clear(self):
+  self.widget.clear()
+
+ def delete(self, item):
+  self.widget.delete(item)
+
+ def get_selection(self):
+  return self.widget.get_selection()
+
+ def select_item(self, item):
+  self.widget.select_item(item)
