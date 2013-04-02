@@ -126,6 +126,12 @@ class GUIField(object):
  def enable(self):
   return self.widget.enable()
 
+ def freeze(self):
+  self.widget.freeze()
+
+ def thaw(self):
+  self.widget.thaw()
+
  def hide(self):
   return self.widget.hide()
 
