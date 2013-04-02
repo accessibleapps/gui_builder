@@ -326,6 +326,19 @@ class Text(WXWidget):
   del val
   return length
 
+ def get_insertion_point(self):
+  return self.control.GetInsertionPoint()
+
+ def set_insertion_point(self, insertion_point):
+  self.control.SetInsertionPoint(insertion_point)
+
+ def get_insertion_point_from_x_y(self, x, y):
+  return self.control.XYToPosition(x, y)
+
+ def get_x_y_from_insertion_point(self, insertion_point):
+  return self.control.PositionToXY(insertion_point)
+
+
 class IntText(Text):
  widget_type = intctrl.IntCtrl
 
@@ -372,6 +385,21 @@ class Slider(WXWidget):
  style_prefix = "SL"
  control_type = wx.Slider
  default_callback_type = "slider"
+
+ def __init__(self, page_size=None, *args, **kwargs):
+  super(Slider, self).__init__(*args, **kwargs)
+  self._page_size = page_size
+
+ def render(self, *args, **kwargs):
+  super(Slider, self).render(*args, **kwargs)
+  if self._page_size is not None:
+   self.set_page_size(self._page_size)
+
+ def get_page_size(self):
+  return self.control.GetPageSize()
+
+ def set_page_size(self, page_size):
+  return self.control.SetPageSize(page_size)
 
 class ScrollBar(WXWidget):
  control_type = wx.ScrollBar
