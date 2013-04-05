@@ -225,6 +225,9 @@ class Notebook(UIForm):
  def set_selection(self, selection):
   return self.widget.set_selection(selection)
 
+ def get_current_page(self):
+  return list(self.get_children())[self.get_selection()]
+
 class MenuBar(UIForm):
  widget_type = widgets.MenuBar
 
