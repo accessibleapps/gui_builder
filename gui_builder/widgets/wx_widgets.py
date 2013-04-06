@@ -169,11 +169,13 @@ class WXWidget(Widget):
  def resolve_callback_type(self, callback_type):
   if isinstance(callback_type, wx.PyEventBinder):
    return callback_type
-  res = find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
-  if res is None:
-   res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=self.event_module)
-  if res is None:
-   res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=WXWidget.event_module)
+  try:
+   res = find_wx_attribute(self.event_prefix, callback_type, module=self.event_module)
+  except AttributeError:
+   try:
+    res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=self.event_module)
+   except AttributeError:
+    res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=WXWidget.event_module)
   return res
 
  @property
@@ -301,23 +303,15 @@ class ChoiceWidget(WXWidget):
  def clear(self):
   self.control.Clear()
 
-class Text(WXWidget):
- control_type = wx.TextCtrl
- style_prefix = "TE"
- default_callback_type = "char"
+class BaseText(WXWidget):
+ event_prefix = 'EVT_TEXT'
 
- def translate_control_arguments(self, **kwargs):
-  res = super(Text, self).translate_control_arguments(**kwargs)
-  if 'style' not in res:
-   return res
-  if res['style'] | wx.TE_READONLY == res['style']:
-   res['style'] |= wx.TE_MULTILINE
-  return res
-
+ def __init__(self, max_length=None, *args, **kwargs):
+  super(BaseText, self).__init__(*args, **kwargs)
+  self.max_length = max_length
 
  def select_range(self, start, end):
   self.control.SetSelection(start, end)
-
 
  def get_length(self):
   #this annoys me
@@ -331,6 +325,27 @@ class Text(WXWidget):
 
  def set_insertion_point(self, insertion_point):
   self.control.SetInsertionPoint(insertion_point)
+
+ def set_max_length(self, length):
+  self.control.SetMaxLen(length)
+
+ def render(self, *args, **kwargs):
+  super(BaseText, self).render(*args, **kwargs)
+  if self.max_length is not None:
+   self.set_max_length(self.max_length)
+
+class Text(BaseText):
+ control_type = wx.TextCtrl
+ style_prefix = "TE"
+ default_callback_type = "char"
+
+ def translate_control_arguments(self, **kwargs):
+  res = super(Text, self).translate_control_arguments(**kwargs)
+  if 'style' not in res:
+   return res
+  if res['style'] | wx.TE_READONLY == res['style']:
+   res['style'] |= wx.TE_MULTILINE
+  return res
 
  def get_insertion_point_from_x_y(self, x, y):
   return self.control.XYToPosition(x, y)
