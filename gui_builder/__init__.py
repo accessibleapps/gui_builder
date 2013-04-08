@@ -1,0 +1,5 @@
+OK = 'ok'
+APPLY = 'apply'
+CANCEL = 'cancel'
+CLOSE = 'close'
+FIND = 'find'

@@ -98,7 +98,7 @@ class BaseForm(GUIField):
 
  def display_modal(self):
   self._predisplay()
-  self.widget.display_modal()
+  return self.widget.display_modal()
 
  def _predisplay(self):
   if not self.is_rendered:

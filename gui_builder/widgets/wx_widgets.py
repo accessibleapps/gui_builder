@@ -10,6 +10,8 @@ from wx.lib import sized_controls as sc
 from wx.lib.agw import hyperlink
 import platform
 
+import gui_builder
+
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, ) #controls which cannot directly take focus
 
 def inheritors(klass):
@@ -25,7 +27,13 @@ def inheritors(klass):
 
 is_labeled = lambda control: is_subclass_or_instance(control, [cls for cls in inheriters(WXWidget) if cls.selflabeled])
 
-
+MODAL_RESULTS = {
+ wx.ID_OK: gui_builder.OK,
+ wx.ID_APPLY: gui_builder.APPLY,
+ wx.ID_CANCEL: gui_builder.CANCEL,
+ wx.ID_CLOSE: gui_builder.CLOSE,
+ wx.ID_FIND: gui_builder.FIND,
+}
 
 
 def is_subclass_or_instance(unknown, possible):
@@ -666,7 +674,13 @@ class BaseDialog(BaseContainer):
  def get_modal_result(self):
   if self._modal_result is None:
    raise RuntimeError("%r has not yet been displayed modally, hence no result is available." % self)
-  return self.control.FindWindowById(self._modal_result)
+  #control = self.control.FindWindowById(self._modal_result)
+  result = self._modal_result
+  try:
+   return MODAL_RESULTS[result]
+  except KeyError:
+   return result
+
 
 class SizedDialog(BaseDialog):
  control_type = sc.SizedDialog
