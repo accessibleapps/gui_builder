@@ -187,6 +187,9 @@ class Text(GUIField):
  def get_length(self):
   return self.widget.get_length()
 
+ def get_number_of_lines(self):
+  return self.widget.get_number_of_lines()
+
  def get_insertion_point_from_x_y(self, x, y):
   return self.widget.get_insertion_point_from_x_y(x, y)
 

@@ -355,6 +355,9 @@ class Text(BaseText):
    res['style'] |= wx.TE_MULTILINE
   return res
 
+ def get_number_of_lines(self):
+  return self.control.GetNumberOfLines()
+
  def get_insertion_point_from_x_y(self, x, y):
   return self.control.XYToPosition(x, y)
 
@@ -367,6 +370,12 @@ class IntText(Text):
 
  def set_value(self, value):
   self.control.SetValue(unicode(value))
+
+ def get_value(self):
+  value = super(IntText, self).get_value()
+  if value:
+   value = int(value)
+  return value
 
 class StaticText(WXWidget):
  control_type = wx.StaticText
