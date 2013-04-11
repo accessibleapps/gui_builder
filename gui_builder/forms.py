@@ -71,7 +71,7 @@ class BaseForm(GUIField):
     field.render()
    except Exception as e:
     logger.exception("Failed rendering field %r" % field)
-    raise RuntimeError("Failed to render field %r" % field, e)
+    raise RuntimeError("Failed to render field %r" % field, traceback.format(e), e)
   self.set_default_value()
   self.is_rendered = True
 
