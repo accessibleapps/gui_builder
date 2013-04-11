@@ -1,5 +1,6 @@
 from logging import getLogger
 logger = getLogger('gui_builder.fields')
+
 import traceback
 
 from widgets import wx_widgets as widgets
