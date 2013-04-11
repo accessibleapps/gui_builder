@@ -81,7 +81,7 @@ class GUIField(object):
    self.widget = self.widget_type(field=self, *self.widget_args, **widget_kwargs)
   except Exception as e:
    logger.exception("Error creating widget.")
-   raise RuntimeError("Unable to create widget with type %r" % self.widget_type, e)
+   raise RuntimeError("Unable to create widget with type %r" % self.widget_type, traceback.format_exc(e), e)
   self.widget.render()
   self.register_extra_callbacks()
 
