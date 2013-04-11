@@ -1,6 +1,8 @@
 from logging import getLogger
 logger = getLogger('gui_builder.forms')
+
 import platform
+import traceback
 
 from .fields import GUIField, ChoiceField
 from .widgets import wx_widgets as widgets
