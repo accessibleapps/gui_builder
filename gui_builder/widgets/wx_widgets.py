@@ -109,7 +109,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", callback=None, min_size=(-1, -1), enabled=True, hidden=False, *args, **kwargs):
+ def __init__(self, parent=None, label="", callback=None, min_size=None, enabled=True, hidden=False, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -129,7 +129,8 @@ class WXWidget(Widget):
   if 'title' in kwargs:
    kwargs['title'] = unicode(kwargs['title'])
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
-  self.control.SetMinSize(self.min_size)
+  if self.min_size is not None:
+   self.control.SetMinSize(self.min_size)
 
  def create_label_control(self, label=None, **kwargs):
   if label is None:
