@@ -742,8 +742,8 @@ class Notebook(BaseContainer):
    else:
     evt.Skip()
    last_child._was_focused = False
-  last_child.widget.control.Bind(wx.EVT_SET_FOCUS, on_focus)
-  first_child.widget.control.Bind(wx.EVT_NAVIGATION_KEY, on_navigation_key)
+  last_child.widget.bind_event(wx.EVT_SET_FOCUS, on_focus)
+  first_child.widget.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
  def get_selection(self):
   return self.control.GetSelection()
