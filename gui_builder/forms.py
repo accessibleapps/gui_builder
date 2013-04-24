@@ -62,8 +62,8 @@ class BaseForm(GUIField):
    res[field.bound_name] = field.get_value()
   return res
 
- def render(self):
-  super(BaseForm, self).render()
+ def render(self, **kwargs):
+  super(BaseForm, self).render(**kwargs)
   logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
   logger.debug("The fields inside this form are %r" % self._fields)
   for field in self:
@@ -216,8 +216,8 @@ class Notebook(UIForm):
  def add_item(self, label, item):
   self.widget.add_item(label, item.widget)
 
- def render(self):
-  super(Notebook, self).render()
+ def render(self, **kwargs):
+  super(Notebook, self).render(**kwargs)
   for field in self:
    self.widget.add_item(field.label, field.widget)
 
