@@ -86,12 +86,14 @@ class BaseForm(GUIField):
   for field in self:
    if field.default_focus and field.can_be_focused():
     field.set_focus()
-  else:
-   child = self.get_first_focusable_child()
-   if child is not None:
-    child.set_focus()
+    logger.debug("Setting default focus to %r" % field)
     return
-   self.set_focus()
+  child = self.get_first_focusable_child()
+  if child is not None:
+   child.set_focus()
+   logger.debug("Setting default focus to first focusable child %r" % child)
+   return
+  self.set_focus()
 
 
  def display(self):
