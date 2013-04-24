@@ -238,6 +238,14 @@ class MenuBar(UIForm):
 class Menu(UIForm):
  widget_type = widgets.Menu
 
+ def enable_menu(self):
+  for menu_item in self:
+   menu_item.enable()
+
+ def disable_menu(self):
+  for menu_item in self:
+   menu_item.disable()
+
 class SubMenu(UIForm):
  widget_type = widgets.SubMenu
 
