@@ -313,6 +313,12 @@ class FilePicker(GUIField):
 class MenuItem(GUIField):
  widget_type = widgets.MenuItem
 
+ def check(self):
+  self.widget.check()
+
+ def uncheck(self):
+  self.widget.uncheck()
+
 class StatusBar(GUIField):
  widget_type = widgets.StatusBar
 

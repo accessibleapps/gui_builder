@@ -821,9 +821,10 @@ class MenuItem(WXWidget):
  focusable = False
  unlabled = True
 
- def __init__(self, hotkey=None, help_message="", **kwargs):
+ def __init__(self, hotkey=None, help_message="", checkable=False, **kwargs):
   self.hotkey = hotkey
   self.help_message = help_message
+  self.checkable = checkable
   self.control_id = None
   super(MenuItem, self).__init__(**kwargs)
 
@@ -836,6 +837,8 @@ class MenuItem(WXWidget):
    label = "%s\t%s" % (label, self.hotkey)
   self.control_id = wx.NewId()
   self.control = self.get_parent_control().Append(self.control_id, label, self.help_message, )
+  if self.checkable:
+   self.control.SetCheckable(True)
 
  def bind_event(self, callback_event, wrapped_callback):
   self.parent.control.Bind(callback_event, wrapped_callback, self.control)
@@ -852,6 +855,11 @@ class MenuItem(WXWidget):
  def disable(self):
   self.control.Enable(False)
 
+ def check(self):
+  self.control.Check(True)
+
+ def uncheck(self):
+  self.control.Check(False)
 
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
