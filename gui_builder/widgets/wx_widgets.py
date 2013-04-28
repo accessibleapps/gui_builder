@@ -742,9 +742,17 @@ class Notebook(BaseContainer):
    else:
     evt.Skip()
    last_child._was_focused = False
-
   last_child.widget.bind_event(wx.EVT_SET_FOCUS, on_focus)
   first_child.widget.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
+
+ def render(self, *args, **kwargs):
+  super(Notebook, self).render(*args, **kwargs)
+  def on_notebook_navigation(evt):
+   if not evt.GetDirection() and evt.GetCurrentFocus() is None:
+    list(self.field.get_current_page().get_children())[-1].set_focus()
+   else:
+    evt.Skip()
+  self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
 
  def get_selection(self):
   return self.control.GetSelection()
