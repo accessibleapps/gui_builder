@@ -6,6 +6,7 @@ import traceback
 
 from .fields import GUIField, ChoiceField
 from .widgets import wx_widgets as widgets
+import wx
 
 class BaseForm(GUIField):
  __autolabel__ = False
@@ -220,8 +221,15 @@ class Notebook(UIForm):
 
  def render(self, **kwargs):
   super(Notebook, self).render(**kwargs)
+  def on_notebook_navigation(evt):
+   if not evt.GetDirection() and evt.GetCurrentFocus() is None:
+    list(self.get_current_page().get_children())[-1].set_focus()
+   else:
+    evt.Skip()
+
   for field in self:
    self.widget.add_item(field.label, field.widget)
+  self.widget.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
 
  def get_selection(self):
   return self.widget.get_selection()
