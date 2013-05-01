@@ -668,6 +668,9 @@ class BaseContainer(WXWidget):
  def get_title(self):
   return self.control.GetTitle()
 
+ def set_label(self, label):
+  pass
+
  def close(self):
   self.control.Close()
 
