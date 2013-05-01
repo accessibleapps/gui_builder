@@ -116,7 +116,7 @@ class WXWidget(Widget):
   self.callback = callback
   if label == "":
    label = self.label
-  self.label = label
+  self.label_text = label
   self.parent = parent
   self.min_size = min_size
   self.label_control = None
@@ -129,12 +129,14 @@ class WXWidget(Widget):
   if 'title' in kwargs:
    kwargs['title'] = unicode(kwargs['title'])
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
+  if self.label_text is not None:
+   self.set_label(unicode(self.label_text))
   if self.min_size is not None:
    self.control.SetMinSize(self.min_size)
 
  def create_label_control(self, label=None, **kwargs):
   if label is None:
-   label = self.label
+   label = self.label_text
   if self.unlabeled:
    return kwargs
   if self.selflabeled:
@@ -240,9 +242,7 @@ class WXWidget(Widget):
  def set_label(self, label):
   if self.label_control is not None:
    self.label_control.SetLabel(label)
-  else:
-   self.control.SetLabel(label)
-
+  self.control.SetLabel(label)
 
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
@@ -811,7 +811,7 @@ class Menu(WXWidget):
  focusable = False
 
  def create_control(self, **kwargs):
-  label = unicode(kwargs.get('label', self.label))
+  label = unicode(kwargs.get('label', self.label_text))
   self.control = wx.Menu()
   self.get_parent_control().Append(self.control, title=label)
 
@@ -829,7 +829,7 @@ class MenuItem(WXWidget):
   super(MenuItem, self).__init__(**kwargs)
 
  def create_control(self, **kwargs):
-  label = unicode(kwargs.get('label', self.label))
+  label = unicode(kwargs.get('label', self.label_text))
   if not label: #This menu item is a separator
    self.control = self.get_parent_control().AppendSeparator()
    return
@@ -863,7 +863,7 @@ class MenuItem(WXWidget):
 
 class SubMenu(WXWidget):
  def create_control(self, **kwargs):
-  label = unicode(kwargs.get('label', self.label))
+  label = unicode(kwargs.get('label', self.label_text))
   self.control = self.get_parent_control().Parent.AppendSubMenu(self.get_parent_control(), label=label)
 
 class StatusBar(WXWidget):
