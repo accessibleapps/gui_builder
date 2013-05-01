@@ -279,7 +279,7 @@ class ChoiceWidget(WXWidget):
   return self.control.SetItems([unicode(item) for item in items])
 
  def get_item(self, index):
-  return self.control.get_string(index)
+  return self.control.GetString(index)
 
  def __getitem___(self, index):
   return self.get_item(index)
@@ -292,6 +292,9 @@ class ChoiceWidget(WXWidget):
 
  def get_choice(self):
   return self.get_item(self.get_index())
+
+ def get_value(self):
+  return self.get_choice()
 
  def populate(self, value):
   self.set_items(value)
