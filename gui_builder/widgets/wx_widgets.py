@@ -346,6 +346,9 @@ class BaseText(WXWidget):
   if self.max_length is not None:
    self.set_max_length(self.max_length)
 
+ def set_label(self, label):
+  self.label_control.SetLabel(label)
+
 class Text(BaseText):
  control_type = wx.TextCtrl
  style_prefix = "TE"
