@@ -91,8 +91,6 @@ def callback_wrapper(widget, callback):
    raise
  return wrapper
 
-  
-
 def translate_none(val):
  if val == -1:
   val = None
@@ -129,7 +127,7 @@ class WXWidget(Widget):
   if 'title' in kwargs:
    kwargs['title'] = unicode(kwargs['title'])
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
-  if self.label_text is not None:
+  if self.label_text:
    self.set_label(unicode(self.label_text))
   if self.min_size is not None:
    self.control.SetMinSize(self.min_size)
@@ -140,7 +138,8 @@ class WXWidget(Widget):
   if self.unlabeled:
    return kwargs
   if self.selflabeled:
-   kwargs['label'] = unicode(label)
+   if label:
+    kwargs['label'] = unicode(label)
    return kwargs
   try:
    self.label_control = wx.StaticText(parent=self.get_parent_control(), label=unicode(label))
