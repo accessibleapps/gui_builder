@@ -398,6 +398,9 @@ class ComboBox(ChoiceWidget):
  style_prefix = "CB"
  default_callback_type = "combobox"
 
+ def get_value(self):
+  return self.control.GetValue()
+
 class Button(WXWidget):
  control_type = wx.Button
  default_callback_type = "button"
