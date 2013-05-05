@@ -216,8 +216,9 @@ class Notebook(UIForm):
  widget_type = widgets.Notebook
 
  def add_item(self, label, item):
+  self.add_child(label, item)
   self.widget.add_item(label, item.widget)
-
+  
  def render(self, **kwargs):
   super(Notebook, self).render(**kwargs)
   for field in self:
