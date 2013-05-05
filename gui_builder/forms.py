@@ -215,8 +215,8 @@ class SizedPanel(UIForm):
 class Notebook(UIForm):
  widget_type = widgets.Notebook
 
- def add_item(self, label, item):
-  self.add_child(label, item)
+ def add_item(self, field_name, label, item):
+  self.add_child(field_name, item)
   self.widget.add_item(label, item.widget)
   
  def render(self, **kwargs):
