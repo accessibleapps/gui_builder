@@ -149,7 +149,7 @@ class Form(BaseForm):
  __metaclass__ = FormMeta
 
  def __init__(self, *args, **kwargs):
-  self._extra_unbound_fields = []
+  self._extra_fields = []
   super(Form, self).__init__(self._unbound_fields, *args, **kwargs)
   for name, field in self._fields.items():
    setattr(self, name, field)
@@ -159,7 +159,7 @@ class Form(BaseForm):
   item = (field_name, field)
   setattr(self, field_name, field)
   if item not in self._unbound_fields:
-   self._extra_unbound_fields.append(item)
+   self._extra_fields.append(item)
   return field
 
  def delete_child(self, name):
@@ -167,7 +167,7 @@ class Form(BaseForm):
   try:
    self._unbound_fields.remove((name, field))
   except ValueError:
-   self._extra_unbound_fields.remove((name, field))
+   self._extra_fields.remove((name, field))
   setattr(self, name, None)
   if hasattr(self.__class__, 'name'):
    delattr(self.__class__, name)
@@ -178,7 +178,7 @@ class Form(BaseForm):
 
  def __iter__(self):
   """ Iterate form fields in their order of definition on the form. """
-  for name, _ in self._unbound_fields + self._extra_unbound_fields:
+  for name, _ in self._unbound_fields + self._extra_fields:
    if name in self._fields:
     yield self._fields[name]
 
