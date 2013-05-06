@@ -18,7 +18,7 @@ class UnboundField(object):
 
  def bind(self, parent=None, name=None, **kwargs):
   kwargs.update(self.kwargs)
-  return self.field(name=name, parent=parent, *self.args, **kwargs)
+  return self.field(bound_name=name, parent=parent, *self.args, **kwargs)
 
 class GUIField(object):
  widget_type = None
@@ -30,7 +30,7 @@ class GUIField(object):
  default_value = None
 
  def __new__(cls, *args, **kwargs):
-  if 'parent' in kwargs and 'name' in kwargs or kwargs.get('top_level_window'):
+  if 'parent' in kwargs and 'bound_name' in kwargs or kwargs.get('top_level_window'):
    return super(GUIField, cls).__new__(cls)
   else:
    return UnboundField(cls, *args, **kwargs)
