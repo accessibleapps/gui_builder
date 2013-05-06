@@ -759,11 +759,17 @@ class Notebook(BaseContainer):
  def render(self, *args, **kwargs):
   super(Notebook, self).render(*args, **kwargs)
   def on_notebook_navigation(evt):
-   if not evt.GetDirection() and evt.GetCurrentFocus() is None:
+   if not evt.GetDirection() and evt.GetCurrentFocus() is None and evt.GetEventObject() is self.control and not self.control_down:
     list(self.field.get_current_page().get_children())[-1].set_focus()
    else:
     evt.Skip()
+  self.control_down = False
+  def key_down_up(evt):
+   self.control_down = evt.ControlDown()
+   evt.Skip()
   self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
+  self.bind_event(wx.EVT_KEY_DOWN, key_down_up)
+  self.bind_event(wx.EVT_KEY_UP, key_down_up)
 
  def get_selection(self):
   return self.control.GetSelection()
