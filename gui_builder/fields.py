@@ -5,9 +5,22 @@ import traceback
 
 from widgets import wx_widgets as widgets
 
-class GUIField(object):
- _GUI_FIELD = True
+class UnboundField(object):
  creation_counter = 0
+ _GUI_FIELD = True
+
+ def __init__(self, field, *args, **kwargs):
+  self.field = field
+  self.args = args
+  self.kwargs = kwargs
+  UnboundField.creation_counter += 1
+  self.creation_counter = UnboundField.creation_counter
+
+ def bind(self, parent=None, name=None, **kwargs):
+  kwargs.update(self.kwargs)
+  return self.field(name=name, parent=parent, *self.args, **kwargs)
+
+class GUIField(object):
  widget_type = None
  __autolabel__ = False
  widget_args = ()
@@ -15,6 +28,12 @@ class GUIField(object):
  callback = None
  extra_callbacks = None
  default_value = None
+
+ def __new__(cls, *args, **kwargs):
+  if 'parent' in kwargs and 'name' in kwargs or kwargs.get('top_level_window'):
+   return super(GUIField, cls).__new__(cls)
+  else:
+   return UnboundField(cls, *args, **kwargs)
 
  def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, default_focus=False, *args, **kwargs):
   if widget_type is None:
@@ -31,8 +50,6 @@ class GUIField(object):
   if default_value is None:
    default_value = self.default_value
   self.widget_type = widget_type
-  GUIField.creation_counter += 1
-  self.creation_counter = GUIField.creation_counter
   super(GUIField, self).__init__()
   self.control_label = label
   self.widget_args.extend(args)
@@ -58,14 +75,13 @@ class GUIField(object):
   if self.__autolabel__ and self.bound_name:
    return self.bound_name.replace("_", " ").title()
 
-
  def render(self, **runtime_kwargs):
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
   widget_kwargs = self.widget_kwargs
   if self.label is not None:
    widget_kwargs['label'] = self.label
-  if not hasattr(self.parent, '_GUI_FIELD'):
+  if not hasattr(self.parent, 'widget'):
    widget_kwargs['parent'] = self.parent
   else:
    if self.parent is not None:
