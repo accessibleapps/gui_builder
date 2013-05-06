@@ -9,13 +9,14 @@ from .widgets import wx_widgets as widgets
 
 class BaseForm(GUIField):
  __autolabel__ = False
+ unbound = False
 
  def __init__(self, fields, *args, **kwargs):
   self._fields = {}
   if hasattr(fields, 'items'):
    fields = fields.items()
   for name, unbound_field in fields:
-   self[name] = unbound_field
+   self.add_child(name, unbound_field)
   working_kwargs = dict(kwargs)
   for key, value in working_kwargs.iteritems():
    try:
@@ -51,7 +52,13 @@ class BaseForm(GUIField):
   self.add_child(name, value)
 
  def add_child(self, field_name, field):
-  self._fields[field_name] = field.bind(self, field_name)
+  to_call = field
+  if hasattr(field, 'bind'):
+   to_call = field.bind
+  new_field = to_call(parent=self, name=field_name)
+  if hasattr(new_field, 'bind'):
+   new_field.bind(parent=self, name=field_name)
+  self._fields[field_name] = new_field
 
  def delete_child(self, name):
   del self._fields[name]
@@ -67,13 +74,12 @@ class BaseForm(GUIField):
   logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
   logger.debug("The fields inside this form are %r" % self._fields)
   for field in self:
-   field.parent = self
    logger.debug("Rendering field %r" % field)
    try:
     field.render()
    except Exception as e:
-    logger.exception("Failed rendering field %r" % field)
-    raise RuntimeError("Failed to render field %r" % field, traceback.format_exc(e), e)
+    logger.exception("Failed rendering field %r. Traceback: %s" % (field, traceback.format_exc(e)))
+    raise RuntimeError("Failed to render field %r" % field, e)
   self.set_default_value()
   self.is_rendered = True
 
@@ -133,12 +139,10 @@ class FormMeta(type):
    cls._unbound_fields = None
   type.__setattr__(cls, name, value)
 
- """
  def __delattr__(cls, name):
   if not name.startswith('_'):
    cls._unbound_fields = None
   type.__delattr__(cls, name)
- """
 
 class Form(BaseForm):
  __metaclass__ = FormMeta
