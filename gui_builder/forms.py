@@ -49,7 +49,7 @@ class BaseForm(GUIField):
   return self._fields[name]
 
  def __setitem__(self, name, value):
-  self.add_child(name, value)
+  return self.add_child(name, value)
 
  def add_child(self, field_name, field):
   to_call = field
@@ -59,6 +59,7 @@ class BaseForm(GUIField):
   if hasattr(new_field, 'bind'):
    new_field.bind(parent=self, name=field_name)
   self._fields[field_name] = new_field
+  return new_field
 
  def delete_child(self, name):
   del self._fields[name]
@@ -154,11 +155,12 @@ class Form(BaseForm):
    setattr(self, name, field)
 
  def add_child(self, field_name, field):
-  super(Form, self).add_child(field_name, field)
+  res = super(Form, self).add_child(field_name, field)
   item = (field_name, field)
   setattr(self, field_name, field)
   if item not in self._unbound_fields:
    self._extra_unbound_fields.append(item)
+  return res
 
  def delete_child(self, name):
   field = self._fields[name]
