@@ -1,5 +1,4 @@
 from collections import defaultdict
-import traceback
 import weakref
 
 
@@ -34,7 +33,8 @@ class Widget(object):
   try:
    self.control = self.control_type(**kwargs)
   except Exception as e:
-   raise RuntimeError("Unable to render control type %r with field %r" % (self.control_type, self.field), traceback.format_exc(e), e)
+   logger.exception("Error rendering widget %r" % self)
+   raise RuntimeError("Unable to render control type %r with field %r" % (self.control_type, self.field), e)
 
  def render(self, **runtime_kwargs):
   control_args = self.translate_control_arguments(**self.control_kwargs)
