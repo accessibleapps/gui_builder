@@ -156,7 +156,7 @@ class Form(BaseForm):
 
  def add_child(self, field_name, unbound_field):
   field = super(Form, self).add_child(field_name, unbound_field)
-  item = (field_name, field)
+  item = (field_name, unbound_field)
   setattr(self, field_name, field)
   if item not in self._unbound_fields:
    self._extra_fields.append(item)
@@ -164,13 +164,15 @@ class Form(BaseForm):
 
  def delete_child(self, name):
   field = self._fields[name]
-  try:
-   self._unbound_fields.remove((name, field))
-  except ValueError:
-   self._extra_fields.remove((name, field))
+  for field_name, field in self._unbound_fields:
+   if name == field_name:
+    self._unbound_fields.remove((field_name, field))
+    break
+  for field_name, field in self._extra_fields:
+   if field_name == name:
+    self._extra_fields.remove((field_name, field))
+    break
   setattr(self, name, None)
-  if hasattr(self.__class__, 'name'):
-   delattr(self.__class__, name)
   super(Form, self).delete_child(name)
 
  def __delattr__(self, name):
