@@ -30,7 +30,7 @@ class GUIField(object):
  default_value = None
 
  def __new__(cls, *args, **kwargs):
-  if 'parent' in kwargs and 'bound_name' in kwargs or kwargs.get('top_level_window'):
+  if 'parent' in kwargs or kwargs.get('top_level_window'):
    return super(GUIField, cls).__new__(cls)
   else:
    return UnboundField(cls, *args, **kwargs)

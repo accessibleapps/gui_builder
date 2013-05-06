@@ -154,13 +154,13 @@ class Form(BaseForm):
   for name, field in self._fields.items():
    setattr(self, name, field)
 
- def add_child(self, field_name, field):
-  res = super(Form, self).add_child(field_name, field)
+ def add_child(self, field_name, unbound_field):
+  field = super(Form, self).add_child(field_name, unbound_field)
   item = (field_name, field)
   setattr(self, field_name, field)
   if item not in self._unbound_fields:
    self._extra_unbound_fields.append(item)
-  return res
+  return field
 
  def delete_child(self, name):
   field = self._fields[name]
