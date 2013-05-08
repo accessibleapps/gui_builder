@@ -81,18 +81,19 @@ UNWANTED_ATTRIBUTES = {'GetLoggingOff', }
 def callback_wrapper(widget, callback):
  def wrapper(evt, *a, **k):
   a = list(a)
-  argspec = inspect.getargspec(callback).args
-  if argspec and argspec[0] == "self" and not hasattr(callback, "im_self"):
+  argspec = inspect.getargspec(callback)
+  if argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self"):
    parent = widget.parent
    if parent is None:
     parent = widget
    a.insert(0, parent.field)
-  event_args = {}
-  for attribute_name in dir(evt):
-   if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
-    translated_name = case_to_underscore(attribute_name[3:])
-    event_args[translated_name] = getattr(evt, attribute_name)()
-  k.update(event_args)
+  if argspec.varargs is not None:
+   event_args = {}
+   for attribute_name in dir(evt):
+    if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
+     translated_name = case_to_underscore(attribute_name[3:])
+     event_args[translated_name] = getattr(evt, attribute_name)()
+   k.update(event_args)
   try:
    callback(*a, **k)
   except Exception as e:
