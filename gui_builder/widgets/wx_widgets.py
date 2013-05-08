@@ -564,7 +564,7 @@ class ListViewColumn(WXWidget):
  def create_control(self, **runtime_kwargs):
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
-  kwargs['label'] = unicode(self.label)
+  kwargs['label'] = unicode(self.label_text)
   translated_kwargs = self.translate_control_arguments(**kwargs)
   self.control = self.parent.add_column(**translated_kwargs)
 
