@@ -97,9 +97,9 @@ def callback_wrapper(widget, callback):
     parent = widget
    a.insert(0, parent.field)
   if argspec.keywords is not None:
-   k.update(extract_event(evt))
+   k.update(extract_event_data(evt))
   if argspec.defaults is not None:
-   extracted = extract_event(evt)
+   extracted = extract_event_data(evt)
    for arg in argspec.args:
     if arg in extracted:
      k[arg] = extracted[arg]
@@ -109,6 +109,7 @@ def callback_wrapper(widget, callback):
    if not isinstance(e, SystemExit):
     logger.exception("Error calling callback")
    raise
+  evt.Skip()
  return wrapper
 
 def translate_none(val):
