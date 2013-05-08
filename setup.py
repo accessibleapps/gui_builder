@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-__version__ = 0.12
+__version__ = 0.2
 __doc__ = """Declarative GUIs"""
 
 setup(
