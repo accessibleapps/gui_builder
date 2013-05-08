@@ -78,6 +78,15 @@ def case_to_underscore(s):
 
 UNWANTED_ATTRIBUTES = {'GetLoggingOff', }
 
+def extract_event_data(event):
+ event_args = {}
+ for attribute_name in dir(event):
+  if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
+   translated_name = case_to_underscore(attribute_name[3:])
+   event_args[translated_name] = getattr(event, attribute_name)()
+ return event_args
+
+
 def callback_wrapper(widget, callback):
  def wrapper(evt, *a, **k):
   a = list(a)
@@ -87,13 +96,13 @@ def callback_wrapper(widget, callback):
    if parent is None:
     parent = widget
    a.insert(0, parent.field)
-  if argspec.varargs is not None:
-   event_args = {}
-   for attribute_name in dir(evt):
-    if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
-     translated_name = case_to_underscore(attribute_name[3:])
-     event_args[translated_name] = getattr(evt, attribute_name)()
-   k.update(event_args)
+  if argspec.keywords is not None:
+   k.update(extract_event(evt))
+  if argspec.defaults is not None:
+   extracted = extract_event(evt)
+   for arg in argspec.args:
+    if arg in extracted:
+     k[arg] = extracted[arg]
   try:
    callback(*a, **k)
   except Exception as e:
