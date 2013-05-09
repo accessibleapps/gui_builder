@@ -865,7 +865,6 @@ class MenuItem(WXWidget):
   if not self.control_enabled:
    self.disable()
 
-
  def enable(self):
   self.control.Enable(True)
 
@@ -878,10 +877,12 @@ class MenuItem(WXWidget):
  def uncheck(self):
   self.control.Check(False)
 
-class SubMenu(WXWidget):
+class SubMenu(Menu):
+
  def create_control(self, **kwargs):
-  label = unicode(kwargs.get('label', self.label_text))
-  self.control = self.get_parent_control().Parent.AppendSubMenu(self.get_parent_control(), label=label)
+  text = unicode(kwargs.get('label', self.label_text))
+  self.control = wx.Menu()
+  self.parent.control.AppendSubMenu(self.control, text=text)
 
 class StatusBar(WXWidget):
  control_type = wx.StatusBar
