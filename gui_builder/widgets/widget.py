@@ -1,6 +1,7 @@
+from logging import getLogger
+logger = getLogger('gui_builder.widgets.widget')
 from collections import defaultdict
 import weakref
-
 
 class Widget(object):
  """Base class which represents a common abstraction over UI elements."""
