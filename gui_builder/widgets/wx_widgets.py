@@ -2,6 +2,7 @@ from logging import getLogger
 logger = getLogger("gui_components.widgets.wx_widgets")
 
 import inspect
+import re
 from .widget import Widget
 import wx
 import wx.dataview
@@ -71,24 +72,44 @@ def wx_attributes(prefix="", result_key="style", module=wx, **attrs):
   del answer[result_key]
  return answer
 
+def case_to_underscore(s):
+ return s[0].lower() + re.sub(r'([A-Z])', lambda m:"_" + m.group(0).lower(), s[1:])
+
+
+UNWANTED_ATTRIBUTES = {'GetLoggingOff', }
+
+def extract_event_data(event):
+ event_args = {}
+ for attribute_name in dir(event):
+  if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
+   translated_name = case_to_underscore(attribute_name[3:])
+   event_args[translated_name] = getattr(event, attribute_name)()
+ return event_args
 
 
 def callback_wrapper(widget, callback):
  def wrapper(evt, *a, **k):
-  evt.Skip(True)
   a = list(a)
-  argspec = inspect.getargspec(callback).args
-  if argspec and argspec[0] == "self" and not hasattr(callback, "im_self"):
+  argspec = inspect.getargspec(callback)
+  if argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self"):
    parent = widget.parent
    if parent is None:
     parent = widget
    a.insert(0, parent.field)
+  if argspec.keywords is not None:
+   k.update(extract_event_data(evt))
+  if argspec.defaults is not None:
+   extracted = extract_event_data(evt)
+   for arg in argspec.args:
+    if arg in extracted:
+     k[arg] = extracted[arg]
   try:
    callback(*a, **k)
   except Exception as e:
    if not isinstance(e, SystemExit):
     logger.exception("Error calling callback")
    raise
+  evt.Skip()
  return wrapper
 
 def translate_none(val):
