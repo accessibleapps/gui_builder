@@ -777,6 +777,9 @@ class Notebook(BaseContainer):
   last_child.widget.bind_event(wx.EVT_SET_FOCUS, on_focus)
   first_child.widget.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
+ def delete_page(self, page):
+  self.control.DeletePage(self.find_page_number(page))
+
  def render(self, *args, **kwargs):
   super(Notebook, self).render(*args, **kwargs)
   def on_notebook_navigation(evt):
@@ -791,6 +794,11 @@ class Notebook(BaseContainer):
   self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
   self.bind_event(wx.EVT_KEY_DOWN, key_down_up)
   self.bind_event(wx.EVT_KEY_UP, key_down_up)
+
+ def find_page_number(self, page):
+  for page_num in xrange(self.control.GetPageCount()):
+   if self.control.GetPage(page_num) is page.control:
+    return page_num
 
  def get_selection(self):
   return self.control.GetSelection()

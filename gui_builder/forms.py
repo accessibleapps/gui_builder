@@ -223,10 +223,14 @@ class SizedPanel(UIForm):
 class Notebook(UIForm):
  widget_type = widgets.Notebook
 
- def add_item(self, field_name, label, item):
-  self.add_child(field_name, item)
+ def add_item(self, label, item):
+  self.add_child(repr(item), item)
   self.widget.add_item(label, item.widget)
-  
+ 
+ def delete_item(self, item):
+  self.widget.delete_page(item.widget)
+  del self[repr(item)]
+
  def render(self, **kwargs):
   super(Notebook, self).render(**kwargs)
   for field in self:
