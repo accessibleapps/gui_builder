@@ -249,7 +249,7 @@ class Menu(UIForm):
 
  def enable_menu(self):
   for menu_item in self:
-   if hasattr(menu_item, 'enable'):
+   if hasattr(menu_item, 'enable_menu'):
     menu_item.enable_menu()
    else:
     menu_item.enable()
