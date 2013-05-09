@@ -249,13 +249,19 @@ class Menu(UIForm):
 
  def enable_menu(self):
   for menu_item in self:
-   menu_item.enable()
+   if hasattr(menu_item, 'enable'):
+    menu_item.enable_menu()
+   else:
+    menu_item.enable()
 
  def disable_menu(self):
   for menu_item in self:
-   menu_item.disable()
+   if hasattr(menu_item, 'disable_menu'):
+    menu_item.disable_menu()
+   else:
+    menu_item.disable()
 
-class SubMenu(UIForm):
+class SubMenu(Menu):
  widget_type = widgets.SubMenu
 
 class ListView(UIForm, ChoiceField):
