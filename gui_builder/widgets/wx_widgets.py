@@ -744,6 +744,15 @@ class SizedPanel(BaseContainer):
 
 class BaseFrame(BaseContainer):
 
+ def __init__(self, maximized=False, *args, **kwargs):
+  self.control_maximized = maximized
+  super(BaseFrame, self).__init__(*args, **kwargs)
+
+ def render(self, *args, **kwargs):
+  super(BaseFrame, self).render(*args, **kwargs)
+  if self.control_maximized:
+   self.maximize()
+
  def maximize(self):
   return self.control.Maximize(True)
 
