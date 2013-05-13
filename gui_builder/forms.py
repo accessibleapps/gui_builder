@@ -202,7 +202,12 @@ class UIForm(Form):
   self.widget.close()
   self.destroy()
 
-class Frame(UIForm):
+class BaseFrame(UIForm):
+
+ def maximize(self):
+  return self.widget.maximize()
+
+class Frame(BaseFrame):
  widget_type = widgets.Frame
 
 class Dialog(UIForm):

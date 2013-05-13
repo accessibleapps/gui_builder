@@ -742,6 +742,11 @@ class SizedPanel(BaseContainer):
   super(SizedPanel, self).render()
   self.control.SetSizerType(self.sizer_type)
 
+class BaseFrame(BaseContainer):
+
+ def maximize(self):
+  return self.control.Maximize(True)
+
 class Frame(BaseContainer):
  control_type = wx.Frame
 
