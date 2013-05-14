@@ -234,7 +234,7 @@ class Notebook(UIForm):
  
  def delete_item(self, item):
   self.widget.delete_page(item.widget)
-  del self[repr(item)]
+  self.delete_child(repr(item))
 
  def render(self, **kwargs):
   super(Notebook, self).render(**kwargs)
