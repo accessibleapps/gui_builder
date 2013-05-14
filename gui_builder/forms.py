@@ -233,8 +233,8 @@ class Notebook(UIForm):
   self.widget.add_item(label, item.widget)
  
  def delete_item(self, item):
-  self.widget.delete_page(item.widget)
   self.delete_child(repr(item))
+  self.widget.delete_page(item.widget)
 
  def render(self, **kwargs):
   super(Notebook, self).render(**kwargs)
