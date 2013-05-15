@@ -361,6 +361,9 @@ class BaseText(WXWidget):
  def set_max_length(self, length):
   self.control.SetMaxLen(length)
 
+ def get_line(self, line_number):
+  return self.control.GetLineText(line_number)
+
  def render(self, *args, **kwargs):
   super(BaseText, self).render(*args, **kwargs)
   if self.max_length is not None:

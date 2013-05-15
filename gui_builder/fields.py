@@ -204,6 +204,9 @@ class Text(GUIField):
  def get_length(self):
   return self.widget.get_length()
 
+ def get_line(self, line_number):
+  return self.widget.get_line(line_number)
+
  def get_number_of_lines(self):
   return self.widget.get_number_of_lines()
 
