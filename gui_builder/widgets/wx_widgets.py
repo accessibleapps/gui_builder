@@ -1003,3 +1003,6 @@ class TreeView(WXWidget):
 
  def select_item(self, item):
   self.control.SelectItem(item)
+
+ def get_py_data(self, item):
+  return self.control.GetPyData(item)
