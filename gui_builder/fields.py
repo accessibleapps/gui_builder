@@ -373,3 +373,6 @@ class TreeView(GUIField):
 
  def select_item(self, item):
   self.widget.select_item(item)
+
+ def get_py_data(self, item):
+  return self.widget.get_py_data(item)
