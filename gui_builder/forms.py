@@ -210,13 +210,18 @@ class BaseFrame(UIForm):
 class Frame(BaseFrame):
  widget_type = widgets.Frame
 
-class Dialog(UIForm):
+class BaseDialog(UIForm):
+
+ def end_modal(self, modal_result):
+  return self.widget.end_modal(modal_result)
+
+class Dialog(BaseDialog):
  widget_type = widgets.Dialog
 
 class Panel(UIForm):
  widget_type = widgets.Panel
 
-class SizedDialog(UIForm):
+class SizedDialog(BaseDialog):
  widget_type = widgets.SizedDialog
 
 class SizedFrame(UIForm):

@@ -716,6 +716,10 @@ class BaseDialog(BaseContainer):
   self._modal_result = self.control.ShowModal()
   return self.get_modal_result()
 
+ def end_modal(self, modal_result):
+  modal_map = dict(zip(MODAL_RESULTS.values(), MODAL_RESULTS.keys()))
+  self.control.EndModal(modal_map[modal_result])
+
  def get_modal_result(self):
   if self._modal_result is None:
    raise RuntimeError("%r has not yet been displayed modally, hence no result is available." % self)
