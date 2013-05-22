@@ -404,7 +404,10 @@ class IntText(Text):
  def get_value(self):
   value = super(IntText, self).get_value()
   if value:
-   value = int(value)
+   try:
+    value = int(value)
+   except ValueError:
+    pass
   return value
 
 class StaticText(WXWidget):
