@@ -219,6 +219,9 @@ class Text(GUIField):
  def select_all(self):
   self.select_range(0, self.get_length())
 
+ def clear(self):
+  return self.widget.clear()
+
 class IntText(Text):
  widget_type = widgets.IntText
 

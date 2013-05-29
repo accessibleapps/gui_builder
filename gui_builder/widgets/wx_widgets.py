@@ -394,6 +394,8 @@ class Text(BaseText):
  def get_x_y_from_insertion_point(self, insertion_point):
   return self.control.PositionToXY(insertion_point)
 
+ def clear(self):
+  return self.control.Clear()
 
 class IntText(Text):
  widget_type = intctrl.IntCtrl
