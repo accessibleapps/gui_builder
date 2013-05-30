@@ -197,6 +197,9 @@ class WXWidget(Widget):
  def bind_event(self, callback_event, wrapped_callback):
   self.control.Bind(callback_event, wrapped_callback)
 
+ def unbind_event(self, callback_event, wrapped_callback=None):
+  self.control.Unbind(callback_event, handler=wrapped_callback)
+
  def resolve_callback_type(self, callback_type):
   if isinstance(callback_type, wx.PyEventBinder):
    return callback_type
