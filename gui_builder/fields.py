@@ -116,6 +116,12 @@ class GUIField(object):
  def unregister_callback(self, trigger, callback):
   self.widget.unregister_callback(trigger, callback)
 
+ def bind_event(self, event, callback):
+  return self.widget.bind_event(event, callback)
+
+ def unbind_event(self, event, callback=None):
+  return self.widget.unbind_event(event, callback)
+
  def is_focused(self):
   return self.widget.is_focused()
 
