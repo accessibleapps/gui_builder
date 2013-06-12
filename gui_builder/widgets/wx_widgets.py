@@ -797,13 +797,19 @@ class Notebook(BaseContainer):
    evt.Skip()
    last_child._was_focused = True
   def on_navigation_key(evt):
-   last_child = list(self.field.get_all_children())[-1]
+   children = list(self.field.get_all_children())
+   if not children:
+    return
+   last_child = children[-1]
    if evt.GetDirection() and getattr(last_child, '_was_focused', False):
     self.set_focus()
    else:
     evt.Skip()
    last_child._was_focused = False
+  
   children = list(item.field.get_all_children())
+  if not children:
+   return
   first_child = children[0]
   last_child = children[-1]
   last_child.bind_event(wx.EVT_SET_FOCUS, on_focus)
@@ -815,8 +821,12 @@ class Notebook(BaseContainer):
  def render(self, *args, **kwargs):
   super(Notebook, self).render(*args, **kwargs)
   def on_notebook_navigation(evt):
+
    if not evt.GetDirection() and evt.GetCurrentFocus() is None and evt.GetEventObject() is self.control and not self.control_down:
-    list(self.field.get_current_page().get_children())[-1].set_focus()
+    children = list(self.field.get_current_page().get_children())
+    if not children:
+     return
+    children[-1].set_focus()
    else:
     evt.Skip()
   self.control_down = False
