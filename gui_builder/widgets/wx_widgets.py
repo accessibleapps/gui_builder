@@ -244,6 +244,9 @@ class WXWidget(Widget):
  def show(self):
   self.control.Show()
 
+ def is_shown(self):
+  return self.control.IsShown()
+
  def display(self):
   self.control.Raise()
   self.show()
