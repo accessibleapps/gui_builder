@@ -790,21 +790,24 @@ class Notebook(BaseContainer):
  def add_item(self, name, item):
   self.control.AddPage(item.control, unicode(name))
   #Now, we shall have much hackyness to work around WX bug 11909
-  children = list(item.field.get_all_children())
-  first_child = children[0]
-  last_child = children[-1]
-  last_child._was_focused = False
+  if not list(self.field.get_all_children()):
+   return
   def on_focus(evt):
+   last_child = list(self.field.get_all_children())[-1]
    evt.Skip()
    last_child._was_focused = True
   def on_navigation_key(evt):
-   if evt.GetDirection() and last_child._was_focused:
+   last_child = list(self.field.get_all_children())[-1]
+   if evt.GetDirection() and getattr(last_child, '_was_focused', False):
     self.set_focus()
    else:
     evt.Skip()
    last_child._was_focused = False
-  last_child.widget.bind_event(wx.EVT_SET_FOCUS, on_focus)
-  first_child.widget.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
+  children = list(item.field.get_all_children())
+  first_child = children[0]
+  last_child = children[-1]
+  last_child.bind_event(wx.EVT_SET_FOCUS, on_focus)
+  first_child.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
  def delete_page(self, page):
   self.control.DeletePage(self.find_page_number(page))
