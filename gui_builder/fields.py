@@ -161,6 +161,9 @@ class GUIField(object):
  def show(self):
   return self.widget.show()
 
+ def is_shown(self):
+  return self.widget.is_shown()
+
  def destroy(self):
   self.widget.destroy()
 
