@@ -774,6 +774,9 @@ class BaseFrame(BaseContainer):
  def maximize(self):
   return self.control.Maximize(True)
 
+ def minimize(self):
+  return self.control.Maximize(False)
+
 class Frame(BaseContainer):
  control_type = wx.Frame
 

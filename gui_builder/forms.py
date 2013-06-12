@@ -207,6 +207,9 @@ class BaseFrame(UIForm):
  def maximize(self):
   return self.widget.maximize()
 
+ def minimize(self):
+  return self.widget.minimize()
+
 class Frame(BaseFrame):
  widget_type = widgets.Frame
 
