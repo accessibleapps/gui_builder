@@ -3,7 +3,7 @@ logger = getLogger('gui_builder.fields')
 
 import traceback
 
-from widgets import wx_widgets as widgets
+from .widgets import wx_widgets as widgets
 
 class UnboundField(object):
  creation_counter = 0
