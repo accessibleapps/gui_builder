@@ -95,7 +95,10 @@ def callback_wrapper(widget, callback):
    parent = widget.parent
    if parent is None:
     parent = widget
-   a.insert(0, parent.field)
+   field = parent.field
+   if isinstance(field, gui_builder.forms.UIForm):
+    field = widget.field
+   a.insert(0, field)
   if argspec.keywords is not None:
    k.update(extract_event_data(evt))
   if argspec.defaults is not None:
