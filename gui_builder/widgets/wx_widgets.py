@@ -92,13 +92,10 @@ def callback_wrapper(widget, callback):
   a = list(a)
   argspec = inspect.getargspec(callback)
   if argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self"):
-   parent = widget.parent
-   if parent is None:
-    parent = widget
-   field = parent.field
-   if isinstance(field, gui_builder.forms.UIForm):
-    field = widget.field
-   a.insert(0, field)
+   self = widget.field
+   if not isinstance(self, gui_builder.forms.UIForm):
+    self = widget.parent.field
+   a.insert(0, self)
   if argspec.keywords is not None:
    k.update(extract_event_data(evt))
   if argspec.defaults is not None:
