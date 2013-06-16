@@ -239,7 +239,7 @@ class WXWidget(Widget):
    pass
 
  def hide(self):
-  self.get_control().Hide()
+  self.control.Hide()
 
  def show(self):
   self.control.Show()
