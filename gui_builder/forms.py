@@ -197,6 +197,10 @@ class UIForm(Form):
    if child.can_be_focused():
     return child
 
+ def delete_child(self, name):
+  child = self._fields[name]
+  self.widget.remove_child(child.widget)
+  super(UIForm, self).delete_child(name)
 
  def close(self):
   self.widget.close()
