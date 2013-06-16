@@ -234,12 +234,12 @@ class WXWidget(Widget):
 
  def destroy(self):
   try:
-   self.control.Destroy()
+   self.get_control().Destroy()
   except wx._core.PyDeadObjectError:
    pass
 
  def hide(self):
-  self.control.Hide()
+  self.get_control().Hide()
 
  def show(self):
   self.control.Show()
@@ -269,6 +269,10 @@ class WXWidget(Widget):
   if self.label_control is not None:
    self.label_control.SetLabel(label)
   self.control.SetLabel(label)
+
+ def remove_child(self, child):
+  print child.get_control()
+  self.get_control().RemoveChild(child.get_control())
 
  def get_value(self):
   """Returns the most Pythonic representation of this control's current value."""
