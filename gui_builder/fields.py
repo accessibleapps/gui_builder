@@ -356,6 +356,12 @@ class MenuItem(GUIField):
   else:
    self.uncheck()
 
+ def set_enabled(self, enabled):
+  if enabled:
+   self.enable()
+  else:
+   self.disable()
+
 class StatusBar(GUIField):
  widget_type = widgets.StatusBar
 
