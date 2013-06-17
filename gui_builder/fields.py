@@ -350,6 +350,12 @@ class MenuItem(GUIField):
  def uncheck(self):
   self.widget.uncheck()
 
+ def set_checked(self, checked):
+  if checked:
+   self.check()
+  else:
+   self.uncheck()
+
 class StatusBar(GUIField):
  widget_type = widgets.StatusBar
 
