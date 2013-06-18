@@ -233,6 +233,8 @@ class WXWidget(Widget):
   self.control.Thaw()
 
  def destroy(self):
+  if self.label_control is not None:
+   self.label_control.Destroy()
   try:
    self.get_control().Destroy()
   except wx._core.PyDeadObjectError:
