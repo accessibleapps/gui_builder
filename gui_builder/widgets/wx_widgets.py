@@ -239,7 +239,7 @@ class WXWidget(Widget):
   if self.label_control is not None:
    self.label_control.Destroy()
   try:
-   self.get_control().Destroy()
+   self.control.Destroy()
   except wx._core.PyDeadObjectError:
    pass
 
