@@ -276,7 +276,6 @@ class WXWidget(Widget):
   self.control.SetLabel(label)
 
  def remove_child(self, child):
-  print child.get_control()
   self.get_control().RemoveChild(child.get_control())
 
  def get_value(self):
