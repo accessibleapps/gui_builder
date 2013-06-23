@@ -92,9 +92,7 @@ def callback_wrapper(widget, callback):
   a = list(a)
   argspec = inspect.getargspec(callback)
   if argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self"):
-   self = widget.field
-   if not isinstance(self, gui_builder.forms.UIForm):
-    self = widget.parent.field
+   self = widget.find_event_target(callback)
    a.insert(0, self)
   if argspec.keywords is not None:
    k.update(extract_event_data(evt))
@@ -211,6 +209,11 @@ class WXWidget(Widget):
    except AttributeError:
     res = find_wx_attribute(WXWidget.event_prefix, callback_type, module=WXWidget.event_module)
   return res
+
+ def find_event_target(self, callback):
+  if not isinstance(self.field, gui_builder.forms.UIForm):
+   return self.parent.field
+  return self.field
 
  @property
  def enabled(self):
@@ -859,6 +862,9 @@ class Notebook(BaseContainer):
 
  def set_selection(self, selection):
   return self.control.SetSelection(selection)
+
+ def find_event_target(self, callback):
+  return self.parent.field
 
 class RadioBox(ChoiceWidget):
  control_type = wx.RadioBox
