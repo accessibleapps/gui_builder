@@ -126,7 +126,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", callback=None, min_size=None, enabled=True, hidden=False, *args, **kwargs):
+ def __init__(self, parent=None, label="", callback=None, min_size=None, enabled=True, hidden=False, tool_tip_text=None, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -139,6 +139,7 @@ class WXWidget(Widget):
   self.label_control = None
   self.control_enabled = enabled
   self.control_hidden = hidden
+  self.tool_tip_text = tool_tip_text
 
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
@@ -150,6 +151,8 @@ class WXWidget(Widget):
    self.set_label(unicode(self.label_text))
   if self.min_size is not None:
    self.control.SetMinSize(self.min_size)
+  if self.tool_tip_text is not None:
+   self.set_tool_tip_text(self.tool_tip_text)
 
  def create_label_control(self, label=None, **kwargs):
   if label is None:
@@ -251,6 +254,12 @@ class WXWidget(Widget):
 
  def is_shown(self):
   return self.control.IsShown()
+
+ def get_tool_tip_text(self):
+  return self.control.GetToolTipString()
+
+ def set_tool_tip_text(self, text):
+  return self.control.SetToolTipString(text)
 
  def display(self):
   self.control.Raise()
