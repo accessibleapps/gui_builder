@@ -26,6 +26,7 @@ class BaseForm(GUIField):
     pass
   super(BaseForm, self).__init__(*args, **kwargs)  
   self.is_rendered = False
+  self._last_child = None
 
  def __iter__(self):
   return self._fields.itervalues()
@@ -43,7 +44,18 @@ class BaseForm(GUIField):
     yield subfield
 
  def get_first_child(self):
-  return self.get_children().next()
+  try:
+   return self.get_children().next()
+  except StopIteration:
+   return
+
+ def get_last_child(self):
+  if self._last_child is None:
+   try:
+    self._last_child = list(self.get_all_children())[-1]
+   except IndexError:
+    pass
+  return self._last_child
 
  def __getitem__(self, name):
   return self._fields[name]
@@ -59,6 +71,12 @@ class BaseForm(GUIField):
   if hasattr(new_field, 'bind'):
    new_field.bind(parent=self, name=field_name)
   self._fields[field_name] = new_field
+  last_child = new_field
+  if hasattr(last_child, 'get_all_children'):
+   children = list(last_child.get_all_children())
+   if children:
+    last_child = list(last_child.get_all_children())[-1]
+  self._last_child = last_child
   return new_field
 
  def delete_child(self, name):

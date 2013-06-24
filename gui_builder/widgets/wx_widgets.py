@@ -804,7 +804,6 @@ class Panel(BaseContainer):
  control_type = wx.Panel
  focusable = False
 
-
 class Notebook(BaseContainer):
  control_type = wx.Notebook
  event_prefix = 'EVT_NOTEBOOK'
@@ -816,27 +815,25 @@ class Notebook(BaseContainer):
   if not list(self.field.get_all_children()):
    return
   def on_focus(evt):
-   last_child = list(self.field.get_all_children())[-1]
    evt.Skip()
-   last_child._was_focused = True
+   last_child = item.field.get_last_child()
+   if last_child is not None and evt.GetWindow() == last_child.widget.get_control():
+    last_child._was_focused = True
+
   def on_navigation_key(evt):
-   children = list(self.field.get_all_children())
-   if not children:
+   last_child = item.field.get_last_child()
+   if last_child is None:
     return
-   last_child = children[-1]
    if evt.GetDirection() and getattr(last_child, '_was_focused', False):
     self.set_focus()
    else:
     evt.Skip()
    last_child._was_focused = False
   
-  children = list(item.field.get_all_children())
-  if not children:
-   return
-  first_child = children[0]
-  last_child = children[-1]
-  last_child.bind_event(wx.EVT_SET_FOCUS, on_focus)
-  first_child.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
+  first_child = item.field.get_first_child()
+  last_child = item.field.get_last_child()
+  item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
+  item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
  def delete_page(self, page):
   self.control.DeletePage(self.find_page_number(page))
