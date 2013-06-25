@@ -1,5 +1,5 @@
 from logging import getLogger
-logger = getLogger("gui_components.widgets.wx_widgets")
+logger = getLogger("gui_builder.widgets.wx_widgets")
 
 import inspect
 import re
