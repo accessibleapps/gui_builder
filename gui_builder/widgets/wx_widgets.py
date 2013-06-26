@@ -395,6 +395,9 @@ class BaseText(WXWidget):
  def set_label(self, label):
   self.label_control.SetLabel(label)
 
+ def set_value(self, value):
+  super(BaseText, self).set_value(unicode(value))
+
 class Text(BaseText):
  control_type = wx.TextCtrl
  style_prefix = "TE"
