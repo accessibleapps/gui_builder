@@ -81,7 +81,7 @@ class BaseForm(GUIField):
 
  def delete_child(self, name):
   del self._fields[name]
-  self._last_child = list(self.get_all_children())[-1]
+  self._last_child = None
 
  def get_value(self):
   res = {}
