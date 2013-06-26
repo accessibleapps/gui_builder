@@ -28,6 +28,10 @@ class BaseForm(GUIField):
   self.is_rendered = False
   self._last_child = None
 
+ def set_default_values(self, values):
+  for k, v in values.iteritems():
+   self[k].default_value = v
+
  def __iter__(self):
   return self._fields.itervalues()
 
