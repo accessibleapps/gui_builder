@@ -102,12 +102,13 @@ def callback_wrapper(widget, callback):
     if arg in extracted:
      k[arg] = extracted[arg]
   try:
-   callback(*a, **k)
+   result = callback(*a, **k)
   except Exception as e:
    if not isinstance(e, SystemExit):
     logger.exception("Error calling callback")
    raise
-  evt.Skip()
+  if not result:
+   evt.Skip()
  return wrapper
 
 def translate_none(val):
