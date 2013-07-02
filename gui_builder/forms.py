@@ -311,6 +311,9 @@ class Menu(UIForm):
    else:
     menu_item.disable()
 
+ def popup(self, position=None):
+  self.widget.popup(position)
+
 class SubMenu(Menu):
  widget_type = widgets.SubMenu
 
