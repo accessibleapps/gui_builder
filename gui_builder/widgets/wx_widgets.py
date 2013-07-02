@@ -928,7 +928,11 @@ class Menu(WXWidget):
  def create_control(self, **kwargs):
   label = unicode(kwargs.get('label', self.label_text))
   self.control = wx.Menu()
-  self.get_parent_control().Append(self.control, title=label)
+  if self.get_parent_control() is not None and (isinstance(self.parent, MenuBar) or isinstance(self.parent, Menu)):
+   self.get_parent_control().Append(self.control, title=label)
+
+ def popup(self, position=None):
+  self.get_parent_control().PopupMenu(self.control, position)
 
 class MenuItem(WXWidget):
  control_type = wx.MenuItem
