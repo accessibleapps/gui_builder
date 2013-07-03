@@ -106,10 +106,11 @@ class GUIField(object):
   if self.extra_callbacks is None:
    return
   for callback_set in self.extra_callbacks:
+   if len(callback_set) == 1:
+    callback_set = [None].extend(callback_set)
    self.register_callback(*callback_set)
 
-
- def register_callback(self, trigger, callback):
+ def register_callback(self, trigger=None, callback=None):
   logger.debug("Registering callback %r with trigger %r to field %r" % (callback, trigger, self))
   self.widget.register_callback(trigger, callback)
 
