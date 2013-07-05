@@ -745,6 +745,7 @@ class BaseDialog(BaseContainer):
   self._modal_result = None
 
  def display_modal(self):
+  self.control.Raise()
   self._modal_result = self.control.ShowModal()
   return self.get_modal_result()
 
