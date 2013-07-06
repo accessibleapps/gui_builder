@@ -402,7 +402,7 @@ class BaseText(WXWidget):
 class Text(BaseText):
  control_type = wx.TextCtrl
  style_prefix = "TE"
- default_callback_type = "char"
+ default_callback_type = 'text'
 
  def translate_control_arguments(self, **kwargs):
   res = super(Text, self).translate_control_arguments(**kwargs)
