@@ -219,7 +219,7 @@ class WXWidget(Widget):
  def find_event_target(self, callback):
   vals = self.field.__dict__.copy()
   vals.pop('callback', None)
-  if callback not in vals and self.parent is not None:
+  if callback not in vals.values() and self.parent is not None:
    return self.parent.field
   return self.field
 
