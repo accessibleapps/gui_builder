@@ -215,7 +215,9 @@ class WXWidget(Widget):
   return res
 
  def find_event_target(self, callback):
-  if not isinstance(self.field, gui_builder.forms.UIForm):
+  vals = self.field.__dict__.copy()
+  vals.pop('callback', None)
+  if callback not in vals:
    return self.parent.field
   return self.field
 
