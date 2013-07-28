@@ -107,7 +107,9 @@ def callback_wrapper(widget, callback):
    if not isinstance(e, SystemExit):
     logger.exception("Error calling callback")
    raise
-  if not result:
+  if result == gui_builder.VETO:
+   evt.Veto()
+  elif not result:
    evt.Skip()
  return wrapper
 
