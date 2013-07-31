@@ -217,11 +217,21 @@ class WXWidget(Widget):
   return res
 
  def find_event_target(self, callback):
-  vals = self.field.__dict__.copy()
-  vals.pop('callback', None)
-  if callback not in vals.values() and self.parent is not None:
+  if self.find_callback_in_dict(callback):
+   return self.field
+  if self.parent is not None and self.parent.find_callback_in_dict(callback):
    return self.parent.field
-  return self.field
+  for child in self.field.get_all_children():
+   if hasattr(child.widget, 'find_callback_in_dict') and child.widget.find_callback_in_dict(callback):
+    return child
+  raise ValueError("Unable to find callback %r in class %r or its parent or children." % (callback, self))
+
+ def find_callback_in_dict(self, callback):
+  dic = dict(inspect.getmembers(self.field))
+  dic.pop('callback', None)
+  for val in dic.itervalues():
+   if hasattr(val, 'im_func') and val.im_func is callback:
+    return True
 
  @property
  def enabled(self):
