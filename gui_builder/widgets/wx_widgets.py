@@ -413,6 +413,9 @@ class BaseText(WXWidget):
  def set_value(self, value):
   super(BaseText, self).set_value(unicode(value))
 
+ def append(self, text):
+  self.control.AppendText(text)
+
 class Text(BaseText):
  control_type = wx.TextCtrl
  style_prefix = "TE"

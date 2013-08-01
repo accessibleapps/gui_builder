@@ -202,6 +202,9 @@ class Text(GUIField):
   super(Text, self).render()
   self.select_all()
 
+ def append(self, text):
+  self.widget.append(text)
+
  def select_range(self, start, end):
   self.widget.select_range(start, end)
 
