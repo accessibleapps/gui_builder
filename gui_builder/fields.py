@@ -205,6 +205,9 @@ class Text(GUIField):
  def append(self, text):
   self.widget.append(text)
 
+ def write(self, text):
+  self.widget.write(text)
+
  def select_range(self, start, end):
   self.widget.select_range(start, end)
 
