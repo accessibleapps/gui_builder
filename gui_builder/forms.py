@@ -201,7 +201,10 @@ class Form(BaseForm):
   super(Form, self).delete_child(name)
 
  def __delattr__(self, name):
-  self.delete_child(name)
+  try:
+   self.delete_child(name)
+  except KeyError:
+   super(Form, self).__delattr__(name)
 
  def __iter__(self):
   """ Iterate form fields in their order of definition on the form. """
