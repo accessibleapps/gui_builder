@@ -314,6 +314,11 @@ class Menu(UIForm):
  def popup(self, position=None):
   self.widget.popup(position)
 
+ def context_menu(self):
+  self.popup()
+  self.destroy()
+  return True
+
 class SubMenu(Menu):
  widget_type = widgets.SubMenu
 
