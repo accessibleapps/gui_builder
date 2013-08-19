@@ -221,9 +221,10 @@ class WXWidget(Widget):
    return self.field
   if self.parent is not None and self.parent.find_callback_in_dict(callback):
    return self.parent.field
-  for child in self.field.get_all_children():
-   if hasattr(child.widget, 'find_callback_in_dict') and child.widget.find_callback_in_dict(callback):
-    return child
+  if hasattr(self.field, 'get_all_children'):
+   for child in self.field.get_all_children():
+    if hasattr(child.widget, 'find_callback_in_dict') and child.widget.find_callback_in_dict(callback):
+     return child
   raise ValueError("Unable to find callback %r in class %r or its parent or children." % (callback, self))
 
  def find_callback_in_dict(self, callback):
