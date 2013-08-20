@@ -76,6 +76,7 @@ class GUIField(object):
    return self.bound_name.replace("_", " ").title()
 
  def render(self, **runtime_kwargs):
+  """Creates this field's widget."""
   if self.widget_type is None:
    raise RuntimeError("Must set a widget_type for %r" % self)
   widget_kwargs = self.widget_kwargs
@@ -103,6 +104,7 @@ class GUIField(object):
   self.register_extra_callbacks()
 
  def register_extra_callbacks(self):
+  """Picks up extra callbacks defined on the field's class and registers them at render time."""
   if self.extra_callbacks is None:
    return
   for callback_set in self.extra_callbacks:
@@ -111,10 +113,12 @@ class GUIField(object):
    self.register_callback(*callback_set)
 
  def register_callback(self, trigger=None, callback=None):
+  """Registers a callback, I.E. an event handler, to a certain trigger (event). If the callback is not provided it is assumed to be this field's default callback. If a trigger is not provided, assumes the trigger is this field's widget's default event type"""
   logger.debug("Registering callback %r with trigger %r to field %r" % (callback, trigger, self))
   self.widget.register_callback(trigger, callback)
 
  def unregister_callback(self, trigger, callback):
+  """Unregisters a callback from a trigger"""
   self.widget.unregister_callback(trigger, callback)
 
  def bind_event(self, event, callback):
@@ -124,9 +128,11 @@ class GUIField(object):
   return self.widget.unbind_event(event, callback)
 
  def is_focused(self):
+  """Returns a boolean indicating if this field is currently focused."""
   return self.widget.is_focused()
 
  def set_focus(self):
+  """Sets focus to this field."""
   self.widget.set_focus()
 
  def populate(self, value):
@@ -145,9 +151,11 @@ class GUIField(object):
   return self.widget_type.can_be_focused()
 
  def disable(self):
+  """Disables this field, I.E. makes it unuseable."""
   return self.widget.disable()
 
  def enable(self):
+  """Enables this field, making it useable."""
   return self.widget.enable()
 
  def freeze(self):
@@ -157,15 +165,19 @@ class GUIField(object):
   self.widget.thaw()
 
  def hide(self):
+  """Hides this field"""
   return self.widget.hide()
 
  def show(self):
+  """Shows this field, perhaps after it has been hidden"""
   return self.widget.show()
 
  def is_shown(self):
+  """Returns a boolean. If it is False, this control is hidden. If it is true, it is not."""
   return self.widget.is_shown()
 
  def destroy(self):
+  """Destroys the visual counterpart of this field."""
   self.widget.destroy()
 
  def __del__(self):
@@ -175,27 +187,33 @@ class GUIField(object):
   self.widget = None
 
  def display(self):
+  """Display's this field's widget on the screen."""
   self.widget.display()
 
  def display_modal(self):
   self.widget.display_modal()
 
  def get_label(self):
+  """Returns this field's current label."""
   return self.widget.get_label()
 
  def set_label(self, label):
+  """Given a string, sets this field's label to it."""
   return self.widget.set_label(label)
 
  def get_value(self):
+  """Returns the contents of this field."""
   return self.widget.get_value()
 
  def set_value(self, value):
+  """Sets the contents of this field."""
   return self.widget.set_value(value)
 
  def get_default_value(self):
   return self.default_value
 
 class Text(GUIField):
+ """A text field"""
  widget_type = widgets.Text
 
  def render(self):
@@ -203,57 +221,75 @@ class Text(GUIField):
   self.select_all()
 
  def append(self, text):
+  """Appends text to this text field."""
   self.widget.append(text)
 
  def write(self, text):
+  """Writes the provided text to this text field at its current position"""
   self.widget.write(text)
 
  def select_range(self, start, end):
+  """Selects the text in this control from the position specified by start to the position specified by end"""
   self.widget.select_range(start, end)
 
  def get_insertion_point(self):
+  """Returns the current insertion point, a zero-based index representing the user's position into the text contained in this field"""
   return self.widget.get_insertion_point()
 
  def set_insertion_point(self, insertion_point):
+  """Sets the insertion point, the 0-based index representing the user's position in this field."""
   self.widget.set_insertion_point(insertion_point)
 
  def get_length(self):
+  """Returns the length of text contained within this control."""
   return self.widget.get_length()
 
  def get_line(self, line_number):
+  """Returns the line number of the currently-focused line in this field."""
   return self.widget.get_line(line_number)
 
  def get_number_of_lines(self):
+  """Returns the total number of lines of text contained in this field."""
   return self.widget.get_number_of_lines()
 
  def get_insertion_point_from_x_y(self, x, y):
+  """Returns the line and column numbers of the given index into this contents of this text field"""
   return self.widget.get_insertion_point_from_x_y(x, y)
 
  def get_x_y_from_insertion_point(self, insertion_point):
+  """Given a line and column number, returns the 0-based index of the specified character in the contents of this field"""
   return self.widget.get_x_y_from_insertion_point(insertion_point)
 
  def select_all(self):
+  """Selects all text in this text field"""
   self.select_range(0, self.get_length())
 
  def clear(self):
+  """Removes all text from this text field."""
   return self.widget.clear()
 
 class IntText(Text):
+ """This text field will only allow the input of numbers."""
  widget_type = widgets.IntText
 
+
 class Button(GUIField):
+ """A standard button"""
  widget_type = widgets.Button
 
  def make_default(self):
+  """Called before rendering, sets this to be the default button in a dialog"""
   return self.widget.make_default()
 
 class CheckBox(GUIField):
+ """A standard Check Box"""
  widget_type = widgets.CheckBox
 
 class ButtonSizer(GUIField):
  widget_type = widgets.ButtonSizer
 
 class ChoiceField(GUIField):
+ """A base class defining the methods available on choice fields."""
 
  def __init__(self, default_index=0, choices=None, *args, **kwargs):
   super(ChoiceField, self).__init__(*args, **kwargs)
@@ -322,14 +358,17 @@ class ChoiceField(GUIField):
   return self.widget.set_item(index, item)
 
 class ComboBox(ChoiceField):
+ """An Edit Combo Box. Pass read_only=True to the constructor for a combo box."""
  widget_type = widgets.ComboBox
 
 
 class ListBox(ChoiceField):
+ """A standard list box."""
  widget_type = widgets.ListBox
 
 
 class RadioButtonGroup(ChoiceField):
+ """A group of choices, expressed as radio buttons."""
  widget_type = widgets.RadioBox
 
 
@@ -337,27 +376,34 @@ class ListViewColumn(GUIField):
  widget_type = widgets.ListViewColumn
 
 class Slider(GUIField):
+ """A moveable slider."""
  widget_type = widgets.Slider
 
  def get_page_size(self):
+  """Returns the number representing how many units this control will skip when the user presses page up/down."""
   return self.widget.get_page_size()
 
  def set_page_size(self, page_size):
+  """Sets the number representing how many units this control will skip when the user presses page up/down."""
   return self.widget.set_page_size(page_size)
 
 class FilePicker(GUIField):
  widget_type = widgets.FilePicker
 
 class MenuItem(GUIField):
+ """An item in a menu which is not a submenu."""
  widget_type = widgets.MenuItem
 
  def check(self):
+  """Check this menu item."""
   self.widget.check()
 
  def uncheck(self):
+  """Uncheck this menu item."""
   self.widget.uncheck()
 
  def set_checked(self, checked):
+  """Pass in a boolean representing whether or not this menu item should be checked."""
   if checked:
    self.check()
   else:
@@ -370,18 +416,22 @@ class MenuItem(GUIField):
    self.disable()
 
 class StatusBar(GUIField):
+ """A status bar."""
  widget_type = widgets.StatusBar
 
 class Link(GUIField):
+ """A hyperlink"""
  widget_type = widgets.Link
 
 class StaticText(GUIField):
+ """Static text"""
  widget_type = widgets.StaticText
 
 class DatePicker(GUIField):
  widget_type = widgets.DatePicker
 
 class TreeView(GUIField):
+ """A treeview"""
  widget_type = widgets.TreeView
 
  def add_root(self, text, image=-1, selected_image=-1, data=None):
