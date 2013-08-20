@@ -29,19 +29,23 @@ class BaseForm(GUIField):
   self._last_child = None
 
  def set_values(self, values):
+  """Given a dictionary mapping field names to values, sets fields on this form to the values provided."""
   for k, v in values.iteritems():
    self[k].default_value = v
    if self.is_rendered:
     self[k].set_value(v)
 
  def __iter__(self):
+  """Iterate over this form's fields."""
   return self._fields.itervalues()
 
  def get_children(self):
+  """Returns a generator which produces children of this form, but not their children."""
   for child in self:
    yield child
 
  def get_all_children(self):
+  """Produces a generator which yields all descendants of this form."""
   for field in self.get_children():
    yield field
    if not hasattr(field, 'get_all_children'):
@@ -50,12 +54,14 @@ class BaseForm(GUIField):
     yield subfield
 
  def get_first_child(self):
+  """Returns the first child field of this form."""
   try:
    return self.get_children().next()
   except StopIteration:
    return
 
  def get_last_child(self):
+  """Returns the last child field of this form."""
   if self._last_child is None:
    try:
     self._last_child = list(self.get_all_children())[-1]
@@ -86,16 +92,19 @@ class BaseForm(GUIField):
   return new_field
 
  def delete_child(self, name):
+  """Removes a child from this form."""
   del self._fields[name]
   self._last_child = None
 
  def get_value(self):
+  """Returns a dictionary whose keys are fieldnames and whose values are the values of those fields."""
   res = {}
   for field in self:
    res[field.bound_name] = field.get_value()
   return res
 
  def render(self, **kwargs):
+  """Renders this form and all children."""
   super(BaseForm, self).render(**kwargs)
   logger.debug("Super has been called by the Base form. The widget for field %r is %r" % (self, self.widget))
   logger.debug("The fields inside this form are %r" % self._fields)
@@ -115,6 +124,7 @@ class BaseForm(GUIField):
    field.set_default_value()
 
  def set_default_focus(self):
+  """Sets focus to the field on this form which was preset to be the default focused field."""
   for field in self:
    if field.default_focus and field.can_be_focused():
     field.set_focus()
@@ -129,6 +139,7 @@ class BaseForm(GUIField):
 
 
  def display(self):
+  """Does the work of actually displaying this form on the screen."""
   self._predisplay()
   self.widget.display()
 
@@ -207,7 +218,7 @@ class Form(BaseForm):
    super(Form, self).__delattr__(name)
 
  def __iter__(self):
-  """ Iterate form fields in their order of definition on the form. """
+  """ Iterates form fields in their order of definition on the form. """
   for name, _ in self._unbound_fields + self._extra_fields:
    if name in self._fields:
     yield self._fields[name]
@@ -215,9 +226,11 @@ class Form(BaseForm):
 class UIForm(Form):
 
  def get_title(self):
+  """Returns the form's title"""
   return self.widget.get_title()
 
  def set_title(self, title):
+  """Sets the form's title to the string provided."""
   return self.widget.set_title(title)
 
  def get_first_focusable_child(self):
@@ -231,15 +244,18 @@ class UIForm(Form):
   super(UIForm, self).delete_child(name)
 
  def close(self):
+  """Closes this form."""
   self.widget.close()
   self.destroy()
 
 class BaseFrame(UIForm):
 
  def maximize(self):
+  """Maximizes the frame."""
   return self.widget.maximize()
 
  def minimize(self):
+  """Minimizes the frame."""
   return self.widget.minimize()
 
 class Frame(BaseFrame):
@@ -269,10 +285,12 @@ class Notebook(UIForm):
  widget_type = widgets.Notebook
 
  def add_item(self, label, item):
+  """Adds a panel to the notebook. Requires a panel object and a label, which will be displayed on the tab strip."""
   self.add_child(repr(item), item)
   self.widget.add_item(label, item.widget)
  
  def delete_item(self, item):
+  """Removes a panel from a notebook. Required: The panel to remove."""
   self.delete_child(repr(item))
   self.widget.delete_page(item.widget)
 
@@ -288,9 +306,11 @@ class Notebook(UIForm):
   return self.widget.set_selection(selection)
 
  def get_current_page(self):
+  """Returns the currently-selected page of the notebook as the original panel."""
   return list(self.get_children())[self.get_selection()]
 
  def set_current_page(self, page):
+  """Given a panel which is currently in the notebook, sets focus to it."""
   page_index = list(self.get_children()).index(page)
   self.set_selection(page_index)
 
@@ -301,6 +321,7 @@ class Menu(UIForm):
  widget_type = widgets.Menu
 
  def enable_menu(self):
+  """Enables all menu items in this menu."""
   for menu_item in self:
    if hasattr(menu_item, 'enable_menu'):
     menu_item.enable_menu()
@@ -308,6 +329,7 @@ class Menu(UIForm):
     menu_item.enable()
 
  def disable_menu(self):
+  """Disables all menu items in this menu"""
   for menu_item in self:
    if hasattr(menu_item, 'disable_menu'):
     menu_item.disable_menu()
@@ -315,9 +337,11 @@ class Menu(UIForm):
     menu_item.disable()
 
  def popup(self, position=None):
+  """Pops up the menu, for use in context menu handlers."""
   self.widget.popup(position)
 
  def context_menu(self):
+  """Simplified context menu handler, performs the basic steps to display a context menu. return the result of this function from your event handler to avoid issues"""
   self.popup()
   self.destroy()
   return True
@@ -339,7 +363,9 @@ class ListView(UIForm, ChoiceField):
   return []
 
  def get_item_column(self, index, column):
+  """Returns the string at the given column and index"""
   return self.widget.get_item_column(index, column)
 
  def set_item_column(self, index, column, data):
+  """Sets the string at the provided column and index to the provided value"""
   return self.widget.set_item_column(index, column, data)
