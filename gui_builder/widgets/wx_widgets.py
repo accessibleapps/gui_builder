@@ -907,7 +907,7 @@ class RadioBox(ChoiceWidget):
   return self.control.GetStringSelection()
 
  def set_value(self, value):
-  self.control.SetStringSelection(value)
+  self.control.SetStringSelection([unicode(i) for i in value])
 
  def get_items(self):
   return self.control.GetChoices()

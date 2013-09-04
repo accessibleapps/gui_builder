@@ -296,7 +296,7 @@ class ChoiceField(GUIField):
   self.default_index = default_index
   if choices is None:
    choices = []
-  self.choices = choices
+  self.choices = [unicode(i) for i in choices]
 
  def render(self, **runtime_kwargs):
   runtime_kwargs.setdefault('choices', self.choices)
