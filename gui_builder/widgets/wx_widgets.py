@@ -982,7 +982,13 @@ class MenuItem(WXWidget):
    self.control.SetCheckable(True)
 
  def bind_event(self, callback_event, wrapped_callback):
-  self.parent.control.Bind(callback_event, wrapped_callback, self.control)
+  parent = self.parent
+  while isinstance(parent, SubMenu):
+   parent = parent.parent
+  parent.control.Bind(callback_event, wrapped_callback, self.control)
+  #Fix if we're called from a menu bar
+  if isinstance(self.parent, SubMenu):
+   self.parent.control.Bind(callback_event, wrapped_callback, self.control)
 
  def render(self):
   super(MenuItem, self).render()
