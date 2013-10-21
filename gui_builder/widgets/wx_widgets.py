@@ -6,6 +6,10 @@ import re
 from .widget import Widget
 import wx
 import wx.dataview
+try:
+ import wx.adv
+except ImportError:
+ pass
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
 from wx.lib.agw import hyperlink
@@ -977,9 +981,10 @@ class MenuItem(WXWidget):
   if self.hotkey is not None:
    label = "%s\t%s" % (label, self.hotkey)
   self.control_id = wx.NewId()
-  self.control = self.get_parent_control().Append(self.control_id, label, self.help_message, )
+  kind = wx.ITEM_NORMAL
   if self.checkable:
-   self.control.SetCheckable(True)
+   kind = wx.ITEM_CHECK
+  self.control = self.get_parent_control().Append(self.control_id, label, self.help_message, kind=kind)
 
  def bind_event(self, callback_event, wrapped_callback):
   parent = self.parent
@@ -1033,7 +1038,10 @@ class Link(WXWidget):
  selflabeled = True
 
 class DatePicker(WXWidget):
- control_type = wx.DatePickerCtrl
+ if hasattr(wx, 'adv'):
+  control_type = wx.adv.DatePickerCtrl
+ else:
+  control_type = wx.DatePickerCtrl
 
 class VirtualListView(wx.ListCtrl):
 
