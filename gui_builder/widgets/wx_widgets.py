@@ -716,6 +716,8 @@ class ButtonSizer(WXWidget):
   callbacks = {}
   kwargs = self.control_kwargs
   kwargs.update(runtime_kwargs)
+  if 'close' in kwargs:
+   kwargs['close'] = self.parent.destroy
   for kwarg, val in kwargs.items():
    if callable(val):
     kwargs[kwarg] = True
