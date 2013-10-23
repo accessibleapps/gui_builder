@@ -216,8 +216,8 @@ class Text(GUIField):
  """A text field"""
  widget_type = widgets.Text
 
- def render(self):
-  super(Text, self).render()
+ def set_default_value(self):
+  super(Text, self).set_default_value()
   self.select_all()
 
  def append(self, text):
