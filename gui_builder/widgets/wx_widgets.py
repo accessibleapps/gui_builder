@@ -733,6 +733,8 @@ class ButtonSizer(WXWidget):
     if window is not None and window.GetId() == control_id:
      window.Bind(wx.EVT_BUTTON, callback_wrapper(self, callback))
      logger.debug("Bound callback %s" % str(callback))
+     if window.GetId() == wx.ID_CLOSE:
+      self.parent.control.SetEscapeId(wx.ID_CLOSE)
      break
 
  def render(self):
