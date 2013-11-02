@@ -389,11 +389,7 @@ class BaseText(WXWidget):
   self.control.SetSelection(start, end)
 
  def get_length(self):
-  #this annoys me
-  val = self.get_value()
-  length = len(val)
-  del val
-  return length
+  return self.control.GetLastPosition()
 
  def get_insertion_point(self):
   return self.control.GetInsertionPoint()
