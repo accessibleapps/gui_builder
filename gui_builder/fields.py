@@ -457,3 +457,6 @@ class TreeView(GUIField):
 
  def get_py_data(self, item):
   return self.widget.get_py_data(item)
+
+class ProgressBar(GUIField):
+ widget_type = widgets.ProgressBar
