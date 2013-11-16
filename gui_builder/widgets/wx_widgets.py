@@ -259,7 +259,7 @@ class WXWidget(Widget):
   self.control.Thaw()
 
  def destroy(self):
-  if self.label_control is not None:
+  if getattr(self, 'label_control', None) is not None:
    self.label_control.Destroy()
   try:
    self.control.Destroy()
