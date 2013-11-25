@@ -153,8 +153,8 @@ class WXWidget(Widget):
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
   kwargs = self.create_label_control(**kwargs)
-  if 'title' in kwargs:
-   kwargs['title'] = unicode(kwargs['title'])
+  #if 'title' in kwargs:
+   #kwargs['title'] = unicode(kwargs['title'])
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
   if self.label_text:
    self.set_label(unicode(self.label_text))
