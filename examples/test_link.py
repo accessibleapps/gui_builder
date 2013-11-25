@@ -7,6 +7,6 @@ app = wx.App()
 class Frame(forms.Frame):
  link = fields.Link(label="Some link!", URL="http://q-continuum.net")
 
-frame = Frame(title="test")
+frame = Frame(title="test", parent=None)
 frame.display()
 app.MainLoop()
