@@ -3,6 +3,8 @@ logger = getLogger("gui_builder.widgets.wx_widgets")
 
 import inspect
 import re
+import sys
+
 from .widget import Widget
 import wx
 import wx.dataview
@@ -840,7 +842,7 @@ class Notebook(BaseContainer):
  default_callback_type = 'page_changed'
 
  def add_item(self, name, item):
-  self.control.AddPage(item.control, unicode(name))
+  self.control.AddPage(item.control, name.encode(sys.getfilesystemencoding()))
   #Now, we shall have much hackyness to work around WX bug 11909
   if not list(self.field.get_all_children()):
    return
