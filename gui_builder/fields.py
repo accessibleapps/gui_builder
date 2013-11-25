@@ -142,6 +142,9 @@ class GUIField(object):
   if self.default_value is None:
    return
   default = self.default_value
+  if hasattr(default, '__unicode__'):
+   self.populate(default)
+   return
   while callable(default):
    default = default(self)
   logger.debug("Setting default value of field %r to %r" % (self, default))
