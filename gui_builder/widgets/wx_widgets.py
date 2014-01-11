@@ -82,7 +82,7 @@ def case_to_underscore(s):
  return s[0].lower() + re.sub(r'([A-Z])', lambda m:"_" + m.group(0).lower(), s[1:])
 
 
-UNWANTED_ATTRIBUTES = {'GetLoggingOff', }
+UNWANTED_ATTRIBUTES = {'GetLoggingOff','GetClientData', 'GetClientObject', }
 
 def extract_event_data(event):
  event_args = {}
