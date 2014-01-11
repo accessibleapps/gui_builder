@@ -345,6 +345,10 @@ class ChoiceField(GUIField):
     return num
   raise ValueError('%r not in %r' % (item, self))
 
+ def set_index_to_item(self, item):
+  index = self.find_index(item)
+  self.set_index(index)
+
  def insert_item(self, index, item):
   return self.widget.insert_item(index, item)
 
