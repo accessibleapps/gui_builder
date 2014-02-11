@@ -364,6 +364,10 @@ class ChoiceField(GUIField):
  def set_item(self, index, item):
   return self.widget.set_item(index, item)
 
+ def set_value(self, value):
+  self.set_items(value)
+
+
 class ComboBox(ChoiceField):
  """An Edit Combo Box. Pass read_only=True to the constructor for a combo box."""
  widget_type = widgets.ComboBox
