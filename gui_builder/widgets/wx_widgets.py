@@ -1078,12 +1078,16 @@ class TreeView(WXWidget):
  default_callback_type = 'SEL_CHANGED'
 
  def add_root(self, text, image, selected_image, data):
+  if data is not None:
+   data = wx.TreeItemData(data)
   return self.control.AddRoot(text, image, selected_image, data)
 
  def get_root_item(self):
   return self.control.GetRootItem()
 
  def append_item(self, parent, text, image, selected_image, data):
+  if data is not None:
+   data = wx.TreeItemData(data)
   return self.control.AppendItem(parent, text, image, selected_image, data)
 
  def clear(self):
