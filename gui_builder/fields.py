@@ -445,13 +445,13 @@ class TreeView(GUIField):
  """A treeview"""
  widget_type = widgets.TreeView
 
- def add_root(self, text="", image=None, selected_image=None, data=None):
+ def add_root(self, text=None, image=None, selected_image=None, data=None):
   return self.widget.add_root(text, image=image, selected_image=selected_image, data=data)
 
  def get_root_item(self):
   return self.widget.get_root_item()
 
- def append_item(self, parent=None, text="", image=None, selected_image=None, data=None):
+ def append_item(self, parent=None, text=None, image=None, selected_image=None, data=None):
   if parent is None:
    return self.add_root(text=text, image=image, selected_image=selected_image, data=data)
   return self.widget.append_item(parent=parent, text=text, image=image, selected_image=selected_image, data=data)

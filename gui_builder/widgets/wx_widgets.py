@@ -1077,7 +1077,9 @@ class TreeView(WXWidget):
  event_prefix = 'EVT_TREE'
  default_callback_type = 'SEL_CHANGED'
 
- def add_root(self, text, image=None, selected_image=None, data=None):
+ def add_root(self, text=None, image=None, selected_image=None, data=None):
+  if text is None:
+   text = ""
   if image is None:
    image = -1
   if selected_image is None:
@@ -1089,7 +1091,9 @@ class TreeView(WXWidget):
  def get_root_item(self):
   return self.control.GetRootItem()
 
- def append_item(self, parent, text, image=None, selected_image=None, data=None):
+ def append_item(self, parent, text=None, image=None, selected_image=None, data=None):
+  if text is None:
+   text = ""
   if image is None:
    image = -1
   if selected_image is None:
