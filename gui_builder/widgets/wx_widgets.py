@@ -1104,3 +1104,7 @@ class TreeView(WXWidget):
 class ProgressBar(WXWidget):
  control_type = wx.Gauge
  focusable = False
+
+class ToolBar(WXWidget):
+ control_type = wx.ToolBar
+ style_prefix = 'TB'

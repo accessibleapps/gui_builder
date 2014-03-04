@@ -369,3 +369,6 @@ class ListView(UIForm, ChoiceField):
  def set_item_column(self, index, column, data):
   """Sets the string at the provided column and index to the provided value"""
   return self.widget.set_item_column(index, column, data)
+
+class ToolBar(UIForm):
+ widget_type = widgets.ToolBar
