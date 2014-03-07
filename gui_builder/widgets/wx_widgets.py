@@ -1100,7 +1100,7 @@ class TreeView(WXWidget):
    selected_image = -1
   if data is not None:
    data = wx.TreeItemData(data)
-  return self.control.AppendItem(parent, text, image, selected_image, data)
+  return self.control.AppendItem(parent, unicode(text), image, selected_image, data)
 
  def clear(self):
   self.control.DeleteAllItems()
