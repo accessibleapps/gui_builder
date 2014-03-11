@@ -473,3 +473,7 @@ class TreeView(GUIField):
 
 class ProgressBar(GUIField):
  widget_type = widgets.ProgressBar
+
+class ToolBarItem(GUIField):
+ widget_type = widgets.ToolBarItem
+
