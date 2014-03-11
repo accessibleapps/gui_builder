@@ -372,3 +372,10 @@ class ListView(UIForm, ChoiceField):
 
 class ToolBar(UIForm):
  widget_type = widgets.ToolBar
+
+ def render(self, *args, **kwargs):
+  super(ToolBar, self).render(*args, **kwargs)
+  self.widget.realize()
+
+class FrameToolBar(ToolBar):
+ widget_type = widgets.FrameToolBar

@@ -1124,3 +1124,36 @@ class ProgressBar(WXWidget):
 class ToolBar(WXWidget):
  control_type = wx.ToolBar
  style_prefix = 'TB'
+
+ def __init__(self, tool_bitmap_size=(16, 16), *args, **kwargs):
+  super(ToolBar, self).__init__(*args, **kwargs)
+  self.tool_bitmap_size = tool_bitmap_size
+
+ def add_simple_tool(self, id=wx.ID_ANY, bitmap=wx.NullBitmap, short_text="", *args, **kwargs):
+  if isinstance(bitmap, basestring):
+   bitmap = wx.Bitmap(bitmap)
+  print bitmap.IsOk()
+  short_text = unicode(short_text)
+  self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
+
+ def realize(self):
+  return self.control.Realize()
+
+ def render(self, **runtime_kwargs):
+  super(ToolBar, self).render(**runtime_kwargs)
+  self.set_tool_bitmap_size(self.tool_bitmap_size)
+
+ def set_tool_bitmap_size(self, tool_bitmap_size):
+  self.control.SetToolBitmapSize(tool_bitmap_size)
+  self.tool_bitmap_size = tool_bitmap_size
+
+
+class FrameToolBar(ToolBar):
+
+ def create_control(self, *args, **kwargs):
+  self.control = self.parent.control.CreateToolBar(*args, **kwargs)
+
+class ToolBarItem(WXWidget):
+ 
+ def create_control(self, id=wx.ID_ANY, *args, **kwargs):
+  self.control = self.parent.add_simple_tool(id=id, short_text=self.label_text, *args, **kwargs)
