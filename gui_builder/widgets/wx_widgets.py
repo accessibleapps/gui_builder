@@ -135,7 +135,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", callback=None, min_size=None, enabled=True, hidden=False, tool_tip_text=None, *args, **kwargs):
+ def __init__(self, parent=None, label="", accessible_label="", callback=None, min_size=None, enabled=True, hidden=False, tool_tip_text=None, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -143,6 +143,9 @@ class WXWidget(Widget):
   if label == "":
    label = self.label
   self.label_text = label
+  if accessible_label == "":
+   accessible_label = label
+  self.accessible_label = accessible_label
   self.parent = parent
   self.min_size = min_size
   self.label_control = None
@@ -158,6 +161,8 @@ class WXWidget(Widget):
   super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
   if self.label_text:
    self.set_label(unicode(self.label_text))
+  elif self.accessible_label:
+   self.set_accessible_label(self.accessible_label)
   if self.min_size is not None:
    self.control.SetMinSize(self.min_size)
   if self.tool_tip_text is not None:
@@ -178,6 +183,9 @@ class WXWidget(Widget):
    logger.exception("Error creating label for control %r" % self.control_type)
    raise
   return kwargs
+
+ def set_accessible_label(self, label):
+  self.control.SetLabel(unicode(label))
 
  def render(self, **runtime_kwargs):
   super(WXWidget, self).render(**runtime_kwargs)

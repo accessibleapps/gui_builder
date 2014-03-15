@@ -204,6 +204,9 @@ class GUIField(object):
   """Given a string, sets this field's label to it."""
   return self.widget.set_label(label)
 
+ def set_accessible_label(self, label):
+  self.widget.set_accessible_label(label)
+
  def get_value(self):
   """Returns the contents of this field."""
   return self.widget.get_value()
