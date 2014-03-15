@@ -275,7 +275,7 @@ class Panel(UIForm):
 class SizedDialog(BaseDialog):
  widget_type = widgets.SizedDialog
 
-class SizedFrame(UIForm):
+class SizedFrame(BaseFrame):
  widget_type = widgets.SizedFrame
 
 class SizedPanel(UIForm):
