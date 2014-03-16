@@ -802,9 +802,6 @@ class BaseDialog(BaseContainer):
 class SizedDialog(BaseDialog):
  control_type = sc.SizedDialog
 
-class SizedFrame(BaseContainer):
- control_type = sc.SizedFrame
-
 class SizedPanel(BaseContainer):
  control_type = sc.SizedPanel
  focusable = False
@@ -836,6 +833,12 @@ class BaseFrame(BaseContainer):
 
 class Frame(BaseContainer):
  control_type = wx.Frame
+
+class SizedFrame(BaseFrame):
+ control_type = sc.SizedFrame
+
+ def get_control(self):
+  return self.control.mainPanel
 
 class Dialog(BaseDialog):
  control_type = wx.Dialog
