@@ -18,6 +18,7 @@ from wx.lib.agw import hyperlink
 import platform
 
 import gui_builder
+import ctypes
 
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, ) #controls which cannot directly take focus
 
@@ -509,10 +510,48 @@ class Button(WXWidget):
  def make_default(self):
   self.control.SetDefault()
 
+class FixedSlider(wx.Slider):
+
+ EVENT_OBJECT_VALUECHANGE = 0x800e
+ CHILDID_SELF = 0
+ OBJID_CLIENT = -4
+
+ def __init__(self, *args, **kwargs):
+  super(FixedSlider,self).__init__(*args,**kwargs)
+  self.Bind(wx.EVT_CHAR, self.onSliderChar)
+
+ def SetValue(self, i):
+  super(FixedSlider, self).SetValue(i)
+  evt = wx.CommandEvent(wx.wxEVT_COMMAND_SLIDER_UPDATED, self.GetId())
+  evt.SetInt(i)
+  self.ProcessEvent(evt)
+  ctypes.windll.user32.NotifyWinEvent(self.EVENT_OBJECT_VALUECHANGE, self.Handle, self.OBJID_CLIENT, self.CHILDID_SELF)
+
+ def onSliderChar(self, evt):
+  key = evt.KeyCode
+  if key == wx.WXK_UP:
+   newValue = min(self.Value + self.LineSize, self.Max)
+  elif key == wx.WXK_DOWN:
+   newValue = max(self.Value - self.LineSize, self.Min)
+  elif key == wx.WXK_PRIOR:
+   newValue = min(self.Value + self.PageSize, self.Max)
+  elif key == wx.WXK_NEXT:
+   newValue = max(self.Value - self.PageSize, self.Min)
+  elif key == wx.WXK_HOME:
+   newValue = self.Max
+  elif key == wx.WXK_END:
+   newValue = self.Min
+  else:
+   evt.Skip()
+   return
+  self.SetValue(newValue)
 
 class Slider(WXWidget):
  style_prefix = "SL"
- control_type = wx.Slider
+ if platform.system() == 'Windows':
+  control_type = FixedSlider
+ else:
+  control_type = wx.Slider
  default_callback_type = "slider"
 
  def __init__(self, page_size=None, *args, **kwargs):
@@ -1169,3 +1208,4 @@ class ToolBarItem(WXWidget):
  
  def create_control(self, id=wx.ID_ANY, *args, **kwargs):
   self.control = self.parent.add_simple_tool(id=id, short_text=self.label_text, *args, **kwargs)
+
