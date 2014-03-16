@@ -177,11 +177,12 @@ class WXWidget(Widget):
    if label:
     kwargs['label'] = unicode(label)
    return kwargs
-  try:
-   self.label_control = wx.StaticText(parent=self.get_parent_control(), label=unicode(label))
-  except:
-   logger.exception("Error creating label for control %r" % self.control_type)
-   raise
+  if label:
+   try:
+    self.label_control = wx.StaticText(parent=self.get_parent_control(), label=unicode(label))
+   except:
+    logger.exception("Error creating label for control %r" % self.control_type)
+    raise
   return kwargs
 
  def set_accessible_label(self, label):
