@@ -441,7 +441,9 @@ class Text(BaseText):
   res = super(Text, self).translate_control_arguments(**kwargs)
   if 'style' not in res:
    return res
-  if res['style'] | wx.TE_READONLY == res['style']:
+  if res['style'] & wx.TE_READONLY:
+   if not (res['style'] & wx.TE_MULTILINE):
+    res['style'] |= wx.TE_NO_VSCROLL
    res['style'] |= wx.TE_MULTILINE
   return res
 
