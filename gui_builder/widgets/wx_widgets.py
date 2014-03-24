@@ -1184,6 +1184,9 @@ class ToolBar(WXWidget):
   short_text = unicode(short_text)
   return self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
 
+ def add_separator(self):
+  return self.control.AddSeparator()
+
  def bind_event(self, callback_type, callback, id=None):
   return self.control.Bind(callback_type, callback, id)
 
@@ -1207,10 +1210,13 @@ class FrameToolBar(ToolBar):
 class ToolBarItem(WXWidget):
  default_callback_type = 'menu'
  
- def create_control(self, id=None, *args, **kwargs):
+ def create_control(self, bitmap=None, id=None, *args, **kwargs):
+  if not self.label_text:
+   self.control = self.parent.add_separator()
+   return
   if id is None:
    id = wx.NewId()
-  self.control = self.parent.add_simple_tool(id=id, short_text=self.label_text, *args, **kwargs)
+  self.control = self.parent.add_simple_tool(id=id, short_text=self.label_text, bitmap=bitmap, *args, **kwargs)
 
  def bind_event(self, callback_type, callback):
   self.parent.bind_event(callback_type, callback, id=self.control)
