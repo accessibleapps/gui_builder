@@ -745,10 +745,6 @@ class DataView(ListView):
  def set_item_column(self, index, column, data):
   self.control.SetTextValue(data, index, column)
 
-class ToolBar(WXWidget):
- control_type = wx.ToolBar
- style_prefix = "TB"
-
 class SpinBox(WXWidget):
  control_type = wx.SpinCtrl
  style_prefix = "SP"
@@ -1184,10 +1180,12 @@ class ToolBar(WXWidget):
 
  def add_simple_tool(self, id=wx.ID_ANY, bitmap=wx.NullBitmap, short_text="", *args, **kwargs):
   if isinstance(bitmap, basestring):
-   bitmap = wx.Bitmap(bitmap)
-  print bitmap.IsOk()
+   bitmap = wx.Image(bitmap, wx.BITMAP_TYPE_PNG).Scale(quality=wx.IMAGE_QUALITY_HIGH, *self.tool_bitmap_size).ConvertToBitmap()
   short_text = unicode(short_text)
-  self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
+  return self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
+
+ def bind_event(self, callback_type, callback, id=None):
+  return self.control.Bind(callback_type, callback, id)
 
  def realize(self):
   return self.control.Realize()
@@ -1207,7 +1205,12 @@ class FrameToolBar(ToolBar):
   self.control = self.parent.control.CreateToolBar(*args, **kwargs)
 
 class ToolBarItem(WXWidget):
+ default_callback_type = 'menu'
  
- def create_control(self, id=wx.ID_ANY, *args, **kwargs):
+ def create_control(self, id=None, *args, **kwargs):
+  if id is None:
+   id = wx.NewId()
   self.control = self.parent.add_simple_tool(id=id, short_text=self.label_text, *args, **kwargs)
 
+ def bind_event(self, callback_type, callback):
+  self.parent.bind_event(callback_type, callback, id=self.control)
