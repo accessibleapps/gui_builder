@@ -524,9 +524,6 @@ class FixedSlider(wx.Slider):
 
  def SetValue(self, i):
   super(FixedSlider, self).SetValue(i)
-  evt = wx.CommandEvent(wx.wxEVT_COMMAND_SLIDER_UPDATED, self.GetId())
-  evt.SetInt(i)
-  self.ProcessEvent(evt)
   ctypes.windll.user32.NotifyWinEvent(self.EVENT_OBJECT_VALUECHANGE, self.Handle, self.OBJID_CLIENT, self.CHILDID_SELF)
 
  def onSliderChar(self, evt):
