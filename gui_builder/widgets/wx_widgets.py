@@ -478,6 +478,9 @@ class StaticText(WXWidget):
  control_type = wx.StaticText
  selflabeled = True
 
+ def set_value(self, value):
+  self.control.SetLabel(value)
+
 class CheckBox(WXWidget):
  control_type = wx.CheckBox
  default_callback_type = "checkbox"
