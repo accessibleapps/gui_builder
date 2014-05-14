@@ -13,12 +13,22 @@ class UnboundField(object):
   self.field = field
   self.args = args
   self.kwargs = kwargs
+  self.extra_callbacks = []
   UnboundField.creation_counter += 1
   self.creation_counter = UnboundField.creation_counter
 
  def bind(self, parent=None, name=None, **kwargs):
   kwargs.update(self.kwargs)
-  return self.field(bound_name=name, parent=parent, *self.args, **kwargs)
+  return self.field(bound_name=name, parent=parent, extra_callbacks=self.extra_callbacks, *self.args, **kwargs)
+
+ def add_callback(self, trigger=None):
+  if not isinstance(trigger, basestring):
+   self.kwargs['callback'] = trigger
+   return trigger
+  def add_callback_decorator(function):
+   self.extra_callbacks.append((trigger, function))
+   return function
+  return add_callback_decorator
 
 class GUIField(object):
  widget_type = None
@@ -35,7 +45,7 @@ class GUIField(object):
   else:
    return UnboundField(cls, *args, **kwargs)
 
- def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, default_focus=False, *args, **kwargs):
+ def __init__(self, widget_type=None, label=None, parent=None, bound_name=None, callback=None, default_value=None, default_focus=False, extra_callbacks=None, *args, **kwargs):
   if widget_type is None:
    widget_type = self.widget_type
   widget_kwargs = {}
@@ -61,6 +71,10 @@ class GUIField(object):
   self.default_value = default_value
   self.default_focus = default_focus
   self.widget = None
+  if extra_callbacks is not None:
+   if self.extra_callbacks is None:
+    self.extra_callbacks = []
+   self.extra_callbacks.extend(extra_callbacks)
 
  def bind(self, parent, name=None):
   logger.debug("Binding field %r to parent %r with name %r" % (self, parent, name))
