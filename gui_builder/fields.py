@@ -74,6 +74,7 @@ class GUIField(object):
   if extra_callbacks is not None:
    if self.extra_callbacks is None:
     self.extra_callbacks = []
+   self.extra_callbacks = list(self.extra_callbacks)
    self.extra_callbacks.extend(extra_callbacks)
 
  def bind(self, parent, name=None):
