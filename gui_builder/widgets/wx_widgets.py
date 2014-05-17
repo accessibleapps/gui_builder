@@ -136,7 +136,7 @@ class WXWidget(Widget):
  callback = None
  label = ""
 
- def __init__(self, parent=None, label="", accessible_label="", callback=None, min_size=None, enabled=True, hidden=False, tool_tip_text=None, *args, **kwargs):
+ def __init__(self, parent=None, label="", accessible_label="", callback=None, min_size=None, enabled=True, hidden=False, tool_tip_text=None, expand=False, proportion=None, *args, **kwargs):
   super(WXWidget, self).__init__(*args, **kwargs)
   if callback is None:
    callback = self.callback
@@ -153,6 +153,8 @@ class WXWidget(Widget):
   self.control_enabled = enabled
   self.control_hidden = hidden
   self.tool_tip_text = tool_tip_text
+  self.expand = expand
+  self.proportion = proportion
 
  def create_control(self, **kwargs):
   logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
@@ -168,6 +170,10 @@ class WXWidget(Widget):
    self.control.SetMinSize(self.min_size)
   if self.tool_tip_text is not None:
    self.set_tool_tip_text(self.tool_tip_text)
+  if self.expand:
+   self.control.SetSizerProp('expand', True)
+  if self.proportion is not None:
+   self.control.SetSizerProp('proportion', self.proportion)
 
  def create_label_control(self, label=None, **kwargs):
   if label is None:
