@@ -176,6 +176,13 @@ class GUIField(object):
   """Enables this field, making it useable."""
   return self.widget.enable()
 
+ def set_enabled(self, enabled):
+  """A method to enable/disable this field based on the truthyness of the passed in value"""
+  if enabled:
+   self.enable()
+  else:
+   self.disable()
+
  def freeze(self):
   self.widget.freeze()
 
