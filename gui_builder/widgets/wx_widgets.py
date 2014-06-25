@@ -297,7 +297,7 @@ class WXWidget(Widget):
   return self.control.GetToolTipString()
 
  def set_tool_tip_text(self, text):
-  return self.control.SetToolTipString(text)
+  return self.control.SetToolTipString(unicode(text))
 
  def display(self):
   self.control.Raise()
