@@ -98,7 +98,7 @@ def callback_wrapper(widget, callback):
  def wrapper(evt, *a, **k):
   a = list(a)
   argspec = inspect.getargspec(callback)
-  if argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self"):
+  if (argspec.args and argspec.args[0] == "self" and not hasattr(callback, "im_self")) or (argspec.varargs and argspec.keywords):
    self = widget.find_event_target(callback)
    a.insert(0, self)
   if argspec.keywords is not None:
