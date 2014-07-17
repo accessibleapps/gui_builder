@@ -45,6 +45,8 @@ class Widget(object):
   #super(Widget, self).render()
 
  def register_callback(self, callback_type=None, callback=None):
+  if not callable(callback):
+   raise TypeError("Callback must be callable")
   self.callbacks[callback_type].append(callback)
 
  def unregister_callback(self, callback_type, callback):
