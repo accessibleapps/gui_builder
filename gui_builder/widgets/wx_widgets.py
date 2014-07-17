@@ -1,6 +1,7 @@
 from logging import getLogger
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
+import datetime
 import inspect
 import re
 import sys
@@ -1099,6 +1100,11 @@ class DatePicker(WXWidget):
   control_type = wx.adv.DatePickerCtrl
  else:
   control_type = wx.DatePickerCtrl
+
+ def set_value(self, value):
+  if isinstance(value, datetime.date, datetime.datetime):
+   value = wx.calendar._pydate2wxdate(value)
+  super(DatePickerCtrl, self).set_value(value)
 
 class VirtualListView(wx.ListCtrl):
 
