@@ -8,6 +8,7 @@ import sys
 
 from .widget import Widget
 import wx
+import wx.calendar
 import wx.dataview
 try:
  import wx.adv
@@ -1094,10 +1095,14 @@ class DatePicker(WXWidget):
  else:
   control_type = wx.DatePickerCtrl
 
+ def get_value(self):
+  value = super(DatePicker, self).get_value()
+  return wx.calendar._wxdate2pydate(value)
+
  def set_value(self, value):
-  if isinstance(value, datetime.date, datetime.datetime):
+  if isinstance(value, (datetime.date, datetime.datetime)):
    value = wx.calendar._pydate2wxdate(value)
-  super(DatePickerCtrl, self).set_value(value)
+  super(DatePicker, self).set_value(value)
 
 class VirtualListView(wx.ListCtrl):
 
