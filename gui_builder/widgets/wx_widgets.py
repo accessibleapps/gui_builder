@@ -334,10 +334,6 @@ class WXWidget(Widget):
  def set_value(self, value):
   self.control.SetValue(value)
 
- def populate(self, value):
-  """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
-  self.set_value(value)
-
  def translate_control_arguments(self, **kwargs):
   return wx_attributes(self.style_prefix, result_key="style", **kwargs)
 
@@ -377,9 +373,6 @@ class ChoiceWidget(WXWidget):
 
  def get_value(self):
   return self.get_choice()
-
- def populate(self, value):
-  self.set_items(value)
 
  def get_count(self):
   return self.control.GetCount()

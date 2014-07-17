@@ -151,7 +151,8 @@ class GUIField(object):
   self.widget.set_focus()
 
  def populate(self, value):
-  self.widget.populate(value)
+  """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
+  self.set_value(value)
 
  def set_default_value(self):
   if self.default_value is None:
@@ -330,6 +331,8 @@ class ChoiceField(GUIField):
   runtime_kwargs.setdefault('choices', self.choices)
   super(ChoiceField, self).render(**runtime_kwargs)
 
+ def populate(self, value):
+  self.set_items(value)
 
  def set_default_value(self):
   super(ChoiceField, self).set_default_value()
