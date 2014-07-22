@@ -99,6 +99,7 @@ def extract_event_data(event):
   if attribute_name.startswith('Get') and attribute_name not in UNWANTED_ATTRIBUTES:
    translated_name = case_to_underscore(attribute_name[3:])
    event_args[translated_name] = getattr(event, attribute_name)()
+ event_args['event'] = event
  return event_args
 
 
