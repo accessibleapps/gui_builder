@@ -64,20 +64,26 @@ def find_wx_attribute(prefix, attr, module=wx):
   val = getattr(module, no_underscore)
  return val
 
-def wx_attributes(prefix="", result_key="style", module=wx, **attrs):
+def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
+ if modules is None:
+  modules = [wx]
  answer = {result_key:0}
  for k, v in attrs.iteritems():
   if v is not True:
    answer[k] = v
-  else:
+   continue
+  for module in modules:
    try:
     answer[result_key] |= find_wx_attribute(prefix, k, module=module)
    except AttributeError:
     try:
      answer[result_key] |= find_wx_attribute("", k, module=module)
     except AttributeError:
-     answer[k] = v
- if result_key in answer and answer[result_key] == 0:
+     continue
+   break
+  else:
+   answer[k] = v
+ if result_key in answer and answer[result_key] is 0:
   del answer[result_key]
  return answer
 
@@ -131,6 +137,7 @@ class WXWidget(Widget):
  style_prefix = ''
  event_prefix = 'EVT'
  event_module = wx
+ style_module = None
  selflabeled = False
  unlabeled = False
  focusable = True
@@ -336,7 +343,10 @@ class WXWidget(Widget):
   self.control.SetValue(value)
 
  def translate_control_arguments(self, **kwargs):
-  return wx_attributes(self.style_prefix, result_key="style", **kwargs)
+  modules = [wx,]
+  if self.style_module is not None:
+   modules.insert(0, self.style_module)
+  return wx_attributes(self.style_prefix, result_key='style', modules=modules, **kwargs)
 
  def is_focused(self):
   return self.control.HasFocus()
