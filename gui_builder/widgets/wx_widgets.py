@@ -1105,6 +1105,7 @@ class DatePicker(WXWidget):
   control_type = wx.adv.DatePickerCtrl
  else:
   control_type = wx.DatePickerCtrl
+ default_callback_type = 'date_changed'
 
  def get_value(self):
   value = super(DatePicker, self).get_value()
