@@ -31,6 +31,7 @@ class Widget(object):
  def create_control(self, **kwargs):
   if self.control_type is None:
    raise RuntimeError("No control type provided")
+  logger.debug("Creating control type %r with kwargs %r" % (self.control_type, kwargs))
   try:
    self.control = self.control_type(**kwargs)
   except Exception as e:
