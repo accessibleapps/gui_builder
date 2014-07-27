@@ -1075,6 +1075,15 @@ class MenuItem(WXWidget):
  def uncheck(self):
   self.control.Check(False)
 
+ def set_as_mac_about_menu_item(self):
+  wx.GetApp().SetMacAboutMenuItemId(self.control_id)
+
+ def set_as_mac_exit_menu_item(self):
+  wx.GetApp().SetMacExitMenuItemId(self.control_id)
+
+ def set_as_mac_preferences_menu_item(self):
+  wx.GetApp().SetMacPreferencesMenuItemId(self.control_id)
+
 class SubMenu(Menu):
 
  def create_control(self, **kwargs):

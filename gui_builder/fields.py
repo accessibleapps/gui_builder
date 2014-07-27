@@ -455,6 +455,18 @@ class MenuItem(GUIField):
   else:
    self.disable()
 
+ def set_as_mac_about_menu_item(self):
+  """Indicate to OS X that this is the About... item in the help menu"""
+  self.widget.set_as_mac_about_menu_item()
+
+ def set_as_mac_exit_menu_item(self):
+  """Indicate to OS X that clicking this menu item will exit the application"""
+  self.widget.set_as_mac_exit_menu_item()
+
+ def set_as_mac_preferences_menu_item(self):
+  """Indicate to OS X that clicking this menu item will invoke the application's preferences"""
+  self.widget.set_as_mac_preferences_menu_item()
+
 class StatusBar(GUIField):
  """A status bar."""
  widget_type = widgets.StatusBar
