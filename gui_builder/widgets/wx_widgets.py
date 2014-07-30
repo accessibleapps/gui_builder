@@ -507,6 +507,10 @@ class ComboBox(ChoiceWidget):
  def get_value(self):
   return self.control.GetValue()
 
+ def set_label(self, label):
+  if self.label_control is not None:
+   self.label_control.SetLabel(label)
+
 class Button(WXWidget):
  control_type = wx.Button
  default_callback_type = "button"
