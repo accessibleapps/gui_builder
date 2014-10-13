@@ -225,6 +225,11 @@ class Form(BaseForm):
 
 class UIForm(Form):
 
+ def populate(self, items):
+  """Given a mapping of field ids to values, populates each field with the corresponding value"""
+  for key, value in items.iteritems():
+   self[key].populate(value)
+
  def get_title(self):
   """Returns the form's title"""
   return self.widget.get_title()
