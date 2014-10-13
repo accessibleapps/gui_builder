@@ -225,7 +225,7 @@ class Form(BaseForm):
 
 class UIForm(Form):
 
- def populate(self, items):
+ def set_value(self, items):
   """Given a mapping of field ids to values, populates each field with the corresponding value"""
   for key, value in items.iteritems():
    self[key].populate(value)
