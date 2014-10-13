@@ -1,4 +1,4 @@
-class Freezer(object):
+class FreezeAndThaw(object):
 
  def __init__(self, to_freeze):
   self.to_freeze = to_freeze
@@ -7,7 +7,7 @@ class Freezer(object):
   self.to_freeze.freeze()
   return self
 
- def __exit__(self):
+ def __exit__(self, *args):
   self.to_freeze.thaw()
 
 class DisplayAndDestroy(object):
@@ -18,5 +18,5 @@ class DisplayAndDestroy(object):
  def __enter__(self):
   return self.to_display.show_modal()
 
- def __exit(self):
+ def __exit(self, *args):
   self.to_display.destroy()
