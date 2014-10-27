@@ -266,6 +266,12 @@ class BaseFrame(UIForm):
 class Frame(BaseFrame):
  widget_type = widgets.Frame
 
+class MDIParentFrame(BaseFrame):
+ widget_type = widgets.MDIParentFrame
+
+class MDIChildFrame(BaseFrame):
+ widget_type = widgets.MDIChildFrame
+
 class BaseDialog(UIForm):
 
  def end_modal(self, modal_result):
