@@ -354,7 +354,7 @@ class Menu(UIForm):
 class SubMenu(Menu):
  widget_type = widgets.SubMenu
 
-class ListView(UIForm, ChoiceField):
+class ListView(ChoiceField, UIForm):
 
  def __init__(self, virtual=False, *args, **kwargs):
   if platform.system() == 'Windows':
