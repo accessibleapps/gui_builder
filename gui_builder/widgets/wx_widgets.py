@@ -898,6 +898,13 @@ class SizedFrame(BaseFrame):
  def get_control(self):
   return self.control.mainPanel
 
+class MDIParentFrame(BaseFrame):
+ control_type = wx.MDIParentFrame
+
+class MDIChildFrame(BaseFrame):
+ control_type = wx.MDIChildFrame
+
+
 class Dialog(BaseDialog):
  control_type = wx.Dialog
 
