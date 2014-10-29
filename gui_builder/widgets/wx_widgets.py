@@ -1212,6 +1212,9 @@ class TreeView(WXWidget):
  def get_py_data(self, item):
   return self.control.GetPyData(item)
 
+ def set_item_has_children(self, item, val):
+  self.control.SetItemHasChildren(item, val)
+
 class ProgressBar(WXWidget):
  control_type = wx.Gauge
  focusable = False
