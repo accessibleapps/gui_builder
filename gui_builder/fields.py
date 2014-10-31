@@ -198,6 +198,14 @@ class GUIField(object):
   """Shows this field, perhaps after it has been hidden"""
   return self.widget.show()
 
+ def get_first_ancestor(self):
+  parent = self
+  current = None
+  while parent is not None:
+   current = parent
+   parent = parent.parent
+  return current
+
  def is_shown(self):
   """Returns a boolean. If it is False, this control is hidden. If it is true, it is not."""
   return self.widget.is_shown()
