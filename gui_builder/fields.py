@@ -171,10 +171,12 @@ class GUIField(object):
 
  def disable(self):
   """Disables this field, I.E. makes it unuseable."""
+  self._reset_last_enabled_descendant()
   return self.widget.disable()
 
  def enable(self):
   """Enables this field, making it useable."""
+  self._reset_last_enabled_descendant()
   return self.widget.enable()
 
  def set_enabled(self, enabled):
@@ -183,6 +185,13 @@ class GUIField(object):
    self.enable()
   else:
    self.disable()
+
+ def _reset_last_enabled_descendant(self):
+  next_field = self
+  while next_field is not None:
+   if hasattr(next_field, '_last_enabled_descendant') and next_field._last_enabled_descendant is not None:
+    next_field._last_enabled_descendant = None
+   next_field = next_field.parent
 
  def freeze(self):
   self.widget.freeze()
