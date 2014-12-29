@@ -924,12 +924,12 @@ class Notebook(BaseContainer):
    return
   def on_focus(evt):
    evt.Skip()
-   last_child = item.field.get_last_child()
+   last_child = item.field.get_last_enabled_descendant()
    if last_child is not None and evt.GetWindow() == last_child.widget.get_control():
     last_child._was_focused = True
 
   def on_navigation_key(evt):
-   last_child = item.field.get_last_child()
+   last_child = item.field.get_last_enabled_descendant()
    if last_child is None:
     return
    if evt.GetDirection() and getattr(last_child, '_was_focused', False):

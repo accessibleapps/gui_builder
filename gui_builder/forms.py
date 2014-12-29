@@ -27,6 +27,7 @@ class BaseForm(GUIField):
   super(BaseForm, self).__init__(*args, **kwargs)  
   self.is_rendered = False
   self._last_child = None
+  self._last_enabled_descendant = None
 
  def set_values(self, values):
   """Given a dictionary mapping field names to values, sets fields on this form to the values provided."""
@@ -69,6 +70,14 @@ class BaseForm(GUIField):
     pass
   return self._last_child
 
+ def get_last_enabled_descendant(self):
+  if self._last_enabled_descendant is not None:
+   return self._last_enabled_descendant
+  enabled_children = [child for child in self.get_all_children() if child.widget.enabled]
+  descendant = enabled_children[-1]
+  self._last_enabled_descendant = descendant
+  return descendant
+
  def __getitem__(self, name):
   return self._fields[name]
 
@@ -95,6 +104,7 @@ class BaseForm(GUIField):
   """Removes a child from this form."""
   del self._fields[name]
   self._last_child = None
+  self._last_enabled_descendant = None
 
  def get_value(self):
   """Returns a dictionary whose keys are fieldnames and whose values are the values of those fields."""
