@@ -951,10 +951,10 @@ class Notebook(BaseContainer):
   def on_notebook_navigation(evt):
 
    if not evt.GetDirection() and evt.GetCurrentFocus() is None and evt.GetEventObject() is self.control and not self.control_down:
-    children = list(self.field.get_current_page().get_children())
-    if not children:
+    last_enabled_descendant = self.field.get_current_page().get_last_enabled_descendant()
+    if not last_enabled_descendant:
      return
-    children[-1].set_focus()
+    last_enabled_descendant.set_focus()
    else:
     evt.Skip()
   self.control_down = False
