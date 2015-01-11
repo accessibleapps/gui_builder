@@ -1234,7 +1234,10 @@ class ToolBar(WXWidget):
 		if isinstance(bitmap, basestring):
 			bitmap = wx.Image(bitmap, wx.BITMAP_TYPE_PNG).Scale(quality=wx.IMAGE_QUALITY_HIGH, *self.tool_bitmap_size).ConvertToBitmap()
 		short_text = unicode(short_text)
-		return self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
+		if hasattr(self.control, 'AddSimpleTool'):
+			return self.control.AddSimpleTool(id=id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs)
+		else:
+			return self.control.AddTool(toolId=id, label='', bitmap=bitmap, shortHelp=short_text, *args, **kwargs)
 
 	def add_separator(self):
 		return self.control.AddSeparator()
