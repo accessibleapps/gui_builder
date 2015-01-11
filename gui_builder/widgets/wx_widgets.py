@@ -9,9 +9,9 @@ import sys
 from .widget import Widget
 import wx
 try:
- from wx import calendar
+	from wx import calendar
 except ImportError:
- from wx.lib import calendar
+	from wx.lib import calendar
 import wx.dataview
 try:
 	import wx.adv
@@ -953,20 +953,20 @@ class Notebook(BaseContainer):
 		super(Notebook, self).render(*args, **kwargs)
 		def on_notebook_navigation(evt):
 
-   if not evt.GetDirection() and evt.GetCurrentFocus() is None and evt.GetEventObject() is self.control and not self.control_down:
-    last_enabled_descendant = self.field.get_current_page().get_last_enabled_descendant()
-    if not last_enabled_descendant:
-     return
-    last_enabled_descendant.set_focus()
-   else:
-    evt.Skip()
-  self.control_down = False
-  def key_down_up(evt):
-   self.control_down = evt.ControlDown()
-   evt.Skip()
-  self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
-  self.bind_event(wx.EVT_KEY_DOWN, key_down_up)
-  self.bind_event(wx.EVT_KEY_UP, key_down_up)
+			if not evt.GetDirection() and evt.GetCurrentFocus() is None and evt.GetEventObject() is self.control and not self.control_down:
+				last_enabled_descendant = self.field.get_current_page().get_last_enabled_descendant()
+				if not last_enabled_descendant:
+					return
+				last_enabled_descendant.set_focus()
+			else:
+				evt.Skip()
+		self.control_down = False
+		def key_down_up(evt):
+			self.control_down = evt.ControlDown()
+			evt.Skip()
+		self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
+		self.bind_event(wx.EVT_KEY_DOWN, key_down_up)
+		self.bind_event(wx.EVT_KEY_UP, key_down_up)
 
 	def find_page_number(self, page):
 		for page_num in xrange(self.control.GetPageCount()):
