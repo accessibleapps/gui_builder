@@ -579,14 +579,24 @@ class Slider(WXWidget):
 		control_type = wx.Slider
 	default_callback_type = "slider"
 
-	def __init__(self, page_size=None, *args, **kwargs):
+	def __init__(self, page_size=None, min_value=0, max_value=100, *args, **kwargs):
 		super(Slider, self).__init__(*args, **kwargs)
 		self._page_size = page_size
+		self._min_value = min_value
+		self._max_value = max_value
 
 	def render(self, *args, **kwargs):
 		super(Slider, self).render(*args, **kwargs)
 		if self._page_size is not None:
 			self.set_page_size(self._page_size)
+		self.set_min_value(self._min_value)
+		self.set_max_value(self._max_value)
+
+	def set_min_value(self, value):
+		self.control.SetMin(value)
+
+	def set_max_value(self, value):
+		self.control.SetMax(value)
 
 	def get_page_size(self):
 		return self.control.GetPageSize()
