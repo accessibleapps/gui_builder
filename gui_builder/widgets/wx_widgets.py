@@ -604,6 +604,12 @@ class Slider(WXWidget):
 	def set_page_size(self, page_size):
 		return self.control.SetPageSize(page_size)
 
+	def set_line_size(self, value):
+		self.control.SetLineSize(value)
+
+	def get_line_size(self):
+		return self.control.GetLineSize()
+
 class ScrollBar(WXWidget):
 	control_type = wx.ScrollBar
 	style_prefix = "SB"
