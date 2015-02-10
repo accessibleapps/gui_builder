@@ -447,6 +447,12 @@ class Slider(GUIField):
 		"""Sets the number representing how many units this control will skip when the user presses page up/down."""
 		return self.widget.set_page_size(page_size)
 
+	def set_line_size(self, value):
+		self.widget.set_line_size(value)
+
+	def get_line_size(self):
+		return self.widget.get_line_size()
+
 class FilePicker(GUIField):
 	widget_type = widgets.FilePicker
 
