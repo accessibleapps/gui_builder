@@ -131,7 +131,7 @@ def callback_wrapper(widget, callback):
 				logger.exception("Error calling callback")
 			raise
 		if result == gui_builder.VETO:
-			evt.Veto()
+			evt.StopPropagation()
 		elif not result:
 			evt.Skip()
 	return wrapper
