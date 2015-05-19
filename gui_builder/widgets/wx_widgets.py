@@ -905,6 +905,9 @@ class BaseFrame(BaseContainer):
 	def maximize(self):
 		return self.control.Maximize(True)
 
+	def restore(self):
+		return self.control.Restore()
+
 	def minimize(self):
 		return self.control.Maximize(False)
 

@@ -269,6 +269,11 @@ class BaseFrame(UIForm):
 		"""Maximizes the frame."""
 		return self.widget.maximize()
 
+	def restore(self):
+		"Restores the frame"""
+		return self.widget.restore()
+
+
 	def minimize(self):
 		"""Minimizes the frame."""
 		return self.widget.minimize()
