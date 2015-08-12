@@ -134,6 +134,7 @@ class GUIField(object):
 
 	def unregister_callback(self, trigger, callback):
 		"""Unregisters a callback from a trigger"""
+		logger.debug("Unregistering callback %r with trigger %r from field %r" % (callback, trigger, self))
 		self.widget.unregister_callback(trigger, callback)
 
 	def bind_event(self, event, callback):
@@ -524,6 +525,7 @@ class TreeView(GUIField):
 		return self.widget.append_item(parent=parent, text=text, image=image, selected_image=selected_image, data=data)
 
 	def clear(self):
+		"""Deletes all items out of this tree view"""
 		self.widget.clear()
 
 	def delete(self, item):
