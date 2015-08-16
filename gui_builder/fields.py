@@ -509,6 +509,10 @@ class StaticText(GUIField):
 class DatePicker(GUIField):
 	widget_type = widgets.DatePicker
 
+	def set_range(self, start, end):
+		"""Sets the minimum and maximum dates that can be picked in this control"""
+		self.widget.set_range(start, end)
+
 class TreeView(GUIField):
 	"""A treeview"""
 	widget_type = widgets.TreeView
