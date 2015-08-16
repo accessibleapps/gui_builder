@@ -1153,6 +1153,15 @@ class DatePicker(WXWidget):
 		control_type = wx.DatePickerCtrl
 	default_callback_type = 'date_changed'
 
+	def __init__(self, range=None, *args, **kwargs):
+		super(DatePicker, self).__init__(*args, **kwargs)
+		self.range = range
+
+	def render(self, *args, **kwargs):
+		super(DatePicker, self).render(*args, **kwargs)
+		if self.range is not None:
+			self.set_range(self.range)
+
 	def get_value(self):
 		value = super(DatePicker, self).get_value()
 		return calendar._wxdate2pydate(value)
@@ -1161,6 +1170,14 @@ class DatePicker(WXWidget):
 		if isinstance(value, (datetime.date, datetime.datetime)):
 			value = calendar._pydate2wxdate(value)
 		super(DatePicker, self).set_value(value)
+
+	def set_range(self, start, end):
+		if isinstance(start, (datetime.date, datetime.datetime)):
+			start = calendar._pydate2wxdate(start)
+		if isinstance(end, (datetime.date, datetime.datetime)):
+			end = calendar._pydate2wxdate(end)
+		self.control.SetRange(start, end)
+		self.range = range
 
 class VirtualListView(wx.ListCtrl):
 
