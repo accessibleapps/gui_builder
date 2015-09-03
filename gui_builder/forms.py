@@ -162,6 +162,10 @@ class BaseForm(GUIField):
 			self.render()
 		self.set_default_focus()
 
+	def destroy(self):
+		for child in self.get_children():
+			child.destroy()
+
 class FormMeta(type):
 
 	def __init__(cls, name, bases, attrs):
