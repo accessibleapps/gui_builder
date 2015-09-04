@@ -422,6 +422,9 @@ class ComboBox(ChoiceField):
 	"""An Edit Combo Box. Pass read_only=True to the constructor for a combo box."""
 	widget_type = widgets.ComboBox
 
+	def select_all(self):
+		return self.widget.select_all()
+
 
 class ListBox(ChoiceField):
 	"""A standard list box."""
