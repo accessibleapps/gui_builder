@@ -456,6 +456,16 @@ class Text(BaseText):
 	style_prefix = "TE"
 	default_callback_type = 'text'
 
+
+	def on_keypress(self, raw_key_code=None, modifiers=None, **kwargs):
+		if raw_key_code == ord('A') and modifiers == wx.MOD_CONTROL:
+			self.field.select_all()
+			return True
+
+	def render(self, *args, **kwargs):
+		super(Text, self).render(*args, **kwargs)
+		self.register_callback('char_hook', self.on_keypress)
+
 	def translate_control_arguments(self, **kwargs):
 		res = super(Text, self).translate_control_arguments(**kwargs)
 		if 'style' not in res:
