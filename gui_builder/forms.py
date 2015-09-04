@@ -165,6 +165,8 @@ class BaseForm(GUIField):
 	def destroy(self):
 		for child in self.get_children():
 			child.destroy()
+		super(BaseForm, self).destroy()
+
 
 class FormMeta(type):
 
