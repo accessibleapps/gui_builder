@@ -518,6 +518,9 @@ class ComboBox(ChoiceWidget):
 		if self.label_control is not None:
 			self.label_control.SetLabel(label)
 
+	def select_all(self):
+		self.control.SelectAll()
+
 class Button(WXWidget):
 	control_type = wx.Button
 	default_callback_type = "button"
