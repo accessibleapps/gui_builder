@@ -531,6 +531,9 @@ class ComboBox(ChoiceWidget):
 	def select_all(self):
 		self.control.SelectAll()
 
+	def insert_item(self, index, item):
+		return self.control.Insert(item, index)
+
 class Button(WXWidget):
 	control_type = wx.Button
 	default_callback_type = "button"
