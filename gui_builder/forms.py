@@ -164,6 +164,7 @@ class BaseForm(GUIField):
 
 	def destroy(self):
 		for child in self.get_children():
+			logger.debug("Destroying child %r" % child)
 			child.destroy()
 		super(BaseForm, self).destroy()
 
