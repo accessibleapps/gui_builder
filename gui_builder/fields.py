@@ -336,9 +336,6 @@ class CheckBox(GUIField):
 class ButtonSizer(GUIField):
 	widget_type = widgets.ButtonSizer
 
-	def destroy(self):
-		pass
-
 class ChoiceField(GUIField):
 	"""A base class defining the methods available on choice fields."""
 
