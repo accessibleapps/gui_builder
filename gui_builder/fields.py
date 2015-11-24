@@ -223,6 +223,7 @@ class GUIField(object):
 	def destroy(self):
 		"""Destroys the visual counterpart of this field."""
 		self.widget.destroy()
+		logger.debug("Destroyed widget for field %r" % self)
 
 	def __del__(self):
 		if self.widget is None:
@@ -334,6 +335,9 @@ class CheckBox(GUIField):
 
 class ButtonSizer(GUIField):
 	widget_type = widgets.ButtonSizer
+
+	def destroy(self):
+		pass
 
 class ChoiceField(GUIField):
 	"""A base class defining the methods available on choice fields."""
