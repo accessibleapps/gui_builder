@@ -1165,6 +1165,7 @@ class Link(WXWidget):
 class DatePicker(WXWidget):
 	if hasattr(wx, 'adv'):
 		control_type = wx.adv.DatePickerCtrl
+		event_module = wx.adv
 	else:
 		control_type = wx.DatePickerCtrl
 	default_callback_type = 'date_changed'
@@ -1180,10 +1181,10 @@ class DatePicker(WXWidget):
 
 	def get_value(self):
 		value = super(DatePicker, self).get_value()
-		return calendar._wxdate2pydate(value)
+		return datetime.date(value.year, value.month, value.day)
 
 	def set_value(self, value):
-		if isinstance(value, (datetime.date, datetime.datetime)):
+		if hasattr(calendar, '_pydate2wxdate') and isinstance(value, (datetime.date, datetime.datetime)):
 			value = calendar._pydate2wxdate(value)
 		super(DatePicker, self).set_value(value)
 
