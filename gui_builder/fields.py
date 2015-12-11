@@ -194,6 +194,9 @@ class GUIField(object):
 				next_field._last_enabled_descendant = None
 			next_field = next_field.parent
 
+	def is_enabled(self):
+		return self.widget.enabled
+
 	def freeze(self):
 		self.widget.freeze()
 
