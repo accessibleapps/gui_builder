@@ -5,6 +5,7 @@ import datetime
 import inspect
 import re
 import sys
+import weakref
 
 from .widget import Widget
 import wx
@@ -172,6 +173,7 @@ class WXWidget(Widget):
 		self.tool_tip_text = tool_tip_text
 		self.expand = expand
 		self.proportion = proportion
+		self.wrapped_callbacks = weakref.WeakKeyDictionary()
 
 	def create_control(self, **kwargs):
 		logger.debug("Creating control for widget %r. Widget parent: %r. Widget parent control: %r" % (self, self.parent, self.get_parent_control()))
@@ -234,8 +236,15 @@ class WXWidget(Widget):
 			return
 
 		wrapped_callback = callback_wrapper(self, callback)
+		self.wrapped_callbacks[callback] = wrapped_callback
 		super(WXWidget, self).register_callback(callback_type, wrapped_callback)
 		self.bind_event(callback_event, wrapped_callback)
+
+	def unregister_callback(self, callback_type, callback):
+		wrapped_callback = self.wrapped_callbacks.pop(callback)
+		super(WXWidget, self).unregister_callback(callback_type, wrapped_callback)
+		callback_event = self.resolve_callback_type(callback_type)
+		self.unbind_event(callback_event, wrapped_callback)
 
 	def bind_event(self, callback_event, wrapped_callback):
 		self.control.Bind(callback_event, wrapped_callback)
