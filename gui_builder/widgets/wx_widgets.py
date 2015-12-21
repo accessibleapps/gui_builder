@@ -1083,6 +1083,8 @@ class Menu(WXWidget):
 			self.get_parent_control().Append(self.control, title=label)
 
 	def popup(self, position=None):
+		if position is None:
+			position = wx.DefaultPosition
 		self.get_parent_control().PopupMenu(self.control, position)
 
 class MenuItem(WXWidget):
