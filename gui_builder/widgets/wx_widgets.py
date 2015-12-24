@@ -1195,15 +1195,17 @@ class DatePicker(WXWidget):
 		return datetime.date(value.year, value.month, value.day)
 
 	def set_value(self, value):
-		if hasattr(calendar, '_pydate2wxdate') and isinstance(value, (datetime.date, datetime.datetime)):
-			value = calendar._pydate2wxdate(value)
-		super(DatePicker, self).set_value(value)
+		super(DatePicker, self).set_value(self.convert_datetime(value))
+
+	def convert_datetime(self, datetime):
+		if hasattr(calendar, '_pydate2wxdate') and isinstance(datetime, (datetime.date, datetime.datetime)):
+			datetime = calendar._pydate2wxdate(datetime)
+		return datetime
+
 
 	def set_range(self, start, end):
-		if isinstance(start, (datetime.date, datetime.datetime)):
-			start = calendar._pydate2wxdate(start)
-		if isinstance(end, (datetime.date, datetime.datetime)):
-			end = calendar._pydate2wxdate(end)
+		start = self.convert_datetime(start)
+		end = self.convert_datetime(end)
 		self.control.SetRange(start, end)
 		self.range = range
 
