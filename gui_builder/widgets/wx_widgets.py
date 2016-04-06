@@ -9,6 +9,8 @@ import weakref
 
 from .widget import Widget
 import wx
+is_PHOENIX = 'phoenix' in wx.version()
+
 try:
 	from wx import calendar
 except ImportError:
