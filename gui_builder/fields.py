@@ -560,3 +560,6 @@ class ProgressBar(GUIField):
 class ToolBarItem(GUIField):
 	widget_type = widgets.ToolBarItem
 
+class Image(GUIField):
+	widget_type = widgets.StaticBitmap
+
