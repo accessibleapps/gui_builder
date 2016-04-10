@@ -1252,7 +1252,7 @@ class TreeView(WXWidget):
 			image = -1
 		if selected_image is None:
 			selected_image = -1
-		if data is not None:
+		if data is not None and not is_phoenix:
 			data = wx.TreeItemData(data)
 		return self.control.AddRoot(text, image, selected_image, data)
 
