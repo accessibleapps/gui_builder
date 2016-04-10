@@ -1343,3 +1343,7 @@ class ToolBarItem(WXWidget):
 
 	def bind_event(self, callback_type, callback):
 		self.parent.bind_event(callback_type, callback, id=self.control)
+
+
+class StaticBitmap(WXWidget):
+	control_type = wx.StaticBitmap
