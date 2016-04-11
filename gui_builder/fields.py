@@ -548,8 +548,8 @@ class TreeView(GUIField):
 	def select_item(self, item):
 		self.widget.select_item(item)
 
-	def get_py_data(self, item):
-		return self.widget.get_py_data(item)
+	def get_data(self, item):
+		return self.widget.get_data(item)
 
 	def set_item_has_children(self, item, val):
 		self.widget.set_item_has_children(item, val)

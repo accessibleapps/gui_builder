@@ -9,7 +9,7 @@ import weakref
 
 from .widget import Widget
 import wx
-is_PHOENIX = 'phoenix' in wx.version()
+IS_PHOENIX = 'phoenix' in wx.version()
 
 try:
 	from wx import calendar
@@ -1256,7 +1256,7 @@ class TreeView(WXWidget):
 			image = -1
 		if selected_image is None:
 			selected_image = -1
-		if data is not None and not is_phoenix:
+		if data is not None and not IS_PHOENIX:
 			data = wx.TreeItemData(data)
 		return self.control.AddRoot(text, image, selected_image, data)
 
@@ -1274,7 +1274,7 @@ class TreeView(WXWidget):
 			if self.image_list is None:
 				self.create_image_list(image.Width, image.Height)
 			image = self.image_list.Add(image.ConvertToBitmap())
-		if data is not None:
+		if data is not None and not IS_PHOENIX:
 			data = wx.TreeItemData(data)
 		return self.control.AppendItem(parent, unicode(text), image, selected_image, data)
 
@@ -1298,7 +1298,9 @@ class TreeView(WXWidget):
 	def select_item(self, item):
 		self.control.SelectItem(item)
 
-	def get_py_data(self, item):
+	def get_data(self, item):
+		if IS_PHOENIX:
+			return self.control.GetItemData(item)
 		return self.control.GetPyData(item)
 
 	def set_item_has_children(self, item, val):
