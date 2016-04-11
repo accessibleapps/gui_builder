@@ -1245,6 +1245,10 @@ class TreeView(WXWidget):
 	event_prefix = 'EVT_TREE'
 	default_callback_type = 'SEL_CHANGED'
 
+	def __init__(self, *args, **kwargs):
+		super(TreeView, self).__init__(*args, **kwargs)
+		self.image_list = None
+
 	def add_root(self, text=None, image=None, selected_image=None, data=None):
 		if text is None:
 			text = ""
@@ -1266,12 +1270,24 @@ class TreeView(WXWidget):
 			image = -1
 		if selected_image is None:
 			selected_image = -1
+		if isinstance(image, wx.Image):
+			if self.image_list is None:
+				self.create_image_list(image.Width, image.Height)
+			image = self.image_list.Add(image.ConvertToBitmap())
 		if data is not None:
 			data = wx.TreeItemData(data)
 		return self.control.AppendItem(parent, unicode(text), image, selected_image, data)
 
+	def create_image_list(self, width, height):
+		self.image_list = wx.ImageList(32, 32)
+		self.control.AssignImageList(self.image_list)
+
 	def clear(self):
 		self.control.DeleteAllItems()
+		if self.image_list is not None:
+			self.image_list.RemoveAll()
+			self.image_list = None
+
 
 	def delete(self, item):
 		self.control.Delete(item)
