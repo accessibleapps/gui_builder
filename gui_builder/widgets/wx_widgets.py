@@ -1365,3 +1365,6 @@ class ToolBarItem(WXWidget):
 
 class StaticBitmap(WXWidget):
 	control_type = wx.StaticBitmap
+
+	def load_image(self, image):
+		return self.control.SetBitmap(wx.BitmapFromImage(image))
