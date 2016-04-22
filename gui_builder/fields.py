@@ -563,3 +563,5 @@ class ToolBarItem(GUIField):
 class Image(GUIField):
 	widget_type = widgets.StaticBitmap
 
+	def load_image(self, image):
+		return self.widget.load_image(image)
