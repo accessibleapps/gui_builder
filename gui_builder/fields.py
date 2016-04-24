@@ -22,7 +22,7 @@ class UnboundField(object):
 		return self.field(bound_name=name, parent=parent, extra_callbacks=self.extra_callbacks, *self.args, **kwargs)
 
 	def add_callback(self, trigger=None):
-		if not isinstance(trigger, basestring):
+		if not isinstance(trigger, str):
 			self.kwargs['callback'] = trigger
 			return trigger
 		def add_callback_decorator(function):
