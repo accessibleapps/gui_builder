@@ -135,7 +135,7 @@ class BaseForm(GUIField):
 
 	def set_default_focus(self):
 		"""Sets focus to the field on this form which was preset to be the default focused field."""
-		for field in self:
+		for field in self.get_all_children():
 			if field.default_focus and field.can_be_focused():
 				field.set_focus()
 				logger.debug("Setting default focus to %r" % field)
