@@ -15,7 +15,12 @@ try:
 	from wx import calendar
 except ImportError:
 	from wx.lib import calendar
-import wx.dataview
+
+try:
+ import wx.dataview as dataview
+except ImportError:
+ dataview = None
+
 try:
 	import wx.adv
 except ImportError:
@@ -771,45 +776,45 @@ class ListViewColumn(WXWidget):
 		for column, subitem in enumerate(item):
 			self.control.SetStringItem(index, column, subitem)
 
+if dataview:
+	class DataView(ListView):
+		control_type = dataview.DataViewListCtrl
+		event_prefix = 'EVT_DATAVIEW'
+		style_prefix = ""
+		event_module = dataview
+		default_callback_type = 'selection_changed'
 
-class DataView(ListView):
-	control_type = wx.dataview.DataViewListCtrl
-	event_prefix = 'EVT_DATAVIEW'
-	style_prefix = ""
-	event_module = wx.dataview
-	default_callback_type = 'selection_changed'
+		def add_item(self, item):
+			self.control.AppendItem(item)
 
-	def add_item(self, item):
-		self.control.AppendItem(item)
+		def insert_item(self, index, item):
+			return self.control.InsertItem(index, item)
 
-	def insert_item(self, index, item):
-		return self.control.InsertItem(index, item)
+		def get_count(self):
+			return self.control.GetStore().GetCount()
 
-	def get_count(self):
-		return self.control.GetStore().GetCount()
+		def get_column_count(self):
+			return self.control.GetStore().GetColumnCount()
 
-	def get_column_count(self):
-		return self.control.GetStore().GetColumnCount()
+		def get_index(self):
+			return translate_none(self.control.GetSelectedRow())
+		
+		def set_index(self, index):
+			if index is None:
+				return
+			index = int(index)
+			if index == 0 and self.get_count() == 0:
+				return
+			self.control.SelectRow(index)
 
-	def get_index(self):
-		return translate_none(self.control.GetSelectedRow())
-	
-	def set_index(self, index):
-		if index is None:
-			return
-		index = int(index)
-		if index == 0 and self.get_count() == 0:
-			return
-		self.control.SelectRow(index)
+		def create_column(self, column_number, label, width, format):
+			self.control.AppendTextColumn(label, align=format, width=width)
 
-	def create_column(self, column_number, label, width, format):
-		self.control.AppendTextColumn(label, align=format, width=width)
+		def get_item_column(self, index, column):
+			return self.control.GetTextValue(index, column)
 
-	def get_item_column(self, index, column):
-		return self.control.GetTextValue(index, column)
-
-	def set_item_column(self, index, column, data):
-		self.control.SetTextValue(data, index, column)
+		def set_item_column(self, index, column, data):
+			self.control.SetTextValue(data, index, column)
 
 class SpinBox(WXWidget):
 	control_type = wx.SpinCtrl
