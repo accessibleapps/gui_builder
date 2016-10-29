@@ -33,6 +33,16 @@ import platform
 import gui_builder
 import ctypes
 
+try:
+	unicode
+except NameError:
+	unicode = str
+
+try:
+	PyDeadObjectError = wx._core.PyDeadObjectError
+except AttributeError:
+	PyDeadObjectError = RuntimeError
+
 UNFOCUSABLE_CONTROLS = (wx.StaticText, wx.Gauge, ) #controls which cannot directly take focus
 
 def inheritors(klass):
@@ -79,7 +89,7 @@ def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
 	if modules is None:
 		modules = [wx]
 	answer = {result_key:0}
-	for k, v in attrs.iteritems():
+	for k, v in attrs.items():
 		if v is not True:
 			answer[k] = v
 			continue
@@ -314,7 +324,7 @@ class WXWidget(Widget):
 			self.label_control.Destroy()
 		try:
 			self.control.Destroy()
-		except wx._core.PyDeadObjectError:
+		except PyDeadObjectError:
 			pass
 
 	def hide(self):

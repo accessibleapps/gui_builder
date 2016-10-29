@@ -4,6 +4,8 @@ logger = getLogger('gui_builder.forms')
 import platform
 import traceback
 
+import six
+
 from .fields import GUIField, ChoiceField
 from .widgets import wx_widgets as widgets
 
@@ -18,7 +20,7 @@ class BaseForm(GUIField):
 		for name, unbound_field in fields:
 			self.add_child(name, unbound_field)
 		working_kwargs = dict(kwargs)
-		for key, value in working_kwargs.iteritems():
+		for key, value in six.iteritems(working_kwargs):
 			try:
 				self[key].default_value = value
 				kwargs.pop(key)
@@ -191,8 +193,7 @@ class FormMeta(type):
 			cls._unbound_fields = None
 		type.__delattr__(cls, name)
 
-class Form(BaseForm):
-	__metaclass__ = FormMeta
+class Form(six.with_metaclass(FormMeta, BaseForm)):
 
 	def __init__(self, *args, **kwargs):
 		self._extra_fields = []

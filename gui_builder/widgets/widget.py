@@ -19,7 +19,7 @@ class Widget(object):
 
 
 	def register_unregistered_callbacks(self):
-		for key, value in dict(self.unregistered_callbacks).iteritems():
+		for key, value in dict(self.unregistered_callbacks).items():
 			self.register_callback(key, value)
 			del self.unregistered_callbacks[key]
 
