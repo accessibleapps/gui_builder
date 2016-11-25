@@ -567,3 +567,12 @@ class Image(GUIField):
 
 	def load_image(self, image):
 		return self.widget.load_image(image)
+
+class SpinBox(GUIField):
+	widget_type = widgets.SpinBox
+
+	def set_min(self, min):
+		self.widget.set_min(min)
+
+	def set_max(self, max):
+		self.control.set_max(max)
