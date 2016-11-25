@@ -831,6 +831,25 @@ class SpinBox(WXWidget):
 	style_prefix = "SP"
 	default_callback_type = "SPINCTRL"
 
+	def __init__(self, min=0, max=100, *args, **kwargs):
+		super(SpinBox, self).__init__(*args, **kwargs)
+		self.min = min
+		self.max = max
+
+
+	def render(self, *args, **kwargs):
+		super(SpinBox, self).render(*args, **kwargs)
+		self.set_min(self.min)
+		self.set_max(self.max)
+
+	def set_min(self, min):
+		self.control.SetMin(min)
+		self.min = min
+
+	def set_max(self, max):
+		self.control.SetMax(max)
+		self.max = max
+
 class ButtonSizer(WXWidget):
 	control_type = wx.StdDialogButtonSizer
 
