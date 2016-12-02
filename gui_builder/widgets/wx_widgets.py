@@ -967,7 +967,9 @@ class BaseFrame(BaseContainer):
 		return self.control.Maximize(True)
 
 	def restore(self):
-		return self.control.Restore()
+		if hasattr(self.control, 'Restore'):
+			return self.control.Restore()
+		return self.control.Maximize(False)
 
 	def minimize(self):
 		return self.control.Maximize(False)
