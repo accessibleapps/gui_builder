@@ -1125,6 +1125,9 @@ class Menu(WXWidget):
 			position = wx.DefaultPosition
 		self.get_parent_control().PopupMenu(self.control, position)
 
+	def destroy_item(self, item):
+		self.control.DestroyItem(item.control)
+
 class MenuItem(WXWidget):
 	control_type = wx.MenuItem
 	default_callback_type = "MENU"
@@ -1185,6 +1188,9 @@ class MenuItem(WXWidget):
 
 	def set_as_mac_preferences_menu_item(self):
 		wx.GetApp().SetMacPreferencesMenuItemId(self.control_id)
+
+	def destroy(self):
+		self.parent.destroy_item(self)
 
 class SubMenu(Menu):
 
