@@ -6,6 +6,10 @@ import traceback
 
 
 from .widgets import wx_widgets as widgets
+try:
+	unicode
+except NameError:
+	unicode = str
 
 class UnboundField(object):
 	creation_counter = 0
