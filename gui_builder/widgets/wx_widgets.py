@@ -874,7 +874,7 @@ class ButtonSizer(WXWidget):
 						pass
 		control_kwargs = self.translate_control_arguments(**kwargs)
 		self.control = self.parent.control.CreateStdDialogButtonSizer(**control_kwargs)
-		for control_id, callback in callbacks.itervalues():
+		for control_id, callback in callbacks.values():
 			for child_sizer in self.control.GetChildren():
 				window = child_sizer.GetWindow()
 				if window is not None and window.GetId() == control_id:
