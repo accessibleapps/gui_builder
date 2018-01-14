@@ -295,8 +295,9 @@ class WXWidget(Widget):
 	def find_callback_in_dict(self, callback):
 		dic = dict(inspect.getmembers(self.field))
 		dic.pop('callback', None)
-		for val in dic.itervalues():
-			if hasattr(val, 'im_func') and val.im_func is callback:
+		for val in dic.values():
+			func = getattr(val, '__func__', getattr(val, 'im_func', None))
+			if func is callback:
 				return True
 
 	@property
@@ -1361,7 +1362,7 @@ class ToolBar(WXWidget):
 		self.tool_bitmap_size = tool_bitmap_size
 
 	def add_simple_tool(self, id=wx.ID_ANY, bitmap=wx.NullBitmap, short_text="", *args, **kwargs):
-		if isinstance(bitmap, basestring):
+		if bitmap is not wx.NullBitmap:
 			bitmap = wx.Image(bitmap, wx.BITMAP_TYPE_PNG).Scale(quality=wx.IMAGE_QUALITY_HIGH, *self.tool_bitmap_size).ConvertToBitmap()
 		short_text = unicode(short_text)
 		if hasattr(self.control, 'AddSimpleTool'):
