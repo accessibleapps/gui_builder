@@ -194,7 +194,10 @@ class GUIField(object):
 		while next_field is not None:
 			if hasattr(next_field, '_last_enabled_descendant') and next_field._last_enabled_descendant is not None:
 				next_field._last_enabled_descendant = None
-			next_field = next_field.parent
+			if hasattr(next_field.parent, 'widget'):
+				next_field = next_field.parent
+			else:
+				break
 
 	def is_enabled(self):
 		return self.widget.enabled
