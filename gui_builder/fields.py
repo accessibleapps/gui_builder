@@ -238,6 +238,7 @@ class GUIField(object):
 		logger.debug("Destroyed widget for field %r" % self)
 
 	def __del__(self):
+		logger.debug("Automatically destroying %r" % self)
 		if self.widget is None:
 			return
 		self.destroy()
