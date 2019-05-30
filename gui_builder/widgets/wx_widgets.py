@@ -498,9 +498,8 @@ class Text(BaseText):
 		if 'style' not in res:
 			return res
 		if res['style'] & wx.TE_READONLY:
-			if not (res['style'] & wx.TE_MULTILINE):
-				res['style'] |= wx.TE_NO_VSCROLL
-			res['style'] |= wx.TE_MULTILINE
+			#Fix: ReadOnly TextCtrl's fail to appear in tab order.
+			self.control.AcceptsFocusFromKeyboard = lambda:True
 		return res
 
 	def get_number_of_lines(self):
