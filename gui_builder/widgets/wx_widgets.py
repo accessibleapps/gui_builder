@@ -552,15 +552,8 @@ class Text(BaseText):
     def render(self, *args, **kwargs):
         super(Text, self).render(*args, **kwargs)
         self.register_callback("char_hook", self.on_keypress)
-
-    def translate_control_arguments(self, **kwargs):
-        res = super(Text, self).translate_control_arguments(**kwargs)
-        if "style" not in res:
-            return res
-        if res["style"] & wx.TE_READONLY:
-            # Fix: ReadOnly TextCtrl's fail to appear in tab order.
-            self.control.AcceptsFocusFromKeyboard = lambda: True
-        return res
+        # Fix: ReadOnly TextCtrl's fail to appear in tab order.
+        self.control.AcceptsFocusFromKeyboard = lambda: True
 
     def get_number_of_lines(self):
         return self.control.GetNumberOfLines()
