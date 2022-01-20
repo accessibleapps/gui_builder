@@ -61,7 +61,7 @@ class BaseForm(GUIField):
     def get_first_child(self):
         """Returns the first child field of this form."""
         try:
-            return self.get_children().next()
+            return next(self.get_children())
         except StopIteration:
             return
 
