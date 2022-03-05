@@ -764,13 +764,13 @@ class ListView(ChoiceWidget):
 
     def get_item(self, index):
         res = []
-        for column in xrange(self.get_column_count()):
+        for column in range(self.get_column_count()):
             res.append(self.get_item_column(index, column))
         return tuple(res)
 
     def get_items(self):
         res = []
-        for num in xrange(self.get_count()):
+        for num in range(self.get_count()):
             res.append(self.get_item(num))
         return res
 
@@ -1145,7 +1145,7 @@ class Notebook(BaseContainer):
         self.bind_event(wx.EVT_KEY_UP, key_down_up)
 
     def find_page_number(self, page):
-        for page_num in xrange(self.control.GetPageCount()):
+        for page_num in range(self.control.GetPageCount()):
             if self.control.GetPage(page_num) is page.control:
                 return page_num
 
