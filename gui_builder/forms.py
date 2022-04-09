@@ -35,14 +35,14 @@ class BaseForm(GUIField):
 
     def set_values(self, values):
         """Given a dictionary mapping field names to values, sets fields on this form to the values provided."""
-        for k, v in values.iteritems():
+        for k, v in values.items():
             self[k].default_value = v
             if self.is_rendered:
                 self[k].set_value(v)
 
     def __iter__(self):
         """Iterate over this form's fields."""
-        return self._fields.itervalues()
+        return self._fields.values()
 
     def get_children(self):
         """Returns a generator which produces children of this form, but not their children."""
