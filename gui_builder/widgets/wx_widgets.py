@@ -1319,9 +1319,24 @@ class StatusBar(WXWidget):
 
 
 class Link(WXWidget):
-    control_type = hyperlink.HyperLinkCtrl
-    default_callback_type = "hyperlink"
+    if hasattr(wx, "adv"):
+        control_type = wx.adv.HyperlinkCtrl
+        event_module = wx.adv
+        default_callback_type = "hyperlink"
+    else:
+        control_type = hyperlink.HyperLinkCtrl
+        event_module = hyperlink
+        default_callback_type = "hyperlink_left"
     selflabeled = True
+
+    def create_control(self, **kwargs):
+        # prefer wx.adv.HyperlinkCtrl when available
+        # otherwise, standardize URL case for backward compatibility
+        if hasattr(wx, "adv") and "URL" in kwargs:
+            kwargs["url"] = kwargs["URL"]
+            del kwargs["URL"]
+        return super(Link, self).create_control(**kwargs)
+
 
 
 class DatePicker(WXWidget):
