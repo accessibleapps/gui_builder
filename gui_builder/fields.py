@@ -289,14 +289,7 @@ class GUIField(object):
         """Destroys the visual counterpart of this field."""
         self.widget.destroy()
         logger.debug("Destroyed widget for field %r" % self)
-
-    def __del__(self):
-        logger.debug("Automatically destroying %r" % self)
-        if self.widget is None:
-            return
-        self.destroy()
-        self.widget = None
-
+        
     def display(self):
         """Display's this field's widget on the screen."""
         self.widget.display()
