@@ -381,7 +381,10 @@ class WXWidget(Widget):
 
     def destroy(self):
         if getattr(self, "label_control", None) is not None:
-            self.label_control.Destroy()
+            try:
+                self.label_control.Destroy()
+            except PyDeadObjectError:
+                pass
         try:
             self.control.Destroy()
         except PyDeadObjectError:
