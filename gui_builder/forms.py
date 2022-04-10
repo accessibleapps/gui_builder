@@ -35,14 +35,14 @@ class BaseForm(GUIField):
 
     def set_values(self, values):
         """Given a dictionary mapping field names to values, sets fields on this form to the values provided."""
-        for k, v in values.iteritems():
+        for k, v in values.items():
             self[k].default_value = v
             if self.is_rendered:
                 self[k].set_value(v)
 
     def __iter__(self):
         """Iterate over this form's fields."""
-        return self._fields.itervalues()
+        return self._fields.values()
 
     def get_children(self):
         """Returns a generator which produces children of this form, but not their children."""
@@ -347,8 +347,14 @@ class Notebook(UIForm):
         return self.widget.set_selection(selection)
 
     def get_current_page(self):
-        """Returns the currently-selected page of the notebook as the original panel."""
-        return list(self.get_children())[self.get_selection()]
+        """Returns the currently-selected page of the notebook as the original panel. If there are no panels, returns None."""
+        children = list(self.get_children())
+        if not children:
+            return
+        selection = self.get_selection()
+        if selection == -1:
+            return
+        return children[selection]
 
     def set_current_page(self, page):
         """Given a panel which is currently in the notebook, sets focus to it."""

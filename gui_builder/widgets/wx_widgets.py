@@ -64,7 +64,7 @@ def inheritors(klass):
 
 
 is_labeled = lambda control: is_subclass_or_instance(
-    control, [cls for cls in inheriters(WXWidget) if cls.selflabeled]
+    control, [cls for cls in inheritors(WXWidget) if cls.selflabeled]
 )
 
 MODAL_RESULTS = {
