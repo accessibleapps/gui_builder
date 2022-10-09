@@ -1,14 +1,11 @@
+from .widgets import wx_widgets as widgets
+from .fields import GUIField, ChoiceField
+import six
+import traceback
+import platform
 from logging import getLogger
 
 logger = getLogger("gui_builder.forms")
-
-import platform
-import traceback
-
-import six
-
-from .fields import GUIField, ChoiceField
-from .widgets import wx_widgets as widgets
 
 
 class BaseForm(GUIField):
@@ -152,7 +149,8 @@ class BaseForm(GUIField):
         child = self.get_first_focusable_child()
         if child is not None:
             child.set_focus()
-            logger.debug("Setting default focus to first focusable child %r" % child)
+            logger.debug(
+                "Setting default focus to first focusable child %r" % child)
             return
         self.set_focus()
 

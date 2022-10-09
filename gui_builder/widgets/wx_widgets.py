@@ -1,15 +1,21 @@
+import ctypes
+
+import platform
+from wx.lib.agw import hyperlink
+from wx.lib import sized_controls as sc
+from wx.lib import intctrl
+import wx
+from .widget import Widget
+from .. import APPLY, CANCEL, CLOSE, FIND, NO, OK, YES, VETO
+import weakref
+import sys
+import re
+import inspect
+import datetime
 from logging import getLogger
 
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
-import datetime
-import inspect
-import re
-import sys
-import weakref
-
-from .widget import Widget
-import wx
 
 IS_PHOENIX = "phoenix" in wx.version()
 
@@ -27,13 +33,7 @@ try:
     import wx.adv
 except ImportError:
     pass
-from wx.lib import intctrl
-from wx.lib import sized_controls as sc
-from wx.lib.agw import hyperlink
-import platform
 
-import gui_builder
-import ctypes
 
 try:
     unicode
@@ -63,16 +63,17 @@ def inheritors(klass):
     return subclasses
 
 
-is_labeled = lambda control: is_subclass_or_instance(
+def is_labeled(control): return is_subclass_or_instance(
     control, [cls for cls in inheritors(WXWidget) if cls.selflabeled]
 )
 
+
 MODAL_RESULTS = {
-    wx.ID_OK: gui_builder.OK,
-    wx.ID_APPLY: gui_builder.APPLY,
-    wx.ID_CANCEL: gui_builder.CANCEL,
-    wx.ID_CLOSE: gui_builder.CLOSE,
-    wx.ID_FIND: gui_builder.FIND,
+    wx.ID_OK: OK,
+    wx.ID_APPLY: APPLY,
+    wx.ID_CANCEL: CANCEL,
+    wx.ID_CLOSE: CLOSE,
+    wx.ID_FIND: FIND,
 }
 
 
@@ -106,10 +107,12 @@ def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
             continue
         for module in modules:
             try:
-                answer[result_key] |= find_wx_attribute(prefix, k, module=module)
+                answer[result_key] |= find_wx_attribute(
+                    prefix, k, module=module)
             except AttributeError:
                 try:
-                    answer[result_key] |= find_wx_attribute("", k, module=module)
+                    answer[result_key] |= find_wx_attribute(
+                        "", k, module=module)
                 except AttributeError:
                     continue
             break
@@ -168,7 +171,7 @@ def callback_wrapper(widget, callback):
             if not isinstance(e, SystemExit):
                 logger.exception("Error calling callback")
             raise
-        if result == gui_builder.VETO:
+        if result == VETO:
             evt.StopPropagation()
         elif not result:
             evt.Skip()
@@ -239,9 +242,8 @@ class WXWidget(Widget):
         kwargs = self.create_label_control(**kwargs)
         if "title" in kwargs:
             kwargs["title"] = unicode(kwargs["title"])
-        if "name" not in kwargs:
-            kwargs["name"] = ""
-        super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
+        super(WXWidget, self).create_control(
+            parent=self.get_parent_control(), **kwargs)
         if self.label_text:
             self.set_label(unicode(self.label_text))
         elif self.accessible_label:
@@ -302,12 +304,14 @@ class WXWidget(Widget):
 
         wrapped_callback = callback_wrapper(self, callback)
         self.wrapped_callbacks[callback] = wrapped_callback
-        super(WXWidget, self).register_callback(callback_type, wrapped_callback)
+        super(WXWidget, self).register_callback(
+            callback_type, wrapped_callback)
         self.bind_event(callback_event, wrapped_callback)
 
     def unregister_callback(self, callback_type, callback):
         wrapped_callback = self.wrapped_callbacks.pop(callback)
-        super(WXWidget, self).unregister_callback(callback_type, wrapped_callback)
+        super(WXWidget, self).unregister_callback(
+            callback_type, wrapped_callback)
         callback_event = self.resolve_callback_type(callback_type)
         self.unbind_event(callback_event, wrapped_callback)
 
@@ -820,13 +824,14 @@ class ListView(ChoiceWidget):
         if width is None:
             width = -1
         format = wx_attributes(format)
-        if not isinstance(format, (int, long)):
+        if not isinstance(format, (int)):
             format = wx.ALIGN_LEFT
         self.create_column(column_number, label, width=width, format=format)
         self._last_added_column = column_number
 
     def create_column(self, column_number, label, width, format):
-        self.control.InsertColumn(column_number, label, width=width, format=format)
+        self.control.InsertColumn(
+            column_number, label, width=width, format=format)
 
     def delete_column(self, column_number):
         self.control.DeleteColumn(column_number)
@@ -943,12 +948,14 @@ class ButtonSizer(WXWidget):
                 except AttributeError:
                     pass
         control_kwargs = self.translate_control_arguments(**kwargs)
-        self.control = self.parent.control.CreateStdDialogButtonSizer(**control_kwargs)
+        self.control = self.parent.control.CreateStdDialogButtonSizer(
+            **control_kwargs)
         for control_id, callback in callbacks.values():
             for child_sizer in self.control.GetChildren():
                 window = child_sizer.GetWindow()
                 if window is not None and window.GetId() == control_id:
-                    window.Bind(wx.EVT_BUTTON, callback_wrapper(self, callback))
+                    window.Bind(wx.EVT_BUTTON,
+                                callback_wrapper(self, callback))
                     logger.debug("Bound callback %s" % str(callback))
                     if window.GetId() == wx.ID_CLOSE:
                         self.parent.control.SetEscapeId(wx.ID_CLOSE)
@@ -1268,7 +1275,8 @@ class MenuItem(WXWidget):
         parent.control.Bind(callback_event, wrapped_callback, self.control)
         # Fix if we're called from a menu bar
         if isinstance(self.parent, SubMenu):
-            self.parent.control.Bind(callback_event, wrapped_callback, self.control)
+            self.parent.control.Bind(
+                callback_event, wrapped_callback, self.control)
 
     def render(self):
         super(MenuItem, self).render()
@@ -1339,7 +1347,6 @@ class Link(WXWidget):
             kwargs["url"] = kwargs["URL"]
             del kwargs["URL"]
         return super(Link, self).create_control(**kwargs)
-
 
 
 class DatePicker(WXWidget):
