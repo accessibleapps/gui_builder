@@ -656,6 +656,7 @@ class FixedSlider(wx.Slider):
         self.Bind(wx.EVT_CHAR, self.onSliderChar)
 
     def SetValue(self, i):
+        i = int(i)
         super(FixedSlider, self).SetValue(i)
         ctypes.windll.user32.NotifyWinEvent(
             self.EVENT_OBJECT_VALUECHANGE,
