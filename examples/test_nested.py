@@ -5,11 +5,11 @@ app = wx.App()
 
 
 class CheckBoxes(forms.Panel):
-    def do_something_fun(self):
-        # put some code here to be called when the checkbox is checked
-        pass
+    @fields.CheckBox(label="Frob!", default_value=True)
+    def frob(self, event):
+        # Code to be called when the checkbox is checked
+        print("Frob checkbox is now:", event.IsChecked())
 
-    frob = fields.CheckBox(label="Frob!", default_value=True, callback=do_something_fun)
     tob = fields.CheckBox(
         label="Tob!", default_value=True
     )  # this checkbox doesn't do anything special when it's clicked.
