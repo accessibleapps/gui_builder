@@ -1,51 +1,67 @@
-GUI_Builder
-=======================
+# GUI Builder
 
-The GUI_builder library is a powerful tool for creating graphical user interfaces (GUIs) in Python with a declarative and clean syntax. It is built on top of wxPython, a cross-platform GUI toolkit for the Python language. GUI_builder simplifies the process of designing and implementing complex user interfaces by allowing developers to define the structure and behavior of a GUI in a high-level, readable format.
+A declarative GUI framework for Python built on wxPython that makes creating complex interfaces simple and maintainable.
 
-Features
---------
-- Declarative syntax: Define your GUI layout and behavior in a structured and readable way.
-- Reusable components: Create custom reusable GUI components for consistent and maintainable code.
-- Event handling: Easily bind events to widget actions with clear callback definitions.
-- Data binding: Synchronize your GUI with your application's data model seamlessly.
+## Features
 
-Installation
-------------
-To install the library, you can use pip:
+- **Declarative Syntax**: Define your GUI layout using Python classes with a clean, readable syntax
+- **Automatic Layout**: Let the framework handle the positioning and sizing of your UI elements
+- **Event Handling**: Easily bind callbacks to UI events with decorators or direct assignment
+- **Form Management**: Automatic form validation and data binding
+- **Cross-Platform**: Works on Windows, macOS, and Linux through wxPython
+
+## Installation
 
 ```bash
 pip install gui_builder
 ```
 
-Getting Started
----------------
-Here's a simple example of how to create a basic window with a button:
+## Quick Example
 
 ```python
 import wx
 from gui_builder import fields, forms
 
-class MyFrame(forms.Frame):
-    output = fields.Text(multiline=True, readonly=True, min_size=(300, 100))
-    button = fields.Button(label="Click Me!")
+class SimpleForm(forms.Frame):
+    # Define UI elements as class attributes
+    name = fields.Text(label="Your Name", min_size=(200, -1))
+    greeting = fields.Button(label="Say Hello")
+    output = fields.Text(multiline=True, read_only=True, min_size=(300, 100))
+    
+    # Bind event handler with decorator
+    @greeting.add_callback
+    def on_greeting(self):
+        self.output.set_value(f"Hello, {self.name.get_value()}!")
 
-    @button
-    def click_me(self, event):
-        self.output.append("Button clicked!\n")
-
-app = wx.App()
-frame = MyFrame()
-frame.display()
-app.MainLoop()
+if __name__ == "__main__":
+    app = wx.App()
+    frame = SimpleForm(title="GUI Builder Demo", top_level_window=True)
+    frame.display()
+    app.MainLoop()
 ```
 
-In the example above, we define a frame with a single button. When the button is clicked, it prints a message to the console. This is just a glimpse of what you can do with GUI_builder. The library supports a wide range of widgets and allows for complex layouts and interactions.
+## More Examples
 
-Documentation
--------------
-For more detailed documentation, including a full list of available widgets and their properties, please refer to the `docs` directory in this repository.
+Check out the `examples` directory for more sample applications:
 
-License
--------
-This library is released under the MIT License. See the `LICENSE.txt` file for more details.
+- Basic forms and dialogs
+- Complex layouts
+- Custom controls
+- Data binding examples
+
+## Context Managers
+
+GUI Builder provides helpful context managers like `FreezeAndThaw` to optimize UI updates:
+
+```python
+from gui_builder.context_managers import FreezeAndThaw
+
+with FreezeAndThaw(my_text_control):
+    # Make multiple updates without flickering
+    my_text_control.set_value(large_text)
+    my_text_control.set_insertion_point(0)
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.txt file for details.
