@@ -406,6 +406,12 @@ class RadioButton(GUIField):
     widget_type = widgets.RadioButton
 
 
+class StaticBox(GUIField):
+    """A static box for grouping controls with a visible border and label"""
+
+    widget_type = widgets.StaticBox
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 

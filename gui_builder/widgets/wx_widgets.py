@@ -618,6 +618,11 @@ class RadioButton(WXWidget):
     selflabeled = True
 
 
+class StaticBox(WXWidget):
+    control_type = wx.StaticBox
+    selflabeled = True
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"
