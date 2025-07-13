@@ -627,6 +627,18 @@ class BitmapButton(WXWidget):
     control_type = wx.BitmapButton
     default_callback_type = "button"
 
+    def set_bitmap(self, bitmap_path):
+        """Set the bitmap from a file path"""
+        if isinstance(bitmap_path, str):
+            bitmap = wx.Bitmap(bitmap_path, wx.BITMAP_TYPE_ANY)
+        else:
+            bitmap = bitmap_path
+        self.control.SetBitmap(bitmap)
+
+    def set_bitmap_label(self, bitmap_path):
+        """Set the bitmap label (alias for set_bitmap)"""
+        self.set_bitmap(bitmap_path)
+
 
 class StaticLine(WXWidget):
     control_type = wx.StaticLine
@@ -646,16 +658,64 @@ class ContextHelpButton(WXWidget):
 class ActivityIndicator(WXWidget):
     control_type = wx.ActivityIndicator
 
+    def start(self):
+        """Start the activity indicator animation"""
+        self.control.Start()
+
+    def stop(self):
+        """Stop the activity indicator animation"""
+        self.control.Stop()
+
+    def is_running(self):
+        """Check if the activity indicator is currently running"""
+        return self.control.IsRunning()
+
 
 class InfoBar(WXWidget):
     control_type = wx.InfoBar
     selflabeled = True
+
+    def show_message(self, message, flags=wx.ICON_INFORMATION):
+        """Show a message in the info bar"""
+        self.control.ShowMessage(message, flags)
+
+    def dismiss(self):
+        """Dismiss/hide the info bar"""
+        self.control.Dismiss()
+
+    def set_message(self, message):
+        """Set the message text"""
+        self.show_message(message)
 
 
 class SpinButton(WXWidget):
     control_type = wx.SpinButton
     style_prefix = "SP"
     default_callback_type = "spin"
+
+    def __init__(self, min=0, max=100, *args, **kwargs):
+        super(SpinButton, self).__init__(*args, **kwargs)
+        self.min = min
+        self.max = max
+
+    def render(self, *args, **kwargs):
+        super(SpinButton, self).render(*args, **kwargs)
+        self.set_min(self.min)
+        self.set_max(self.max)
+
+    def set_min(self, min_val):
+        self.control.SetMin(min_val)
+        self.min = min_val
+
+    def set_max(self, max_val):
+        self.control.SetMax(max_val)
+        self.max = max_val
+
+    def get_value(self):
+        return self.control.GetValue()
+
+    def set_value(self, value):
+        self.control.SetValue(value)
 
 
 class ComboBox(ChoiceWidget):
