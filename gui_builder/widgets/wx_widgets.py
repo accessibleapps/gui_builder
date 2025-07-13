@@ -638,6 +638,11 @@ class AnyButton(WXWidget):
     selflabeled = True
 
 
+class ContextHelpButton(WXWidget):
+    control_type = wx.ContextHelpButton
+    default_callback_type = "button"
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"

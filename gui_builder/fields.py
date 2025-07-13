@@ -430,6 +430,12 @@ class AnyButton(GUIField):
     widget_type = widgets.AnyButton
 
 
+class ContextHelpButton(GUIField):
+    """A button that provides context-sensitive help"""
+
+    widget_type = widgets.ContextHelpButton
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 
