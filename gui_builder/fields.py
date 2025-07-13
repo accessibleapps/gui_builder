@@ -400,6 +400,12 @@ class CheckBox(GUIField):
     widget_type = widgets.CheckBox
 
 
+class RadioButton(GUIField):
+    """A radio button for single selection from a group"""
+
+    widget_type = widgets.RadioButton
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 
