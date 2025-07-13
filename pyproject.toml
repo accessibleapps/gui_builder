@@ -1,0 +1,8 @@
+[project]
+name = "gui-builder"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "wxpython>=4.2.3",
+]
