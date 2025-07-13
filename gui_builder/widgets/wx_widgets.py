@@ -688,6 +688,32 @@ class InfoBar(WXWidget):
         self.show_message(message)
 
 
+class CollapsiblePane(WXWidget):
+    control_type = wx.CollapsiblePane
+    default_callback_type = "collapsiblepane"
+    selflabeled = True
+
+    def expand(self):
+        """Expand the collapsible pane"""
+        self.control.Expand()
+
+    def collapse(self):
+        """Collapse the collapsible pane"""  
+        self.control.Collapse()
+
+    def is_expanded(self):
+        """Check if the pane is currently expanded"""
+        return self.control.IsExpanded()
+
+    def is_collapsed(self):
+        """Check if the pane is currently collapsed"""
+        return self.control.IsCollapsed()
+
+    def get_pane(self):
+        """Get the pane window that holds child controls"""
+        return self.control.GetPane()
+
+
 class SpinButton(WXWidget):
     control_type = wx.SpinButton
     style_prefix = "SP"

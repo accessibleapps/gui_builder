@@ -429,3 +429,28 @@ class ToolBar(UIForm):
 
 class FrameToolBar(ToolBar):
     widget_type = widgets.FrameToolBar
+
+
+class CollapsiblePane(UIForm):
+    """A collapsible pane that can expand/collapse to show/hide child controls"""
+    widget_type = widgets.CollapsiblePane
+
+    def expand(self):
+        """Expand the collapsible pane"""
+        return self.widget.expand()
+
+    def collapse(self):
+        """Collapse the collapsible pane"""
+        return self.widget.collapse()
+
+    def is_expanded(self):
+        """Check if the pane is currently expanded"""
+        return self.widget.is_expanded()
+
+    def is_collapsed(self):
+        """Check if the pane is currently collapsed"""
+        return self.widget.is_collapsed()
+
+    def get_pane(self):
+        """Get the pane window that holds child controls"""
+        return self.widget.get_pane()
