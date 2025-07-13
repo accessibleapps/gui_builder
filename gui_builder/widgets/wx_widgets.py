@@ -652,6 +652,12 @@ class InfoBar(WXWidget):
     selflabeled = True
 
 
+class SpinButton(WXWidget):
+    control_type = wx.SpinButton
+    style_prefix = "SP"
+    default_callback_type = "spin"
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"

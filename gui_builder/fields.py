@@ -448,6 +448,12 @@ class InfoBar(GUIField):
     widget_type = widgets.InfoBar
 
 
+class SpinButton(GUIField):
+    """A spin button control for numeric input"""
+
+    widget_type = widgets.SpinButton
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 
