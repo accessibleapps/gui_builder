@@ -424,6 +424,12 @@ class StaticLine(GUIField):
     widget_type = widgets.StaticLine
 
 
+class AnyButton(GUIField):
+    """Base button class for buttons with any label type"""
+
+    widget_type = widgets.AnyButton
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 

@@ -632,6 +632,12 @@ class StaticLine(WXWidget):
     control_type = wx.StaticLine
 
 
+class AnyButton(WXWidget):
+    control_type = wx.AnyButton
+    default_callback_type = "button"
+    selflabeled = True
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"
