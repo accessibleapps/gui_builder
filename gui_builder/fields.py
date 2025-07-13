@@ -436,6 +436,12 @@ class ContextHelpButton(GUIField):
     widget_type = widgets.ContextHelpButton
 
 
+class ActivityIndicator(GUIField):
+    """A control showing activity or progress indicator"""
+
+    widget_type = widgets.ActivityIndicator
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 

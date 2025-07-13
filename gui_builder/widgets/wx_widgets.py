@@ -643,6 +643,10 @@ class ContextHelpButton(WXWidget):
     default_callback_type = "button"
 
 
+class ActivityIndicator(WXWidget):
+    control_type = wx.ActivityIndicator
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"
