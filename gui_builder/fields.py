@@ -418,6 +418,12 @@ class BitmapButton(GUIField):
     widget_type = widgets.BitmapButton
 
 
+class StaticLine(GUIField):
+    """A static line for visual separation"""
+
+    widget_type = widgets.StaticLine
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 

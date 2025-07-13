@@ -628,6 +628,10 @@ class BitmapButton(WXWidget):
     default_callback_type = "button"
 
 
+class StaticLine(WXWidget):
+    control_type = wx.StaticLine
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"
