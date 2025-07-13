@@ -623,6 +623,11 @@ class StaticBox(WXWidget):
     selflabeled = True
 
 
+class BitmapButton(WXWidget):
+    control_type = wx.BitmapButton
+    default_callback_type = "button"
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"

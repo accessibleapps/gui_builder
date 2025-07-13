@@ -412,6 +412,12 @@ class StaticBox(GUIField):
     widget_type = widgets.StaticBox
 
 
+class BitmapButton(GUIField):
+    """A button that displays a bitmap image"""
+
+    widget_type = widgets.BitmapButton
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 
