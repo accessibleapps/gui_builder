@@ -146,19 +146,26 @@ def extract_event_data(event):
 def callback_wrapper(widget, callback):
     def wrapper(evt, *a, **k):
         a = list(a)
-        argspec = inspect.getargspec(callback)
+        # Use getfullargspec for Python 3.0+ or getargspec for older versions
+        if hasattr(inspect, 'getfullargspec'):
+            argspec = inspect.getfullargspec(callback)
+            keywords_attr = argspec.varkw
+        else:
+            argspec = inspect.getargspec(callback)
+            keywords_attr = argspec.keywords
+            
         if (
             argspec.args
             and argspec.args[0] == "self"
             and not hasattr(callback, "im_self")
-        ) or (argspec.varargs and argspec.keywords):
+        ) or (argspec.varargs and keywords_attr):
             try:
                 self = widget.find_event_target(callback)
             except ValueError:
                 self = None
             if self is not None:
                 a.insert(0, self)
-        if argspec.keywords is not None:
+        if keywords_attr is not None:
             k.update(extract_event_data(evt))
         if argspec.defaults is not None:
             extracted = extract_event_data(evt)
@@ -602,6 +609,12 @@ class StaticText(WXWidget):
 class CheckBox(WXWidget):
     control_type = wx.CheckBox
     default_callback_type = "checkbox"
+    selflabeled = True
+
+
+class RadioButton(WXWidget):
+    control_type = wx.RadioButton
+    default_callback_type = "radiobutton"
     selflabeled = True
 
 
