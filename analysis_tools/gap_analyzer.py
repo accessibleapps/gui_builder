@@ -21,7 +21,7 @@ def load_inventory_data() -> Dict[str, Any]:
     
     # Load wx controls inventory
     try:
-        with open('wx_controls_inventory.json', 'r') as f:
+        with open('../wx_controls_inventory.json', 'r') as f:
             data['wx_inventory'] = json.load(f)
         print(f"  ✅ Loaded {len(data['wx_inventory']['controls'])} wx controls")
     except FileNotFoundError:
@@ -30,7 +30,7 @@ def load_inventory_data() -> Dict[str, Any]:
     
     # Load wrapper analysis
     try:
-        with open('current_wrapper_analysis.json', 'r') as f:
+        with open('../current_wrapper_analysis.json', 'r') as f:
             data['wrapper_analysis'] = json.load(f)
         wrapped_count = len(data['wrapper_analysis']['coverage']['wrapped_controls'])
         print(f"  ✅ Loaded wrapper analysis ({wrapped_count} wrapped controls)")
@@ -200,6 +200,10 @@ def prioritize_missing_controls(
     # Convert wrapped controls to just names (remove wx. prefix)
     wrapped_names = {ctrl.replace('wx.', '') for ctrl in wrapped_controls}
     unwrapped_names = {ctrl.replace('wx.', '') for ctrl in unwrapped_controls}
+    
+    # Exclude base controls that shouldn't be wrapped directly
+    base_controls_to_exclude = {'Control', 'Window', 'WindowBase', 'Object', 'EvtHandler'}
+    unwrapped_names = unwrapped_names - base_controls_to_exclude
     
     for category, controls in categories.items():
         category_score = category_scores.get(category, 2)
