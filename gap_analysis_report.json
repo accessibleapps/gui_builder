@@ -1,0 +1,1999 @@
+{
+  "metadata": {
+    "generated_at": "2025-07-13T04:02:58.932593",
+    "total_wx_controls": 117,
+    "wrapped_controls": 27,
+    "unwrapped_controls": 83
+  },
+  "categories": {
+    "basic_controls": [
+      "ActivityIndicator",
+      "AnyButton",
+      "BitmapButton",
+      "BitmapToggleButton",
+      "Button",
+      "CheckBox",
+      "CheckListBox",
+      "CollapsiblePane",
+      "ContextHelpButton",
+      "Control",
+      "ControlWithItems",
+      "Gauge",
+      "GenericStaticBitmap",
+      "InfoBar",
+      "PreviewControlBar",
+      "Control",
+      "PreviewControlBar",
+      "RadioBox",
+      "RadioButton",
+      "ScrollBar",
+      "SpinButton",
+      "StaticBitmap",
+      "StaticBox",
+      "StaticBoxSizer",
+      "StaticLine",
+      "StaticText",
+      "StatusBar",
+      "StdDialogButtonSizer",
+      "TextCtrl",
+      "TextEntryDialog",
+      "ToggleButton",
+      "ToolBar"
+    ],
+    "container_controls": [
+      "Notebook",
+      "BookCtrlBase",
+      "Choicebook",
+      "Frame",
+      "HScrolledWindow",
+      "HVScrolledWindow",
+      "Listbook",
+      "MDIChildFrame",
+      "MDIChildFrameBase",
+      "MDIClientWindow",
+      "MDIParentFrame",
+      "MiniFrame",
+      "NonOwnedWindow",
+      "Notebook",
+      "Window",
+      "Panel",
+      "PopupTransientWindow",
+      "PopupWindow",
+      "PreviewFrame",
+      "Panel",
+      "PreviewFrame",
+      "ScrolledWindow",
+      "Window",
+      "ScrolledCanvas",
+      "ScrolledWindow",
+      "Simplebook",
+      "SplitterWindow",
+      "TDIChildFrame",
+      "TipWindow",
+      "Toolbook",
+      "TopLevelWindow",
+      "Treebook",
+      "VScrolledWindow",
+      "Window"
+    ],
+    "list_controls": [
+      "Choice",
+      "ComboBox",
+      "ComboCtrl",
+      "DirFilterListCtrl",
+      "FlexGridSizer",
+      "GridBagSizer",
+      "GridSizer",
+      "ListBox",
+      "ListCtrl",
+      "ListView",
+      "MultiChoiceDialog",
+      "RearrangeList",
+      "SingleChoiceDialog",
+      "TreeCtrl",
+      "VListBox"
+    ],
+    "input_controls": [
+      "CollapsibleHeaderCtrl",
+      "ColourPickerCtrl",
+      "DirPickerCtrl",
+      "FileCtrl",
+      "FilePickerCtrl",
+      "FontPickerCtrl",
+      "GenericDirCtrl",
+      "HeaderCtrl",
+      "HeaderCtrlSimple",
+      "PickerBase",
+      "RearrangeCtrl",
+      "SearchCtrl",
+      "Slider",
+      "SpinCtrl",
+      "SpinCtrlDouble"
+    ],
+    "graphics_controls": [
+      "PreviewCanvas"
+    ],
+    "layout_controls": [
+      "BoxSizer",
+      "Sizer",
+      "Sizer",
+      "WrapSizer"
+    ],
+    "advanced_controls": [],
+    "dialog_controls": [
+      "ColourDialog",
+      "Dialog",
+      "DirDialog",
+      "FileDialog",
+      "FindReplaceDialog",
+      "FontDialog",
+      "GenericMessageDialog",
+      "GenericProgressDialog",
+      "MessageDialog",
+      "NumberEntryDialog",
+      "PasswordEntryDialog",
+      "PrintAbortDialog",
+      "ProgressDialog",
+      "RearrangeDialog",
+      "RichMessageDialog"
+    ],
+    "uncategorized": [
+      "MenuBar"
+    ]
+  },
+  "prioritized_controls": [
+    {
+      "name": "RadioButton",
+      "category": "basic_controls",
+      "total_score": 4.5,
+      "category_score": 5,
+      "frequency_score": 4,
+      "complexity_score": 1,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "StaticBox",
+      "category": "basic_controls",
+      "total_score": 4.3,
+      "category_score": 5,
+      "frequency_score": 3,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "BitmapButton",
+      "category": "basic_controls",
+      "total_score": 4.2,
+      "category_score": 5,
+      "frequency_score": 3,
+      "complexity_score": 1,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "StaticLine",
+      "category": "basic_controls",
+      "total_score": 4.2,
+      "category_score": 5,
+      "frequency_score": 3,
+      "complexity_score": 1,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "Control",
+      "category": "basic_controls",
+      "total_score": 4.1,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 5,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "Control",
+      "category": "basic_controls",
+      "total_score": 4.1,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 5,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "StaticBoxSizer",
+      "category": "basic_controls",
+      "total_score": 4.0,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "TextEntryDialog",
+      "category": "basic_controls",
+      "total_score": 4.0,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "AnyButton",
+      "category": "basic_controls",
+      "total_score": 3.9,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "ContextHelpButton",
+      "category": "basic_controls",
+      "total_score": 3.9,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "ActivityIndicator",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "CollapsiblePane",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "ControlWithItems",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "InfoBar",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "PreviewControlBar",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "PreviewControlBar",
+      "category": "basic_controls",
+      "total_score": 3.8,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "SpinButton",
+      "category": "basic_controls",
+      "total_score": 3.7,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 3,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "Sizer",
+      "category": "layout_controls",
+      "total_score": 3.7,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 5,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "Sizer",
+      "category": "layout_controls",
+      "total_score": 3.7,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 5,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "BoxSizer",
+      "category": "layout_controls",
+      "total_score": 3.6,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "ToggleButton",
+      "category": "basic_controls",
+      "total_score": 3.4,
+      "category_score": 5,
+      "frequency_score": 3,
+      "complexity_score": 5,
+      "dependency_score": 3,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "WrapSizer",
+      "category": "layout_controls",
+      "total_score": 3.4,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "FileDialog",
+      "category": "dialog_controls",
+      "total_score": 3.4,
+      "category_score": 2,
+      "frequency_score": 4,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "MessageDialog",
+      "category": "dialog_controls",
+      "total_score": 3.4,
+      "category_score": 2,
+      "frequency_score": 4,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "GenericStaticBitmap",
+      "category": "basic_controls",
+      "total_score": 3.3,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 3,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "Window",
+      "category": "container_controls",
+      "total_score": 3.3,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 5,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Window",
+      "category": "container_controls",
+      "total_score": 3.3,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 5,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Window",
+      "category": "container_controls",
+      "total_score": 3.3,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 5,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "BitmapToggleButton",
+      "category": "basic_controls",
+      "total_score": 3.1,
+      "category_score": 5,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 3,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "Slider",
+      "category": "input_controls",
+      "total_score": 3.1,
+      "category_score": 3,
+      "frequency_score": 3,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "ColourDialog",
+      "category": "dialog_controls",
+      "total_score": 3.1,
+      "category_score": 2,
+      "frequency_score": 3,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "BookCtrlBase",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Choicebook",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "HScrolledWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "HVScrolledWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Listbook",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "MDIChildFrameBase",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "MDIClientWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "MiniFrame",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "NonOwnedWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "PopupTransientWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "PopupWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "PreviewFrame",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "PreviewFrame",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "ScrolledWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "ScrolledCanvas",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "ScrolledWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Simplebook",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "SplitterWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "TDIChildFrame",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "TipWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Toolbook",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "TopLevelWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "VScrolledWindow",
+      "category": "container_controls",
+      "total_score": 3.0,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "ListCtrl",
+      "category": "list_controls",
+      "total_score": 2.9,
+      "category_score": 3,
+      "frequency_score": 3,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "Treebook",
+      "category": "container_controls",
+      "total_score": 2.8,
+      "category_score": 4,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "MultiChoiceDialog",
+      "category": "list_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 4,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "VListBox",
+      "category": "list_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 4,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "CollapsibleHeaderCtrl",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "FileCtrl",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "HeaderCtrl",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "HeaderCtrlSimple",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "RearrangeCtrl",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "SpinCtrlDouble",
+      "category": "input_controls",
+      "total_score": 2.8,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 2,
+      "dependency_score": 2,
+      "implementation_effort": "2-4 hours"
+    },
+    {
+      "name": "DirDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "FindReplaceDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "FontDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "NumberEntryDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "PasswordEntryDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "PrintAbortDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "ProgressDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "RearrangeDialog",
+      "category": "dialog_controls",
+      "total_score": 2.8,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "SearchCtrl",
+      "category": "input_controls",
+      "total_score": 2.7,
+      "category_score": 3,
+      "frequency_score": 3,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "Choice",
+      "category": "list_controls",
+      "total_score": 2.6,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "ComboCtrl",
+      "category": "list_controls",
+      "total_score": 2.6,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "DirFilterListCtrl",
+      "category": "list_controls",
+      "total_score": 2.6,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "RearrangeList",
+      "category": "list_controls",
+      "total_score": 2.6,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 3,
+      "dependency_score": 2,
+      "implementation_effort": "4-8 hours"
+    },
+    {
+      "name": "PreviewCanvas",
+      "category": "graphics_controls",
+      "total_score": 2.6,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 1,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 hours"
+    },
+    {
+      "name": "SingleChoiceDialog",
+      "category": "list_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 4,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "ColourPickerCtrl",
+      "category": "input_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "DirPickerCtrl",
+      "category": "input_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "FontPickerCtrl",
+      "category": "input_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "GenericDirCtrl",
+      "category": "input_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "PickerBase",
+      "category": "input_controls",
+      "total_score": 2.4,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 2,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "FlexGridSizer",
+      "category": "list_controls",
+      "total_score": 2.2,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 2,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "GridBagSizer",
+      "category": "list_controls",
+      "total_score": 2.2,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 2,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "GridSizer",
+      "category": "list_controls",
+      "total_score": 2.2,
+      "category_score": 3,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 2,
+      "implementation_effort": "2-5 days"
+    },
+    {
+      "name": "GenericMessageDialog",
+      "category": "dialog_controls",
+      "total_score": 2.2,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "GenericProgressDialog",
+      "category": "dialog_controls",
+      "total_score": 2.2,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 4,
+      "dependency_score": 4,
+      "implementation_effort": "1-2 days"
+    },
+    {
+      "name": "RichMessageDialog",
+      "category": "dialog_controls",
+      "total_score": 2.0,
+      "category_score": 2,
+      "frequency_score": 2,
+      "complexity_score": 5,
+      "dependency_score": 4,
+      "implementation_effort": "2-5 days"
+    }
+  ],
+  "implementation_plan": {
+    "phases": {
+      "phase_1_critical": [
+        {
+          "name": "RadioButton",
+          "category": "basic_controls",
+          "total_score": 4.5,
+          "category_score": 5,
+          "frequency_score": 4,
+          "complexity_score": 1,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "StaticBox",
+          "category": "basic_controls",
+          "total_score": 4.3,
+          "category_score": 5,
+          "frequency_score": 3,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "BitmapButton",
+          "category": "basic_controls",
+          "total_score": 4.2,
+          "category_score": 5,
+          "frequency_score": 3,
+          "complexity_score": 1,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "StaticLine",
+          "category": "basic_controls",
+          "total_score": 4.2,
+          "category_score": 5,
+          "frequency_score": 3,
+          "complexity_score": 1,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "Control",
+          "category": "basic_controls",
+          "total_score": 4.1,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 5,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "Control",
+          "category": "basic_controls",
+          "total_score": 4.1,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 5,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "StaticBoxSizer",
+          "category": "basic_controls",
+          "total_score": 4.0,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "TextEntryDialog",
+          "category": "basic_controls",
+          "total_score": 4.0,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        }
+      ],
+      "phase_2_important": [
+        {
+          "name": "AnyButton",
+          "category": "basic_controls",
+          "total_score": 3.9,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "ContextHelpButton",
+          "category": "basic_controls",
+          "total_score": 3.9,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "ActivityIndicator",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "CollapsiblePane",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "ControlWithItems",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "InfoBar",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "PreviewControlBar",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "PreviewControlBar",
+          "category": "basic_controls",
+          "total_score": 3.8,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "SpinButton",
+          "category": "basic_controls",
+          "total_score": 3.7,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 3,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "Sizer",
+          "category": "layout_controls",
+          "total_score": 3.7,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 5,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "Sizer",
+          "category": "layout_controls",
+          "total_score": 3.7,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 5,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "BoxSizer",
+          "category": "layout_controls",
+          "total_score": 3.6,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "ToggleButton",
+          "category": "basic_controls",
+          "total_score": 3.4,
+          "category_score": 5,
+          "frequency_score": 3,
+          "complexity_score": 5,
+          "dependency_score": 3,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "WrapSizer",
+          "category": "layout_controls",
+          "total_score": 3.4,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "FileDialog",
+          "category": "dialog_controls",
+          "total_score": 3.4,
+          "category_score": 2,
+          "frequency_score": 4,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "MessageDialog",
+          "category": "dialog_controls",
+          "total_score": 3.4,
+          "category_score": 2,
+          "frequency_score": 4,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "GenericStaticBitmap",
+          "category": "basic_controls",
+          "total_score": 3.3,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 3,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "Window",
+          "category": "container_controls",
+          "total_score": 3.3,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 5,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Window",
+          "category": "container_controls",
+          "total_score": 3.3,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 5,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Window",
+          "category": "container_controls",
+          "total_score": 3.3,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 5,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "BitmapToggleButton",
+          "category": "basic_controls",
+          "total_score": 3.1,
+          "category_score": 5,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 3,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "Slider",
+          "category": "input_controls",
+          "total_score": 3.1,
+          "category_score": 3,
+          "frequency_score": 3,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "ColourDialog",
+          "category": "dialog_controls",
+          "total_score": 3.1,
+          "category_score": 2,
+          "frequency_score": 3,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "BookCtrlBase",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Choicebook",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "HScrolledWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "HVScrolledWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Listbook",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "MDIChildFrameBase",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "MDIClientWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "MiniFrame",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "NonOwnedWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "PopupTransientWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "PopupWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "PreviewFrame",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "PreviewFrame",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "ScrolledWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "ScrolledCanvas",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "ScrolledWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Simplebook",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "SplitterWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "TDIChildFrame",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "TipWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Toolbook",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "TopLevelWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "VScrolledWindow",
+          "category": "container_controls",
+          "total_score": 3.0,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        }
+      ],
+      "phase_3_useful": [
+        {
+          "name": "ListCtrl",
+          "category": "list_controls",
+          "total_score": 2.9,
+          "category_score": 3,
+          "frequency_score": 3,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "Treebook",
+          "category": "container_controls",
+          "total_score": 2.8,
+          "category_score": 4,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "MultiChoiceDialog",
+          "category": "list_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 4,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "VListBox",
+          "category": "list_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 4,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "CollapsibleHeaderCtrl",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "FileCtrl",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "HeaderCtrl",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "HeaderCtrlSimple",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "RearrangeCtrl",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "SpinCtrlDouble",
+          "category": "input_controls",
+          "total_score": 2.8,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 2,
+          "dependency_score": 2,
+          "implementation_effort": "2-4 hours"
+        },
+        {
+          "name": "DirDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "FindReplaceDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "FontDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "NumberEntryDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "PasswordEntryDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "PrintAbortDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "ProgressDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "RearrangeDialog",
+          "category": "dialog_controls",
+          "total_score": 2.8,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "SearchCtrl",
+          "category": "input_controls",
+          "total_score": 2.7,
+          "category_score": 3,
+          "frequency_score": 3,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "Choice",
+          "category": "list_controls",
+          "total_score": 2.6,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "ComboCtrl",
+          "category": "list_controls",
+          "total_score": 2.6,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "DirFilterListCtrl",
+          "category": "list_controls",
+          "total_score": 2.6,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "RearrangeList",
+          "category": "list_controls",
+          "total_score": 2.6,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 3,
+          "dependency_score": 2,
+          "implementation_effort": "4-8 hours"
+        },
+        {
+          "name": "PreviewCanvas",
+          "category": "graphics_controls",
+          "total_score": 2.6,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 1,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 hours"
+        },
+        {
+          "name": "SingleChoiceDialog",
+          "category": "list_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 4,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "ColourPickerCtrl",
+          "category": "input_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "DirPickerCtrl",
+          "category": "input_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "FontPickerCtrl",
+          "category": "input_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "GenericDirCtrl",
+          "category": "input_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "PickerBase",
+          "category": "input_controls",
+          "total_score": 2.4,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 2,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "FlexGridSizer",
+          "category": "list_controls",
+          "total_score": 2.2,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 2,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "GridBagSizer",
+          "category": "list_controls",
+          "total_score": 2.2,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 2,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "GridSizer",
+          "category": "list_controls",
+          "total_score": 2.2,
+          "category_score": 3,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 2,
+          "implementation_effort": "2-5 days"
+        },
+        {
+          "name": "GenericMessageDialog",
+          "category": "dialog_controls",
+          "total_score": 2.2,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "GenericProgressDialog",
+          "category": "dialog_controls",
+          "total_score": 2.2,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 4,
+          "dependency_score": 4,
+          "implementation_effort": "1-2 days"
+        },
+        {
+          "name": "RichMessageDialog",
+          "category": "dialog_controls",
+          "total_score": 2.0,
+          "category_score": 2,
+          "frequency_score": 2,
+          "complexity_score": 5,
+          "dependency_score": 4,
+          "implementation_effort": "2-5 days"
+        }
+      ],
+      "phase_4_nice_to_have": []
+    },
+    "effort_estimates": {
+      "phase_1_critical": "1-2 weeks",
+      "phase_2_important": "2-3 weeks",
+      "phase_3_useful": "3-4 weeks",
+      "phase_4_nice_to_have": "4+ weeks"
+    },
+    "statistics": {
+      "phase_1_critical": {
+        "count": 8,
+        "avg_score": 4.17,
+        "categories": [
+          "basic_controls"
+        ]
+      },
+      "phase_2_important": {
+        "count": 46,
+        "avg_score": 3.27,
+        "categories": [
+          "layout_controls",
+          "input_controls",
+          "dialog_controls",
+          "basic_controls",
+          "container_controls"
+        ]
+      },
+      "phase_3_useful": {
+        "count": 36,
+        "avg_score": 2.6,
+        "categories": [
+          "container_controls",
+          "graphics_controls",
+          "list_controls",
+          "dialog_controls",
+          "input_controls"
+        ]
+      },
+      "phase_4_nice_to_have": {
+        "count": 0,
+        "avg_score": 0,
+        "categories": []
+      }
+    }
+  }
+}

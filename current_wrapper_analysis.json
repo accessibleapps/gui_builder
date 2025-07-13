@@ -1,0 +1,3555 @@
+{
+  "metadata": {
+    "generated_at": "2025-07-13T04:01:24.184322",
+    "analyzer_version": "1.0.0"
+  },
+  "widgets_analysis": {
+    "widgets": {
+      "WXWidget": {
+        "name": "WXWidget",
+        "base_classes": [
+          "Widget"
+        ],
+        "attributes": {
+          "style_prefix": "",
+          "event_prefix": "EVT",
+          "event_module": "wx",
+          "style_module": null,
+          "selflabeled": false,
+          "unlabeled": false,
+          "focusable": true,
+          "default_callback_type": null,
+          "callback": null,
+          "label": ""
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "parent",
+              "label",
+              "accessible_label",
+              "callback",
+              "min_size",
+              "enabled",
+              "hidden",
+              "tool_tip_text",
+              "expand",
+              "proportion"
+            ]
+          },
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "create_label_control",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "set_accessible_label",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "register_callback",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_type",
+              "callback"
+            ]
+          },
+          {
+            "name": "unregister_callback",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_type",
+              "callback"
+            ]
+          },
+          {
+            "name": "bind_event",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_event",
+              "wrapped_callback"
+            ]
+          },
+          {
+            "name": "unbind_event",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_event",
+              "wrapped_callback"
+            ]
+          },
+          {
+            "name": "resolve_callback_type",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_type"
+            ]
+          },
+          {
+            "name": "find_event_target",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback"
+            ]
+          },
+          {
+            "name": "find_callback_in_dict",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback"
+            ]
+          },
+          {
+            "name": "enabled",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "enabled",
+            "docstring": null,
+            "args": [
+              "self",
+              "val"
+            ]
+          },
+          {
+            "name": "enable",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "disable",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "freeze",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "thaw",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "destroy",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "hide",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "show",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "is_shown",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_tool_tip_text",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_tool_tip_text",
+            "docstring": null,
+            "args": [
+              "self",
+              "text"
+            ]
+          },
+          {
+            "name": "display",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_parent_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_label",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_label",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "remove_child",
+            "docstring": null,
+            "args": [
+              "self",
+              "child"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": "Returns the most Pythonic representation of this control's current value.",
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "translate_control_arguments",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "is_focused",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_focus",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "can_be_focused",
+            "docstring": null,
+            "args": [
+              "cls"
+            ]
+          }
+        ],
+        "docstring": null,
+        "style_prefix": "",
+        "event_prefix": "EVT",
+        "selflabeled": false,
+        "unlabeled": false,
+        "focusable": true,
+        "default_callback_type": null
+      },
+      "ChoiceWidget": {
+        "name": "ChoiceWidget",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "get_items",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_items",
+            "docstring": null,
+            "args": [
+              "self",
+              "items"
+            ]
+          },
+          {
+            "name": "get_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "__getitem___",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "get_index",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_index",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "get_choice",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_count",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "delete_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "insert_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "update_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "clear",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "BaseText": {
+        "name": "BaseText",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "event_prefix": "EVT_TEXT"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "max_length"
+            ]
+          },
+          {
+            "name": "select_range",
+            "docstring": null,
+            "args": [
+              "self",
+              "start",
+              "end"
+            ]
+          },
+          {
+            "name": "get_length",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_insertion_point",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_insertion_point",
+            "docstring": null,
+            "args": [
+              "self",
+              "insertion_point"
+            ]
+          },
+          {
+            "name": "set_max_length",
+            "docstring": null,
+            "args": [
+              "self",
+              "length"
+            ]
+          },
+          {
+            "name": "get_line",
+            "docstring": null,
+            "args": [
+              "self",
+              "line_number"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_label",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "append",
+            "docstring": null,
+            "args": [
+              "self",
+              "text"
+            ]
+          },
+          {
+            "name": "write",
+            "docstring": null,
+            "args": [
+              "self",
+              "text"
+            ]
+          }
+        ],
+        "docstring": null,
+        "event_prefix": "EVT_TEXT"
+      },
+      "Text": {
+        "name": "Text",
+        "base_classes": [
+          "BaseText"
+        ],
+        "attributes": {
+          "control_type": "wx.TextCtrl",
+          "style_prefix": "TE",
+          "default_callback_type": "text"
+        },
+        "methods": [
+          {
+            "name": "on_keypress",
+            "docstring": null,
+            "args": [
+              "self",
+              "raw_key_code",
+              "modifiers"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_number_of_lines",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_insertion_point_from_x_y",
+            "docstring": null,
+            "args": [
+              "self",
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "get_x_y_from_insertion_point",
+            "docstring": null,
+            "args": [
+              "self",
+              "insertion_point"
+            ]
+          },
+          {
+            "name": "clear",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.TextCtrl",
+        "style_prefix": "TE",
+        "default_callback_type": "text"
+      },
+      "IntText": {
+        "name": "IntText",
+        "base_classes": [
+          "Text"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "StaticText": {
+        "name": "StaticText",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.StaticText",
+          "selflabeled": true
+        },
+        "methods": [
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.StaticText",
+        "selflabeled": true
+      },
+      "CheckBox": {
+        "name": "CheckBox",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.CheckBox",
+          "default_callback_type": "checkbox",
+          "selflabeled": true
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.CheckBox",
+        "selflabeled": true,
+        "default_callback_type": "checkbox"
+      },
+      "ComboBox": {
+        "name": "ComboBox",
+        "base_classes": [
+          "ChoiceWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.ComboBox",
+          "style_prefix": "CB",
+          "default_callback_type": "combobox"
+        },
+        "methods": [
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_label",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "select_all",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "insert_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.ComboBox",
+        "style_prefix": "CB",
+        "default_callback_type": "combobox"
+      },
+      "Button": {
+        "name": "Button",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.Button",
+          "default_callback_type": "button",
+          "selflabeled": true
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "default"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "translate_control_arguments",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "make_default",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.Button",
+        "selflabeled": true,
+        "default_callback_type": "button"
+      },
+      "FixedSlider": {
+        "name": "FixedSlider",
+        "base_classes": [
+          "<ast.Attribute object at 0x781974608130>"
+        ],
+        "attributes": {
+          "EVENT_OBJECT_VALUECHANGE": 32782,
+          "CHILDID_SELF": 0,
+          "OBJID_CLIENT": "<ast.UnaryOp object at 0x7819745f7ee0>"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "SetValue",
+            "docstring": null,
+            "args": [
+              "self",
+              "i"
+            ]
+          },
+          {
+            "name": "onSliderChar",
+            "docstring": null,
+            "args": [
+              "self",
+              "evt"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "Slider": {
+        "name": "Slider",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "style_prefix": "SL",
+          "default_callback_type": "slider"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "page_size",
+              "min_value",
+              "max_value"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_min_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "set_max_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "get_page_size",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_page_size",
+            "docstring": null,
+            "args": [
+              "self",
+              "page_size"
+            ]
+          },
+          {
+            "name": "set_line_size",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "get_line_size",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "style_prefix": "SL",
+        "default_callback_type": "slider"
+      },
+      "ScrollBar": {
+        "name": "ScrollBar",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.ScrollBar",
+          "style_prefix": "SB",
+          "default_callback_type": "scrollbar"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.ScrollBar",
+        "style_prefix": "SB",
+        "default_callback_type": "scrollbar"
+      },
+      "ListBox": {
+        "name": "ListBox",
+        "base_classes": [
+          "ChoiceWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.ListBox",
+          "style_prefix": "LB",
+          "default_callback_type": "listbox"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.ListBox",
+        "style_prefix": "LB",
+        "default_callback_type": "listbox"
+      },
+      "ListView": {
+        "name": "ListView",
+        "base_classes": [
+          "ChoiceWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.ListView",
+          "style_prefix": "LC",
+          "event_prefix": "EVT_LIST",
+          "default_callback_type": "ITEM_SELECTED"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "choices"
+            ]
+          },
+          {
+            "name": "get_index",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_index",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "get_count",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_column_count",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "get_items",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_item_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "column"
+            ]
+          },
+          {
+            "name": "set_item_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "column",
+              "data"
+            ]
+          },
+          {
+            "name": "add_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "set_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "update_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "set_items",
+            "docstring": null,
+            "args": [
+              "self",
+              "items"
+            ]
+          },
+          {
+            "name": "insert_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "delete_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "clear",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "add_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "column_number",
+              "label",
+              "width"
+            ]
+          },
+          {
+            "name": "create_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "column_number",
+              "label",
+              "width",
+              "format"
+            ]
+          },
+          {
+            "name": "delete_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "column_number"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.ListView",
+        "style_prefix": "LC",
+        "event_prefix": "EVT_LIST",
+        "default_callback_type": "ITEM_SELECTED"
+      },
+      "ListViewColumn": {
+        "name": "ListViewColumn",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "SpinBox": {
+        "name": "SpinBox",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.SpinCtrl",
+          "style_prefix": "SP",
+          "default_callback_type": "SPINCTRL"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "min",
+              "max"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_min",
+            "docstring": null,
+            "args": [
+              "self",
+              "min"
+            ]
+          },
+          {
+            "name": "set_max",
+            "docstring": null,
+            "args": [
+              "self",
+              "max"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.SpinCtrl",
+        "style_prefix": "SP",
+        "default_callback_type": "SPINCTRL"
+      },
+      "ButtonSizer": {
+        "name": "ButtonSizer",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.StdDialogButtonSizer"
+        },
+        "methods": [
+          {
+            "name": "translate_control_arguments",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.StdDialogButtonSizer"
+      },
+      "BaseContainer": {
+        "name": "BaseContainer",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "unlabeled": true
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "top_level_window"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_title",
+            "docstring": null,
+            "args": [
+              "self",
+              "title"
+            ]
+          },
+          {
+            "name": "get_title",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_label",
+            "docstring": null,
+            "args": [
+              "self",
+              "label"
+            ]
+          },
+          {
+            "name": "close",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "unlabeled": true
+      },
+      "BaseDialog": {
+        "name": "BaseDialog",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "display_modal",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "end_modal",
+            "docstring": null,
+            "args": [
+              "self",
+              "modal_result"
+            ]
+          },
+          {
+            "name": "get_modal_result",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "SizedDialog": {
+        "name": "SizedDialog",
+        "base_classes": [
+          "BaseDialog"
+        ],
+        "attributes": {},
+        "methods": [],
+        "docstring": null
+      },
+      "SizedPanel": {
+        "name": "SizedPanel",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {
+          "focusable": false
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "sizer_type"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "focusable": false
+      },
+      "BaseFrame": {
+        "name": "BaseFrame",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "maximized"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "maximize",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "restore",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "minimize",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "Frame": {
+        "name": "Frame",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {
+          "control_type": "wx.Frame"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.Frame"
+      },
+      "SizedFrame": {
+        "name": "SizedFrame",
+        "base_classes": [
+          "BaseFrame"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "get_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "MDIParentFrame": {
+        "name": "MDIParentFrame",
+        "base_classes": [
+          "BaseFrame"
+        ],
+        "attributes": {
+          "control_type": "wx.MDIParentFrame"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.MDIParentFrame"
+      },
+      "MDIChildFrame": {
+        "name": "MDIChildFrame",
+        "base_classes": [
+          "BaseFrame"
+        ],
+        "attributes": {
+          "control_type": "wx.MDIChildFrame"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.MDIChildFrame"
+      },
+      "Dialog": {
+        "name": "Dialog",
+        "base_classes": [
+          "BaseDialog"
+        ],
+        "attributes": {
+          "control_type": "wx.Dialog"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.Dialog"
+      },
+      "Panel": {
+        "name": "Panel",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {
+          "control_type": "wx.Panel",
+          "focusable": false
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.Panel",
+        "focusable": false
+      },
+      "Notebook": {
+        "name": "Notebook",
+        "base_classes": [
+          "BaseContainer"
+        ],
+        "attributes": {
+          "control_type": "wx.Notebook",
+          "event_prefix": "EVT_NOTEBOOK",
+          "default_callback_type": "page_changed"
+        },
+        "methods": [
+          {
+            "name": "add_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "name",
+              "item"
+            ]
+          },
+          {
+            "name": "delete_page",
+            "docstring": null,
+            "args": [
+              "self",
+              "page"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "find_page_number",
+            "docstring": null,
+            "args": [
+              "self",
+              "page"
+            ]
+          },
+          {
+            "name": "get_selection",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_selection",
+            "docstring": null,
+            "args": [
+              "self",
+              "selection"
+            ]
+          },
+          {
+            "name": "find_event_target",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.Notebook",
+        "event_prefix": "EVT_NOTEBOOK",
+        "default_callback_type": "page_changed"
+      },
+      "RadioBox": {
+        "name": "RadioBox",
+        "base_classes": [
+          "ChoiceWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.RadioBox",
+          "default_callback_type": "RADIOBOX",
+          "selflabeled": true,
+          "style_prefix": "RA"
+        },
+        "methods": [
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "get_items",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_items",
+            "docstring": null,
+            "args": [
+              "self",
+              "items"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.RadioBox",
+        "style_prefix": "RA",
+        "selflabeled": true,
+        "default_callback_type": "RADIOBOX"
+      },
+      "CheckListBox": {
+        "name": "CheckListBox",
+        "base_classes": [
+          "ListBox"
+        ],
+        "attributes": {
+          "default_callback_type": "CHECKLISTBOX",
+          "control_type": "wx.CheckListBox"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.CheckListBox",
+        "default_callback_type": "CHECKLISTBOX"
+      },
+      "FilePicker": {
+        "name": "FilePicker",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.FilePickerCtrl"
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.FilePickerCtrl"
+      },
+      "MenuBar": {
+        "name": "MenuBar",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.MenuBar",
+          "focusable": false,
+          "unlabeled": true
+        },
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "add_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "name",
+              "item"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.MenuBar",
+        "unlabeled": true,
+        "focusable": false
+      },
+      "Menu": {
+        "name": "Menu",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.Menu",
+          "focusable": false
+        },
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "popup",
+            "docstring": null,
+            "args": [
+              "self",
+              "position"
+            ]
+          },
+          {
+            "name": "destroy_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.Menu",
+        "focusable": false
+      },
+      "MenuItem": {
+        "name": "MenuItem",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.MenuItem",
+          "default_callback_type": "MENU",
+          "focusable": false,
+          "unlabled": true
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "hotkey",
+              "help_message",
+              "checkable"
+            ]
+          },
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "bind_event",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_event",
+              "wrapped_callback"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "enable",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "disable",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "check",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "uncheck",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_as_mac_about_menu_item",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_as_mac_exit_menu_item",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_as_mac_preferences_menu_item",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "destroy",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.MenuItem",
+        "focusable": false,
+        "default_callback_type": "MENU"
+      },
+      "SubMenu": {
+        "name": "SubMenu",
+        "base_classes": [
+          "Menu"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "StatusBar": {
+        "name": "StatusBar",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.StatusBar",
+          "style_prefix": "SB"
+        },
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.StatusBar",
+        "style_prefix": "SB"
+      },
+      "Link": {
+        "name": "Link",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "selflabeled": true
+        },
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null,
+        "selflabeled": true
+      },
+      "DatePicker": {
+        "name": "DatePicker",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "default_callback_type": "date_changed"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "range"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_value",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_value",
+            "docstring": null,
+            "args": [
+              "self",
+              "value"
+            ]
+          },
+          {
+            "name": "convert_datetime",
+            "docstring": null,
+            "args": [
+              "self",
+              "dt"
+            ]
+          },
+          {
+            "name": "set_range",
+            "docstring": null,
+            "args": [
+              "self",
+              "start",
+              "end"
+            ]
+          }
+        ],
+        "docstring": null,
+        "default_callback_type": "date_changed"
+      },
+      "VirtualListView": {
+        "name": "VirtualListView",
+        "base_classes": [
+          "<ast.Attribute object at 0x7819743c2980>"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "Append",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "SetItems",
+            "docstring": null,
+            "args": [
+              "self",
+              "items"
+            ]
+          },
+          {
+            "name": "OnGetItemText",
+            "docstring": null,
+            "args": [
+              "self",
+              "item",
+              "col"
+            ]
+          },
+          {
+            "name": "DeleteAllItems",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "SetStringItem",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "column",
+              "data"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "TreeView": {
+        "name": "TreeView",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.TreeCtrl",
+          "style_prefix": "TR",
+          "event_prefix": "EVT_TREE",
+          "default_callback_type": "SEL_CHANGED"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "add_root",
+            "docstring": null,
+            "args": [
+              "self",
+              "text",
+              "image",
+              "selected_image",
+              "data"
+            ]
+          },
+          {
+            "name": "get_root_item",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "append_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "parent",
+              "text",
+              "image",
+              "selected_image",
+              "data"
+            ]
+          },
+          {
+            "name": "create_image_list",
+            "docstring": null,
+            "args": [
+              "self",
+              "width",
+              "height"
+            ]
+          },
+          {
+            "name": "clear",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "delete",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "get_selection",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "select_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "get_data",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "set_item_has_children",
+            "docstring": null,
+            "args": [
+              "self",
+              "item",
+              "val"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.TreeCtrl",
+        "style_prefix": "TR",
+        "event_prefix": "EVT_TREE",
+        "default_callback_type": "SEL_CHANGED"
+      },
+      "ProgressBar": {
+        "name": "ProgressBar",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.Gauge",
+          "focusable": false
+        },
+        "methods": [],
+        "docstring": null,
+        "control_type": "wx.Gauge",
+        "focusable": false
+      },
+      "ToolBar": {
+        "name": "ToolBar",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.ToolBar",
+          "style_prefix": "TB"
+        },
+        "methods": [
+          {
+            "name": "__init__",
+            "docstring": null,
+            "args": [
+              "self",
+              "tool_bitmap_size"
+            ]
+          },
+          {
+            "name": "add_simple_tool",
+            "docstring": null,
+            "args": [
+              "self",
+              "id",
+              "bitmap",
+              "short_text"
+            ]
+          },
+          {
+            "name": "add_separator",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "bind_event",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_type",
+              "callback",
+              "id"
+            ]
+          },
+          {
+            "name": "realize",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "render",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_tool_bitmap_size",
+            "docstring": null,
+            "args": [
+              "self",
+              "tool_bitmap_size"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.ToolBar",
+        "style_prefix": "TB"
+      },
+      "FrameToolBar": {
+        "name": "FrameToolBar",
+        "base_classes": [
+          "ToolBar"
+        ],
+        "attributes": {},
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          }
+        ],
+        "docstring": null
+      },
+      "ToolBarItem": {
+        "name": "ToolBarItem",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "default_callback_type": "menu"
+        },
+        "methods": [
+          {
+            "name": "create_control",
+            "docstring": null,
+            "args": [
+              "self",
+              "bitmap",
+              "id"
+            ]
+          },
+          {
+            "name": "bind_event",
+            "docstring": null,
+            "args": [
+              "self",
+              "callback_type",
+              "callback"
+            ]
+          }
+        ],
+        "docstring": null,
+        "default_callback_type": "menu"
+      },
+      "StaticBitmap": {
+        "name": "StaticBitmap",
+        "base_classes": [
+          "WXWidget"
+        ],
+        "attributes": {
+          "control_type": "wx.StaticBitmap"
+        },
+        "methods": [
+          {
+            "name": "load_image",
+            "docstring": null,
+            "args": [
+              "self",
+              "image"
+            ]
+          }
+        ],
+        "docstring": null,
+        "control_type": "wx.StaticBitmap"
+      },
+      "DataView": {
+        "name": "DataView",
+        "base_classes": [
+          "ListView"
+        ],
+        "attributes": {
+          "event_prefix": "EVT_DATAVIEW",
+          "style_prefix": "",
+          "event_module": "dataview",
+          "default_callback_type": "selection_changed"
+        },
+        "methods": [
+          {
+            "name": "add_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "item"
+            ]
+          },
+          {
+            "name": "insert_item",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "item"
+            ]
+          },
+          {
+            "name": "get_count",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_column_count",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "get_index",
+            "docstring": null,
+            "args": [
+              "self"
+            ]
+          },
+          {
+            "name": "set_index",
+            "docstring": null,
+            "args": [
+              "self",
+              "index"
+            ]
+          },
+          {
+            "name": "create_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "column_number",
+              "label",
+              "width",
+              "format"
+            ]
+          },
+          {
+            "name": "get_item_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "column"
+            ]
+          },
+          {
+            "name": "set_item_column",
+            "docstring": null,
+            "args": [
+              "self",
+              "index",
+              "column",
+              "data"
+            ]
+          }
+        ],
+        "docstring": null,
+        "style_prefix": "",
+        "event_prefix": "EVT_DATAVIEW",
+        "default_callback_type": "selection_changed"
+      }
+    },
+    "patterns": {
+      "style_prefixes": [
+        "",
+        "LC",
+        "CB",
+        "LB",
+        "TB",
+        "SL",
+        "RA",
+        "SP",
+        "TE",
+        "TR",
+        "SB"
+      ],
+      "event_prefixes": [
+        "EVT_DATAVIEW",
+        "EVT",
+        "EVT_TREE",
+        "EVT_TEXT",
+        "EVT_LIST",
+        "EVT_NOTEBOOK"
+      ],
+      "base_classes": [
+        "ChoiceWidget",
+        "Widget",
+        "WXWidget",
+        "BaseText",
+        "Menu",
+        "BaseDialog",
+        "ToolBar",
+        "Text",
+        "<ast.Attribute object at 0x7819743c2980>",
+        "BaseFrame",
+        "<ast.Attribute object at 0x781974608130>",
+        "ListBox",
+        "ListView",
+        "BaseContainer"
+      ],
+      "control_types": [
+        "wx.Menu",
+        "wx.Frame",
+        "wx.Button",
+        "wx.StdDialogButtonSizer",
+        "wx.StaticText",
+        "wx.Dialog",
+        "wx.StatusBar",
+        "wx.MenuBar",
+        "wx.MenuItem",
+        "wx.MDIChildFrame",
+        "wx.Panel",
+        "wx.MDIParentFrame",
+        "wx.ListBox",
+        "wx.StaticBitmap",
+        "wx.ScrollBar",
+        "wx.RadioBox",
+        "wx.FilePickerCtrl",
+        "wx.CheckListBox",
+        "wx.ToolBar",
+        "wx.ListView",
+        "wx.Notebook",
+        "wx.TextCtrl",
+        "wx.CheckBox",
+        "wx.Gauge",
+        "wx.ComboBox",
+        "wx.SpinCtrl",
+        "wx.TreeCtrl"
+      ]
+    }
+  },
+  "fields_analysis": {
+    "fields": {
+      "UnboundField": {
+        "name": "UnboundField",
+        "base_classes": [
+          "object"
+        ],
+        "attributes": {
+          "creation_counter": 0,
+          "_GUI_FIELD": true
+        },
+        "docstring": null
+      },
+      "GUIField": {
+        "name": "GUIField",
+        "base_classes": [
+          "object"
+        ],
+        "attributes": {
+          "widget_type": null,
+          "__autolabel__": false,
+          "widget_args": "<ast.Tuple object at 0x78197465f040>",
+          "widget_kwargs": "<ast.Dict object at 0x78197465efb0>",
+          "callback": null,
+          "extra_callbacks": null,
+          "default_value": null
+        },
+        "docstring": null,
+        "widget_type": null
+      },
+      "Text": {
+        "name": "Text",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.Text"
+        },
+        "docstring": "A text field",
+        "widget_type": "widgets.Text"
+      },
+      "IntText": {
+        "name": "IntText",
+        "base_classes": [
+          "Text"
+        ],
+        "attributes": {
+          "widget_type": "widgets.IntText"
+        },
+        "docstring": "This text field will only allow the input of numbers.",
+        "widget_type": "widgets.IntText"
+      },
+      "Button": {
+        "name": "Button",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.Button"
+        },
+        "docstring": "A standard button",
+        "widget_type": "widgets.Button"
+      },
+      "CheckBox": {
+        "name": "CheckBox",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.CheckBox"
+        },
+        "docstring": "A standard Check Box",
+        "widget_type": "widgets.CheckBox"
+      },
+      "ButtonSizer": {
+        "name": "ButtonSizer",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ButtonSizer"
+        },
+        "docstring": null,
+        "widget_type": "widgets.ButtonSizer"
+      },
+      "ChoiceField": {
+        "name": "ChoiceField",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {},
+        "docstring": "A base class defining the methods available on choice fields."
+      },
+      "ComboBox": {
+        "name": "ComboBox",
+        "base_classes": [
+          "ChoiceField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ComboBox"
+        },
+        "docstring": "An Edit Combo Box. Pass read_only=True to the constructor for a combo box.",
+        "widget_type": "widgets.ComboBox"
+      },
+      "ListBox": {
+        "name": "ListBox",
+        "base_classes": [
+          "ChoiceField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ListBox"
+        },
+        "docstring": "A standard list box.",
+        "widget_type": "widgets.ListBox"
+      },
+      "RadioButtonGroup": {
+        "name": "RadioButtonGroup",
+        "base_classes": [
+          "ChoiceField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.RadioBox"
+        },
+        "docstring": "A group of choices, expressed as radio buttons.",
+        "widget_type": "widgets.RadioBox"
+      },
+      "ListViewColumn": {
+        "name": "ListViewColumn",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ListViewColumn"
+        },
+        "docstring": null,
+        "widget_type": "widgets.ListViewColumn"
+      },
+      "Slider": {
+        "name": "Slider",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.Slider"
+        },
+        "docstring": "A moveable slider.",
+        "widget_type": "widgets.Slider"
+      },
+      "FilePicker": {
+        "name": "FilePicker",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.FilePicker"
+        },
+        "docstring": null,
+        "widget_type": "widgets.FilePicker"
+      },
+      "MenuItem": {
+        "name": "MenuItem",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.MenuItem"
+        },
+        "docstring": "An item in a menu which is not a submenu.",
+        "widget_type": "widgets.MenuItem"
+      },
+      "StatusBar": {
+        "name": "StatusBar",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.StatusBar"
+        },
+        "docstring": "A status bar.",
+        "widget_type": "widgets.StatusBar"
+      },
+      "Link": {
+        "name": "Link",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.Link"
+        },
+        "docstring": "A hyperlink",
+        "widget_type": "widgets.Link"
+      },
+      "StaticText": {
+        "name": "StaticText",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.StaticText"
+        },
+        "docstring": "Static text",
+        "widget_type": "widgets.StaticText"
+      },
+      "DatePicker": {
+        "name": "DatePicker",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.DatePicker"
+        },
+        "docstring": null,
+        "widget_type": "widgets.DatePicker"
+      },
+      "TreeView": {
+        "name": "TreeView",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.TreeView"
+        },
+        "docstring": "A treeview",
+        "widget_type": "widgets.TreeView"
+      },
+      "ProgressBar": {
+        "name": "ProgressBar",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ProgressBar"
+        },
+        "docstring": null,
+        "widget_type": "widgets.ProgressBar"
+      },
+      "ToolBarItem": {
+        "name": "ToolBarItem",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.ToolBarItem"
+        },
+        "docstring": null,
+        "widget_type": "widgets.ToolBarItem"
+      },
+      "Image": {
+        "name": "Image",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.StaticBitmap"
+        },
+        "docstring": null,
+        "widget_type": "widgets.StaticBitmap"
+      },
+      "SpinBox": {
+        "name": "SpinBox",
+        "base_classes": [
+          "GUIField"
+        ],
+        "attributes": {
+          "widget_type": "widgets.SpinBox"
+        },
+        "docstring": null,
+        "widget_type": "widgets.SpinBox"
+      }
+    },
+    "field_to_widget_mapping": {
+      "GUIField": null,
+      "Text": "widgets.Text",
+      "IntText": "widgets.IntText",
+      "Button": "widgets.Button",
+      "CheckBox": "widgets.CheckBox",
+      "ButtonSizer": "widgets.ButtonSizer",
+      "ComboBox": "widgets.ComboBox",
+      "ListBox": "widgets.ListBox",
+      "RadioButtonGroup": "widgets.RadioBox",
+      "ListViewColumn": "widgets.ListViewColumn",
+      "Slider": "widgets.Slider",
+      "FilePicker": "widgets.FilePicker",
+      "MenuItem": "widgets.MenuItem",
+      "StatusBar": "widgets.StatusBar",
+      "Link": "widgets.Link",
+      "StaticText": "widgets.StaticText",
+      "DatePicker": "widgets.DatePicker",
+      "TreeView": "widgets.TreeView",
+      "ProgressBar": "widgets.ProgressBar",
+      "ToolBarItem": "widgets.ToolBarItem",
+      "Image": "widgets.StaticBitmap",
+      "SpinBox": "widgets.SpinBox"
+    }
+  },
+  "patterns": {
+    "inheritance_hierarchy": {
+      "Widget": [
+        "WXWidget"
+      ],
+      "WXWidget": [
+        "ChoiceWidget",
+        "BaseText",
+        "StaticText",
+        "CheckBox",
+        "Button",
+        "Slider",
+        "ScrollBar",
+        "ListViewColumn",
+        "SpinBox",
+        "ButtonSizer",
+        "BaseContainer",
+        "FilePicker",
+        "MenuBar",
+        "Menu",
+        "MenuItem",
+        "StatusBar",
+        "Link",
+        "DatePicker",
+        "TreeView",
+        "ProgressBar",
+        "ToolBar",
+        "ToolBarItem",
+        "StaticBitmap"
+      ],
+      "BaseText": [
+        "Text"
+      ],
+      "Text": [
+        "IntText"
+      ],
+      "ChoiceWidget": [
+        "ComboBox",
+        "ListBox",
+        "ListView",
+        "RadioBox"
+      ],
+      "<ast.Attribute object at 0x781974608130>": [
+        "FixedSlider"
+      ],
+      "BaseContainer": [
+        "BaseDialog",
+        "SizedPanel",
+        "BaseFrame",
+        "Frame",
+        "Panel",
+        "Notebook"
+      ],
+      "BaseDialog": [
+        "SizedDialog",
+        "Dialog"
+      ],
+      "BaseFrame": [
+        "SizedFrame",
+        "MDIParentFrame",
+        "MDIChildFrame"
+      ],
+      "ListBox": [
+        "CheckListBox"
+      ],
+      "Menu": [
+        "SubMenu"
+      ],
+      "<ast.Attribute object at 0x7819743c2980>": [
+        "VirtualListView"
+      ],
+      "ToolBar": [
+        "FrameToolBar"
+      ],
+      "ListView": [
+        "DataView"
+      ]
+    },
+    "common_attributes": {
+      "style_prefix": {
+        "": [
+          "WXWidget",
+          "DataView"
+        ],
+        "TE": [
+          "Text"
+        ],
+        "CB": [
+          "ComboBox"
+        ],
+        "SL": [
+          "Slider"
+        ],
+        "SB": [
+          "ScrollBar",
+          "StatusBar"
+        ],
+        "LB": [
+          "ListBox"
+        ],
+        "LC": [
+          "ListView"
+        ],
+        "SP": [
+          "SpinBox"
+        ],
+        "RA": [
+          "RadioBox"
+        ],
+        "TR": [
+          "TreeView"
+        ],
+        "TB": [
+          "ToolBar"
+        ]
+      },
+      "event_prefix": {
+        "EVT": [
+          "WXWidget"
+        ],
+        "EVT_TEXT": [
+          "BaseText"
+        ],
+        "EVT_LIST": [
+          "ListView"
+        ],
+        "EVT_NOTEBOOK": [
+          "Notebook"
+        ],
+        "EVT_TREE": [
+          "TreeView"
+        ],
+        "EVT_DATAVIEW": [
+          "DataView"
+        ]
+      },
+      "event_module": {
+        "wx": [
+          "WXWidget"
+        ],
+        "dataview": [
+          "DataView"
+        ]
+      },
+      "style_module": {
+        "None": [
+          "WXWidget"
+        ]
+      },
+      "selflabeled": {
+        "False": [
+          "WXWidget"
+        ],
+        "True": [
+          "StaticText",
+          "CheckBox",
+          "Button",
+          "RadioBox",
+          "Link"
+        ]
+      },
+      "unlabeled": {
+        "False": [
+          "WXWidget"
+        ],
+        "True": [
+          "BaseContainer",
+          "MenuBar"
+        ]
+      },
+      "focusable": {
+        "True": [
+          "WXWidget"
+        ],
+        "False": [
+          "SizedPanel",
+          "Panel",
+          "MenuBar",
+          "Menu",
+          "MenuItem",
+          "ProgressBar"
+        ]
+      },
+      "default_callback_type": {
+        "None": [
+          "WXWidget"
+        ],
+        "text": [
+          "Text"
+        ],
+        "checkbox": [
+          "CheckBox"
+        ],
+        "combobox": [
+          "ComboBox"
+        ],
+        "button": [
+          "Button"
+        ],
+        "slider": [
+          "Slider"
+        ],
+        "scrollbar": [
+          "ScrollBar"
+        ],
+        "listbox": [
+          "ListBox"
+        ],
+        "ITEM_SELECTED": [
+          "ListView"
+        ],
+        "SPINCTRL": [
+          "SpinBox"
+        ],
+        "page_changed": [
+          "Notebook"
+        ],
+        "RADIOBOX": [
+          "RadioBox"
+        ],
+        "CHECKLISTBOX": [
+          "CheckListBox"
+        ],
+        "MENU": [
+          "MenuItem"
+        ],
+        "date_changed": [
+          "DatePicker"
+        ],
+        "SEL_CHANGED": [
+          "TreeView"
+        ],
+        "menu": [
+          "ToolBarItem"
+        ],
+        "selection_changed": [
+          "DataView"
+        ]
+      },
+      "callback": {
+        "None": [
+          "WXWidget"
+        ]
+      },
+      "label": {
+        "": [
+          "WXWidget"
+        ]
+      },
+      "control_type": {
+        "wx.TextCtrl": [
+          "Text"
+        ],
+        "wx.StaticText": [
+          "StaticText"
+        ],
+        "wx.CheckBox": [
+          "CheckBox"
+        ],
+        "wx.ComboBox": [
+          "ComboBox"
+        ],
+        "wx.Button": [
+          "Button"
+        ],
+        "wx.ScrollBar": [
+          "ScrollBar"
+        ],
+        "wx.ListBox": [
+          "ListBox"
+        ],
+        "wx.ListView": [
+          "ListView"
+        ],
+        "wx.SpinCtrl": [
+          "SpinBox"
+        ],
+        "wx.StdDialogButtonSizer": [
+          "ButtonSizer"
+        ],
+        "wx.Frame": [
+          "Frame"
+        ],
+        "wx.MDIParentFrame": [
+          "MDIParentFrame"
+        ],
+        "wx.MDIChildFrame": [
+          "MDIChildFrame"
+        ],
+        "wx.Dialog": [
+          "Dialog"
+        ],
+        "wx.Panel": [
+          "Panel"
+        ],
+        "wx.Notebook": [
+          "Notebook"
+        ],
+        "wx.RadioBox": [
+          "RadioBox"
+        ],
+        "wx.CheckListBox": [
+          "CheckListBox"
+        ],
+        "wx.FilePickerCtrl": [
+          "FilePicker"
+        ],
+        "wx.MenuBar": [
+          "MenuBar"
+        ],
+        "wx.Menu": [
+          "Menu"
+        ],
+        "wx.MenuItem": [
+          "MenuItem"
+        ],
+        "wx.StatusBar": [
+          "StatusBar"
+        ],
+        "wx.TreeCtrl": [
+          "TreeView"
+        ],
+        "wx.Gauge": [
+          "ProgressBar"
+        ],
+        "wx.ToolBar": [
+          "ToolBar"
+        ],
+        "wx.StaticBitmap": [
+          "StaticBitmap"
+        ]
+      },
+      "EVENT_OBJECT_VALUECHANGE": {
+        "32782": [
+          "FixedSlider"
+        ]
+      },
+      "CHILDID_SELF": {
+        "0": [
+          "FixedSlider"
+        ]
+      },
+      "OBJID_CLIENT": {
+        "<ast.UnaryOp object at 0x7819745f7ee0>": [
+          "FixedSlider"
+        ]
+      },
+      "unlabled": {
+        "True": [
+          "MenuItem"
+        ]
+      }
+    },
+    "method_patterns": {
+      "__init__": [
+        "WXWidget",
+        "BaseText",
+        "Button",
+        "FixedSlider",
+        "Slider",
+        "ListView",
+        "SpinBox",
+        "BaseContainer",
+        "BaseDialog",
+        "SizedPanel",
+        "BaseFrame",
+        "MenuItem",
+        "DatePicker",
+        "VirtualListView",
+        "TreeView",
+        "ToolBar"
+      ],
+      "create_control": [
+        "WXWidget",
+        "ListViewColumn",
+        "ButtonSizer",
+        "MenuBar",
+        "Menu",
+        "MenuItem",
+        "SubMenu",
+        "StatusBar",
+        "Link",
+        "FrameToolBar",
+        "ToolBarItem"
+      ],
+      "render": [
+        "WXWidget",
+        "BaseText",
+        "Text",
+        "Button",
+        "Slider",
+        "ListView",
+        "ListViewColumn",
+        "SpinBox",
+        "ButtonSizer",
+        "BaseContainer",
+        "SizedPanel",
+        "BaseFrame",
+        "Notebook",
+        "MenuBar",
+        "MenuItem",
+        "DatePicker",
+        "ToolBar"
+      ],
+      "bind_event": [
+        "WXWidget",
+        "MenuItem",
+        "ToolBar",
+        "ToolBarItem"
+      ],
+      "find_event_target": [
+        "WXWidget",
+        "Notebook"
+      ],
+      "enabled": [
+        "WXWidget",
+        "WXWidget"
+      ],
+      "enable": [
+        "WXWidget",
+        "MenuItem"
+      ],
+      "disable": [
+        "WXWidget",
+        "MenuItem"
+      ],
+      "destroy": [
+        "WXWidget",
+        "MenuItem"
+      ],
+      "get_control": [
+        "WXWidget",
+        "SizedFrame"
+      ],
+      "set_label": [
+        "WXWidget",
+        "BaseText",
+        "ComboBox",
+        "BaseContainer"
+      ],
+      "get_value": [
+        "WXWidget",
+        "ChoiceWidget",
+        "IntText",
+        "ComboBox",
+        "ListView",
+        "RadioBox",
+        "StatusBar",
+        "DatePicker"
+      ],
+      "set_value": [
+        "WXWidget",
+        "BaseText",
+        "IntText",
+        "StaticText",
+        "ListView",
+        "RadioBox",
+        "StatusBar",
+        "DatePicker"
+      ],
+      "translate_control_arguments": [
+        "WXWidget",
+        "Button",
+        "ButtonSizer"
+      ],
+      "get_items": [
+        "ChoiceWidget",
+        "ListView",
+        "RadioBox"
+      ],
+      "set_items": [
+        "ChoiceWidget",
+        "ListView",
+        "RadioBox"
+      ],
+      "get_item": [
+        "ChoiceWidget",
+        "ListView"
+      ],
+      "get_index": [
+        "ChoiceWidget",
+        "ListView",
+        "DataView"
+      ],
+      "set_index": [
+        "ChoiceWidget",
+        "ListView",
+        "DataView"
+      ],
+      "get_count": [
+        "ChoiceWidget",
+        "ListView",
+        "DataView"
+      ],
+      "delete_item": [
+        "ChoiceWidget",
+        "ListView"
+      ],
+      "insert_item": [
+        "ChoiceWidget",
+        "ComboBox",
+        "ListView",
+        "DataView"
+      ],
+      "update_item": [
+        "ChoiceWidget",
+        "ListView"
+      ],
+      "clear": [
+        "ChoiceWidget",
+        "Text",
+        "ListView",
+        "TreeView"
+      ],
+      "get_column_count": [
+        "ListView",
+        "DataView"
+      ],
+      "get_item_column": [
+        "ListView",
+        "DataView"
+      ],
+      "set_item_column": [
+        "ListView",
+        "DataView"
+      ],
+      "add_item": [
+        "ListView",
+        "Notebook",
+        "MenuBar",
+        "DataView"
+      ],
+      "set_item": [
+        "ListView",
+        "ListViewColumn"
+      ],
+      "create_column": [
+        "ListView",
+        "DataView"
+      ],
+      "get_selection": [
+        "Notebook",
+        "TreeView"
+      ]
+    },
+    "style_patterns": {
+      "TE": [
+        "Text"
+      ],
+      "CB": [
+        "ComboBox"
+      ],
+      "SL": [
+        "Slider"
+      ],
+      "SB": [
+        "ScrollBar",
+        "StatusBar"
+      ],
+      "LB": [
+        "ListBox"
+      ],
+      "LC": [
+        "ListView"
+      ],
+      "SP": [
+        "SpinBox"
+      ],
+      "RA": [
+        "RadioBox"
+      ],
+      "TR": [
+        "TreeView"
+      ],
+      "TB": [
+        "ToolBar"
+      ]
+    },
+    "event_patterns": {
+      "EVT": [
+        "WXWidget"
+      ],
+      "EVT_TEXT": [
+        "BaseText"
+      ],
+      "EVT_LIST": [
+        "ListView"
+      ],
+      "EVT_NOTEBOOK": [
+        "Notebook"
+      ],
+      "EVT_TREE": [
+        "TreeView"
+      ],
+      "EVT_DATAVIEW": [
+        "DataView"
+      ]
+    }
+  },
+  "coverage": {
+    "wrapped_controls": [
+      "wx.Menu",
+      "wx.Frame",
+      "wx.Button",
+      "wx.StdDialogButtonSizer",
+      "wx.StaticText",
+      "wx.Dialog",
+      "wx.StatusBar",
+      "wx.MenuBar",
+      "wx.MenuItem",
+      "wx.MDIChildFrame",
+      "wx.Panel",
+      "wx.MDIParentFrame",
+      "wx.ListBox",
+      "wx.StaticBitmap",
+      "wx.ScrollBar",
+      "wx.RadioBox",
+      "wx.FilePickerCtrl",
+      "wx.CheckListBox",
+      "wx.ToolBar",
+      "wx.ListView",
+      "wx.Notebook",
+      "wx.TextCtrl",
+      "wx.CheckBox",
+      "wx.Gauge",
+      "wx.ComboBox",
+      "wx.SpinCtrl",
+      "wx.TreeCtrl"
+    ],
+    "unwrapped_controls": [
+      "wx.ColourDialog",
+      "wx.Listbook",
+      "wx.AnyButton",
+      "wx.PrintAbortDialog",
+      "wx.TextEntryDialog",
+      "wx.ScrolledCanvas",
+      "wx.SplitterWindow",
+      "wx.StaticBoxSizer",
+      "wx.DirFilterListCtrl",
+      "wx.SpinCtrlDouble",
+      "wx.Treebook",
+      "wx.Sizer",
+      "wx.CollapsibleHeaderCtrl",
+      "wx.GenericDirCtrl",
+      "wx.MultiChoiceDialog",
+      "wx.ProgressDialog",
+      "wx.ToggleButton",
+      "wx.PopupTransientWindow",
+      "wx.ColourPickerCtrl",
+      "wx.FindReplaceDialog",
+      "wx.MessageDialog",
+      "wx.SingleChoiceDialog",
+      "wx.MDIChildFrameBase",
+      "wx.ScrolledWindow",
+      "wx.HScrolledWindow",
+      "wx.CollapsiblePane",
+      "wx.GenericProgressDialog",
+      "wx.RadioButton",
+      "wx.NumberEntryDialog",
+      "wx.FontDialog",
+      "wx.HeaderCtrl",
+      "wx.PasswordEntryDialog",
+      "wx.VListBox",
+      "wx.ActivityIndicator",
+      "wx.SpinButton",
+      "wx.TipWindow",
+      "wx.NonOwnedWindow",
+      "wx.ComboCtrl",
+      "wx.BoxSizer",
+      "wx.RichMessageDialog",
+      "wx.HeaderCtrlSimple",
+      "wx.StaticBox",
+      "wx.RearrangeDialog",
+      "wx.WrapSizer",
+      "wx.FontPickerCtrl",
+      "wx.FileDialog",
+      "wx.Control",
+      "wx.TopLevelWindow",
+      "wx.GenericMessageDialog",
+      "wx.Choice",
+      "wx.Slider",
+      "wx.Choicebook",
+      "wx.GenericStaticBitmap",
+      "wx.ContextHelpButton",
+      "wx.SearchCtrl",
+      "wx.PreviewFrame",
+      "wx.StaticLine",
+      "wx.RearrangeList",
+      "wx.PreviewControlBar",
+      "wx.Toolbook",
+      "wx.HVScrolledWindow",
+      "wx.PopupWindow",
+      "wx.GridSizer",
+      "wx.FileCtrl",
+      "wx.DirPickerCtrl",
+      "wx.BitmapButton",
+      "wx.MiniFrame",
+      "wx.GridBagSizer",
+      "wx.InfoBar",
+      "wx.BookCtrlBase",
+      "wx.PickerBase",
+      "wx.DirDialog",
+      "wx.MDIClientWindow",
+      "wx.ListCtrl",
+      "wx.FlexGridSizer",
+      "wx.TDIChildFrame",
+      "wx.ControlWithItems",
+      "wx.BitmapToggleButton",
+      "wx.PreviewCanvas",
+      "wx.Window",
+      "wx.RearrangeCtrl",
+      "wx.VScrolledWindow",
+      "wx.Simplebook"
+    ],
+    "field_widget_pairs": 22,
+    "widget_only": [
+      "ChoiceWidget",
+      "Panel",
+      "Frame",
+      "SizedDialog",
+      "MenuBar",
+      "VirtualListView",
+      "BaseText",
+      "MDIParentFrame",
+      "BaseDialog",
+      "ToolBar",
+      "SubMenu",
+      "FixedSlider",
+      "FrameToolBar",
+      "SizedFrame",
+      "CheckListBox",
+      "Notebook",
+      "SizedPanel",
+      "BaseContainer",
+      "WXWidget",
+      "Menu",
+      "Dialog",
+      "DataView",
+      "BaseFrame",
+      "ScrollBar",
+      "ListView",
+      "MDIChildFrame"
+    ],
+    "field_only": [
+      "IntText",
+      "ListViewColumn",
+      "Slider",
+      "Link",
+      "DatePicker",
+      "ToolBarItem"
+    ],
+    "complete_pairs": [
+      {
+        "field": "Text",
+        "widget": "Text",
+        "wx_control": "wx.TextCtrl"
+      },
+      {
+        "field": "Button",
+        "widget": "Button",
+        "wx_control": "wx.Button"
+      },
+      {
+        "field": "CheckBox",
+        "widget": "CheckBox",
+        "wx_control": "wx.CheckBox"
+      },
+      {
+        "field": "ButtonSizer",
+        "widget": "ButtonSizer",
+        "wx_control": "wx.StdDialogButtonSizer"
+      },
+      {
+        "field": "ComboBox",
+        "widget": "ComboBox",
+        "wx_control": "wx.ComboBox"
+      },
+      {
+        "field": "ListBox",
+        "widget": "ListBox",
+        "wx_control": "wx.ListBox"
+      },
+      {
+        "field": "RadioButtonGroup",
+        "widget": "RadioBox",
+        "wx_control": "wx.RadioBox"
+      },
+      {
+        "field": "FilePicker",
+        "widget": "FilePicker",
+        "wx_control": "wx.FilePickerCtrl"
+      },
+      {
+        "field": "MenuItem",
+        "widget": "MenuItem",
+        "wx_control": "wx.MenuItem"
+      },
+      {
+        "field": "StatusBar",
+        "widget": "StatusBar",
+        "wx_control": "wx.StatusBar"
+      },
+      {
+        "field": "StaticText",
+        "widget": "StaticText",
+        "wx_control": "wx.StaticText"
+      },
+      {
+        "field": "TreeView",
+        "widget": "TreeView",
+        "wx_control": "wx.TreeCtrl"
+      },
+      {
+        "field": "ProgressBar",
+        "widget": "ProgressBar",
+        "wx_control": "wx.Gauge"
+      },
+      {
+        "field": "Image",
+        "widget": "StaticBitmap",
+        "wx_control": "wx.StaticBitmap"
+      },
+      {
+        "field": "SpinBox",
+        "widget": "SpinBox",
+        "wx_control": "wx.SpinCtrl"
+      }
+    ]
+  }
+}
