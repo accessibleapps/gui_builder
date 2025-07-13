@@ -647,6 +647,11 @@ class ActivityIndicator(WXWidget):
     control_type = wx.ActivityIndicator
 
 
+class InfoBar(WXWidget):
+    control_type = wx.InfoBar
+    selflabeled = True
+
+
 class ComboBox(ChoiceWidget):
     control_type = wx.ComboBox
     style_prefix = "CB"

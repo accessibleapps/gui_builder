@@ -442,6 +442,12 @@ class ActivityIndicator(GUIField):
     widget_type = widgets.ActivityIndicator
 
 
+class InfoBar(GUIField):
+    """An information bar for displaying messages to users"""
+
+    widget_type = widgets.InfoBar
+
+
 class ButtonSizer(GUIField):
     widget_type = widgets.ButtonSizer
 
