@@ -149,20 +149,22 @@ def callback_wrapper(widget, callback):
         # Use getfullargspec for Python 3.3+ compatibility, fallback to getargspec for older versions
         try:
             argspec = inspect.getfullargspec(callback)
+            has_kwargs = argspec.varkw is not None
         except AttributeError:
             argspec = inspect.getargspec(callback)
+            has_kwargs = argspec.keywords is not None
         if (
             argspec.args
             and argspec.args[0] == "self"
             and not hasattr(callback, "im_self")
-        ) or (argspec.varargs and argspec.keywords):
+        ) or (argspec.varargs and has_kwargs):
             try:
                 self = widget.find_event_target(callback)
             except ValueError:
                 self = None
             if self is not None:
                 a.insert(0, self)
-        if argspec.keywords is not None:
+        if has_kwargs:
             k.update(extract_event_data(evt))
         if argspec.defaults is not None:
             extracted = extract_event_data(evt)
