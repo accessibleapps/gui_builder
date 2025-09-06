@@ -146,7 +146,11 @@ def extract_event_data(event):
 def callback_wrapper(widget, callback):
     def wrapper(evt, *a, **k):
         a = list(a)
-        argspec = inspect.getargspec(callback)
+        # Use getfullargspec for Python 3.3+ compatibility, fallback to getargspec for older versions
+        try:
+            argspec = inspect.getfullargspec(callback)
+        except AttributeError:
+            argspec = inspect.getargspec(callback)
         if (
             argspec.args
             and argspec.args[0] == "self"
