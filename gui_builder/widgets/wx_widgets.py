@@ -1122,9 +1122,11 @@ class Notebook(BaseContainer):
         def on_navigation_key(evt):
             last_child = item.field.get_last_enabled_descendant()
             if last_child is None:
+                evt.Skip()
                 return
             if evt.GetDirection() and getattr(last_child, "_was_focused", False):
                 self.set_focus()
+                evt.Skip()  # Continue navigation after focusing notebook
             else:
                 evt.Skip()
             last_child._was_focused = False
