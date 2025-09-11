@@ -8,7 +8,7 @@ version = "1.3.2"
 description = "A declarative GUI framework for Python built on wxPython that makes creating complex interfaces simple and maintainable"
 readme = "README.md"
 license = {file = "license.txt"}
-requires-python = ">=3.7"
+requires-python = ">=3.8.6"
 authors = [
     {name = "Accessible Apps", email = "q.alpha@gmail.com"},
 ]
@@ -29,6 +29,7 @@ classifiers = [
 dependencies = [
     "wxPython>=4.1.0",
     "six",
+    "backports.strenum>=1.3.1; python_version<'3.11'",
 ]
 
 [project.urls]

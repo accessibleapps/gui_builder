@@ -74,6 +74,8 @@ MODAL_RESULTS = {
     wx.ID_CANCEL: CANCEL,
     wx.ID_CLOSE: CLOSE,
     wx.ID_FIND: FIND,
+    wx.ID_YES: YES,
+    wx.ID_NO: NO,
 }
 
 
@@ -118,7 +120,7 @@ def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
             break
         else:
             answer[k] = v
-    if result_key in answer and answer[result_key] is 0:
+    if result_key in answer and answer[result_key] == 0:
         del answer[result_key]
     return answer
 
