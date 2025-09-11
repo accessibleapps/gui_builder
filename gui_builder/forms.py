@@ -74,12 +74,30 @@ class BaseForm(GUIField):
     def get_last_enabled_descendant(self):
         if self._last_enabled_descendant is not None:
             return self._last_enabled_descendant
-        enabled_children = [
-            child for child in self.get_all_children() if child.widget.enabled
+        enabled_focusable_children = [
+            child for child in self.get_all_children() 
+            if child.widget.enabled and child.can_be_focused()
         ]
-        descendant = enabled_children[-1]
+        if not enabled_focusable_children:
+            return None
+        descendant = enabled_focusable_children[-1]
         self._last_enabled_descendant = descendant
         return descendant
+
+    def get_first_enabled_descendant(self):
+        """Returns the first child that is both enabled and focusable."""
+        enabled_focusable_children = [
+            child for child in self.get_all_children() 
+            if child.widget.enabled and child.can_be_focused()
+        ]
+        if not enabled_focusable_children:
+            return None
+        return enabled_focusable_children[0]
+
+    def invalidate_descendant_cache(self):
+        """Invalidates cached descendant references when children's state changes."""
+        self._last_enabled_descendant = None
+        self._last_child = None
 
     def __getitem__(self, name):
         return self._fields[name]
