@@ -1094,7 +1094,7 @@ class SizedFrame(BaseFrame):
             padding (int): Padding in pixels around all content
         """
         pane = self.control.GetContentsPane()
-        pane.SetSizerProps(border=padding)
+        pane.SetSizerProps(border=(wx.ALL, padding))
 
 
 class MDIParentFrame(BaseFrame):
