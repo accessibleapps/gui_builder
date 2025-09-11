@@ -1086,6 +1086,15 @@ class SizedFrame(BaseFrame):
 
     def get_control(self):
         return self.control.mainPanel
+    
+    def set_content_padding(self, padding):
+        """Set padding around the frame's content area.
+        
+        Args:
+            padding (int): Padding in pixels around all content
+        """
+        pane = self.control.GetContentsPane()
+        pane.SetSizerProps(border=padding)
 
 
 class MDIParentFrame(BaseFrame):

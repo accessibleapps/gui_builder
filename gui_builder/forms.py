@@ -334,6 +334,14 @@ class SizedDialog(BaseDialog):
 
 class SizedFrame(BaseFrame):
     widget_type = widgets.SizedFrame
+    
+    def set_content_padding(self, padding):
+        """Set padding around the frame's content area.
+        
+        Args:
+            padding (int): Padding in pixels around all content
+        """
+        return self.widget.set_content_padding(padding)
 
 
 class SizedPanel(UIForm):
