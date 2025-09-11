@@ -77,6 +77,7 @@ class BaseForm(GUIField):
         enabled_focusable_children = [
             child for child in self.get_all_children() 
             if child.widget.enabled and child.can_be_focused()
+            and child.widget.can_accept_focus()
         ]
         if not enabled_focusable_children:
             return None
@@ -89,6 +90,7 @@ class BaseForm(GUIField):
         enabled_focusable_children = [
             child for child in self.get_all_children() 
             if child.widget.enabled and child.can_be_focused()
+            and child.widget.can_accept_focus()
         ]
         if not enabled_focusable_children:
             return None

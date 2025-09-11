@@ -383,6 +383,12 @@ class WXWidget(Widget):
         if old_enabled is not None and old_enabled != bool(val) and hasattr(self, 'field') and hasattr(self.field, 'parent') and self.field.parent and hasattr(self.field.parent, 'invalidate_descendant_cache'):
             self.field.parent.invalidate_descendant_cache()
 
+    def can_accept_focus(self):
+        """Check if the underlying control can actually accept focus."""
+        if not self.control:
+            return False
+        return self.control.CanAcceptFocus()
+
     def enable(self):
         self.enabled = True
 
@@ -1112,27 +1118,50 @@ class Notebook(BaseContainer):
 
         def on_focus(evt):
             evt.Skip()
-            last_child = item.field.get_last_enabled_descendant()
-            if (
-                last_child is not None
-                and evt.GetWindow() == last_child.widget.get_control()
-            ):
-                last_child._was_focused = True
 
         def on_navigation_key(evt):
-            last_child = item.field.get_last_enabled_descendant()
-            if last_child is None:
+            # Get the currently focused window using FindFocus instead of evt.GetCurrentFocus
+            focused_window = wx.Window.FindFocus()
+            direction = evt.GetDirection()  # True = forward, False = backward
+            
+            # Get the enabled, focusable children of this page
+            enabled_children = [
+                child for child in item.field.get_all_children() 
+                if child.widget.enabled and child.can_be_focused() and child.widget.can_accept_focus()
+            ]
+            
+            if not enabled_children:
                 evt.Skip()
                 return
-            if evt.GetDirection() and getattr(last_child, "_was_focused", False):
-                self.set_focus()
-                evt.Skip()  # Continue navigation after focusing notebook
-            else:
-                evt.Skip()
-            last_child._was_focused = False
+                
+            first_child = enabled_children[0]
+            last_child = enabled_children[-1]
+            
+            # Check if we're at a boundary that should go to notebook
+            current_control = None
+            for child in enabled_children:
+                if hasattr(child.widget, 'get_control'):
+                    control = child.widget.get_control()
+                    if control == focused_window:
+                        current_control = child
+                        break
+                    
+            if current_control:
+                # Forward tab from last control -> go to notebook
+                if direction and current_control == last_child:
+                    logger.debug(f"Tab navigation: transferring from last control '{current_control.bound_name}' to notebook")
+                    self.set_focus()
+                    return  # Consume the event
+                    
+                # Backward tab from first control -> go to notebook  
+                elif not direction and current_control == first_child:
+                    logger.debug(f"Shift+Tab navigation: transferring from first control '{current_control.bound_name}' to notebook")
+                    self.set_focus()
+                    return  # Consume the event
+            
+            # Normal intra-page navigation
+            evt.Skip()
 
-        first_child = item.field.get_first_child()
-        last_child = item.field.get_last_child()
         item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
         item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
@@ -1142,27 +1171,45 @@ class Notebook(BaseContainer):
     def render(self, *args, **kwargs):
         super(Notebook, self).render(*args, **kwargs)
 
-        def on_notebook_navigation(evt):
-
-            if (
-                not evt.GetDirection()
-                and evt.GetCurrentFocus() is None
-                and evt.GetEventObject() is self.control
-                and not self.control_down
-            ):
-                last_enabled_descendant = (
-                    self.field.get_current_page().get_last_enabled_descendant()
-                )
-                if not last_enabled_descendant:
-                    return
-                last_enabled_descendant.set_focus()
-            else:
-                evt.Skip()
-
         self.control_down = False
+        self._setting_notebook_focus = False  # Guard against recursive focus calls
 
         def key_down_up(evt):
             self.control_down = evt.ControlDown()
+            evt.Skip()
+
+        def on_notebook_navigation(evt):
+            direction = evt.GetDirection()  # True = forward, False = backward
+            current_page_index = self.control.GetSelection()
+            
+            if direction:
+                # Forward tab from notebook -> focus first control of current page
+                current_page = self.control.GetPage(current_page_index) if current_page_index >= 0 else None
+                if current_page:
+                    # Find the field object for this page
+                    for field in self.field.get_children():
+                        if hasattr(field.widget, 'control') and field.widget.control == current_page:
+                            first_child = field.get_first_enabled_descendant()
+                            if first_child:
+                                logger.debug(f"Notebook navigation: transferring focus to first control '{first_child.bound_name}'")
+                                first_child.set_focus()
+                                return  # Consume the event
+                            break
+            else:
+                # Backward tab from notebook -> focus last control of current page
+                current_page = self.control.GetPage(current_page_index) if current_page_index >= 0 else None
+                if current_page:
+                    # Find the field object for this page
+                    for field in self.field.get_children():
+                        if hasattr(field.widget, 'control') and field.widget.control == current_page:
+                            last_child = field.get_last_enabled_descendant()
+                            if last_child:
+                                logger.debug(f"Notebook navigation: transferring focus to last control '{last_child.bound_name}'")
+                                last_child.set_focus()
+                                return  # Consume the event
+                            break
+            
+            # If we can't find appropriate controls, allow normal navigation
             evt.Skip()
 
         self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
