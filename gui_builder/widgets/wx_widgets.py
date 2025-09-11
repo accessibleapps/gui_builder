@@ -377,10 +377,10 @@ class WXWidget(Widget):
 
     @enabled.setter
     def enabled(self, val):
-        old_enabled = self.control.Enabled
+        old_enabled = getattr(self.control, 'Enabled', None)
         self.control.Enabled = bool(val)
         # Invalidate parent form's descendant cache if enabled state changed
-        if old_enabled != bool(val) and hasattr(self, 'field') and hasattr(self.field, 'parent') and self.field.parent and hasattr(self.field.parent, 'invalidate_descendant_cache'):
+        if old_enabled is not None and old_enabled != bool(val) and hasattr(self, 'field') and hasattr(self.field, 'parent') and self.field.parent and hasattr(self.field.parent, 'invalidate_descendant_cache'):
             self.field.parent.invalidate_descendant_cache()
 
     def enable(self):
