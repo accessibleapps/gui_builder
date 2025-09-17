@@ -580,6 +580,10 @@ class StatusBar(GUIField):
 
     widget_type = widgets.StatusBar
 
+    def set_status_text(self, text):
+        """Sets the status text displayed in the status bar."""
+        self.widget.set_status_text(text)
+
 
 class Link(GUIField):
     """A hyperlink"""

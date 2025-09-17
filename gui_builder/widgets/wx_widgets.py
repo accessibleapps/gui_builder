@@ -1399,6 +1399,9 @@ class StatusBar(WXWidget):
     def get_value(self):
         return self.control.GetStatusText()
 
+    def set_status_text(self, text):
+        self.control.SetStatusText(text)
+
 
 class Link(WXWidget):
     if hasattr(wx, "adv"):
