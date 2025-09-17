@@ -580,9 +580,14 @@ class StatusBar(GUIField):
 
     widget_type = widgets.StatusBar
 
-    def set_status_text(self, text):
-        """Sets the status text displayed in the status bar."""
-        self.widget.set_status_text(text)
+    def set_status_text(self, text, field=0):
+        """Sets the status text displayed in the status bar.
+
+        Args:
+            text (str): The text to be set in the status bar field. Use an empty string to clear the field.
+            field (int, optional): The field number to set, starting from zero. Defaults to 0.
+        """
+        self.widget.set_status_text(text, field)
 
 
 class Link(GUIField):

@@ -1396,11 +1396,11 @@ class StatusBar(WXWidget):
     def set_value(self, value):
         self.control.SetStatusText(value)
 
-    def get_value(self):
-        return self.control.GetStatusText()
+    def get_value(self, field=0):
+        return self.control.GetStatusText(field)
 
-    def set_status_text(self, text):
-        self.control.SetStatusText(text)
+    def set_status_text(self, text, field=0):
+        self.control.SetStatusText(text, field)
 
 
 class Link(WXWidget):
