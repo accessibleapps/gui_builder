@@ -12,7 +12,20 @@ import re
 import inspect
 import datetime
 from logging import getLogger
-from typing import Any, Callable, Optional, Sequence, TypeVar, Generic, Type
+from typing import (
+    Any,
+    Callable,
+    Optional,
+    Sequence,
+    TypeVar,
+    Generic,
+    Type,
+    Union,
+    List,
+    Tuple,
+    Dict,
+    overload,
+)
 
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
@@ -55,7 +68,7 @@ UNFOCUSABLE_CONTROLS = (
 )  # controls which cannot directly take focus
 
 
-def inheritors(klass):
+def inheritors(klass: type) -> set:
     subclasses = set()
     work = [klass]
     while work:
@@ -67,7 +80,7 @@ def inheritors(klass):
     return subclasses
 
 
-def is_labeled(control):
+def is_labeled(control: Union[type, object]) -> bool:
     return is_subclass_or_instance(
         control, [cls for cls in inheritors(WXWidget) if cls.selflabeled]
     )
@@ -84,14 +97,19 @@ MODAL_RESULTS = {
 }
 
 
-def is_subclass_or_instance(unknown, possible):
+def is_subclass_or_instance(
+    unknown: Any, possible: Union[Type, Sequence[Type]]
+) -> bool:
+    # Convert Sequence to tuple for isinstance/issubclass compatibility
+    if isinstance(possible, Sequence) and not isinstance(possible, type):
+        possible = tuple(possible)
     try:
         return issubclass(unknown, possible)
     except TypeError:
         return isinstance(unknown, possible)
 
 
-def find_wx_attribute(prefix, attr, module=wx):
+def find_wx_attribute(prefix: str, attr: str, module: Any = wx) -> Any:
     if prefix:
         prefix = "%s_" % prefix
     underscore = "%s%s" % (prefix, attr)
@@ -104,7 +122,12 @@ def find_wx_attribute(prefix, attr, module=wx):
     return val
 
 
-def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
+def wx_attributes(
+    prefix: str = "",
+    result_key: str = "style",
+    modules: Optional[List[Any]] = None,
+    **attrs: Any,
+) -> Dict[str, Any]:
     if modules is None:
         modules = [wx]
     answer = {result_key: 0}
@@ -128,14 +151,14 @@ def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
     return answer
 
 
-def case_to_underscore(s):
+def case_to_underscore(s: str) -> str:
     return s[0].lower() + re.sub(r"([A-Z])", lambda m: "_" + m.group(0).lower(), s[1:])
 
 
 UNWANTED_ATTRIBUTES = {"GetLoggingOff", "GetClientData", "GetClientObject"}
 
 
-def extract_event_data(event):
+def extract_event_data(event: wx.Event) -> Dict[str, Any]:
     event_args = {}
     for attribute_name in dir(event):
         if (
@@ -148,7 +171,9 @@ def extract_event_data(event):
     return event_args
 
 
-def callback_wrapper(widget, callback):
+def callback_wrapper(
+    widget: "WXWidget", callback: Callable[..., Any]
+) -> Callable[[wx.Event], None]:
     def wrapper(evt, *a, **k):
         a = list(a)
         # Use getfullargspec for Python 3.3+ compatibility, fallback to getargspec for older versions
@@ -190,10 +215,11 @@ def callback_wrapper(widget, callback):
     return wrapper
 
 
-def translate_to_none(val):
-    if val == -1:
-        val = None
-    return val
+def translate_to_none(val: int) -> Optional[int]:
+    res = val
+    if res == -1:
+        res = None
+    return res
 
 
 class WXWidget(Widget, Generic[ControlType]):
@@ -214,19 +240,19 @@ class WXWidget(Widget, Generic[ControlType]):
 
     def __init__(
         self,
-        parent: Optional[Widget] = None,
-        label="",
-        accessible_label="",
-        callback=None,
-        min_size=None,
-        enabled=True,
-        hidden=False,
-        tool_tip_text=None,
-        expand=False,
-        proportion=None,
-        *args,
-        **kwargs,
-    ):
+        parent: Optional["Widget"] = None,
+        label: str = "",
+        accessible_label: str = "",
+        callback: Optional[Callable[..., Any]] = None,
+        min_size: Optional[Tuple[int, int]] = None,
+        enabled: bool = True,
+        hidden: bool = False,
+        tool_tip_text: Optional[str] = None,
+        expand: bool = False,
+        proportion: Optional[int] = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super(WXWidget, self).__init__(*args, **kwargs)
         if callback is None:
             callback = self.callback
@@ -269,7 +295,9 @@ class WXWidget(Widget, Generic[ControlType]):
         if self.proportion is not None:
             self.control.SetSizerProp("proportion", self.proportion)
 
-    def create_label_control(self, label=None, **kwargs):
+    def create_label_control(
+        self, label: Optional[str] = None, **kwargs: Any
+    ) -> Dict[str, Any]:
         if label is None:
             label = self.label_text
         if self.unlabeled:
@@ -290,7 +318,7 @@ class WXWidget(Widget, Generic[ControlType]):
                 raise
         return kwargs
 
-    def set_accessible_label(self, label):
+    def set_accessible_label(self, label: str) -> None:
         self.control.SetLabel(unicode(label))
 
     def render(self, **runtime_kwargs):
@@ -302,7 +330,11 @@ class WXWidget(Widget, Generic[ControlType]):
         if self.control_hidden:
             self.hide()
 
-    def register_callback(self, callback_type=None, callback=None):
+    def register_callback(
+        self,
+        callback_type: Optional[str] = None,
+        callback: Optional[Callable[..., Any]] = None,
+    ) -> None:
         if callback_type is None:
             callback_type = self.default_callback_type
         if callback is None:
@@ -319,19 +351,31 @@ class WXWidget(Widget, Generic[ControlType]):
         super(WXWidget, self).register_callback(callback_type, wrapped_callback)
         self.bind_event(callback_event, wrapped_callback)
 
-    def unregister_callback(self, callback_type, callback):
+    def unregister_callback(
+        self, callback_type: str, callback: Callable[..., Any]
+    ) -> None:
         wrapped_callback = self.wrapped_callbacks.pop(callback)
         super(WXWidget, self).unregister_callback(callback_type, wrapped_callback)
         callback_event = self.resolve_callback_type(callback_type)
         self.unbind_event(callback_event, wrapped_callback)
 
-    def bind_event(self, callback_event, wrapped_callback):
+    def bind_event(
+        self,
+        callback_event: wx.PyEventBinder,
+        wrapped_callback: Callable[[wx.Event], None],
+    ) -> None:
         self.control.Bind(callback_event, wrapped_callback)
 
-    def unbind_event(self, callback_event, wrapped_callback=None):
+    def unbind_event(
+        self,
+        callback_event: wx.PyEventBinder,
+        wrapped_callback: Optional[Callable[[wx.Event], None]] = None,
+    ) -> None:
         self.control.Unbind(callback_event, handler=wrapped_callback)
 
-    def resolve_callback_type(self, callback_type):
+    def resolve_callback_type(
+        self, callback_type: Union[str, wx.PyEventBinder]
+    ) -> wx.PyEventBinder:
         if isinstance(callback_type, wx.PyEventBinder):
             return callback_type
         try:
@@ -349,7 +393,7 @@ class WXWidget(Widget, Generic[ControlType]):
                 )
         return res
 
-    def find_event_target(self, callback):
+    def find_event_target(self, callback: Callable[..., Any]) -> Any:
         """Find the widget instance whose field contains the given callback.
         This is used to determine the 'self' argument when calling a callback.
         The search order is:
@@ -402,25 +446,25 @@ class WXWidget(Widget, Generic[ControlType]):
         ):
             self.field.parent.invalidate_descendant_cache()
 
-    def can_accept_focus(self):
+    def can_accept_focus(self) -> bool:
         """Check if the underlying control can actually accept focus."""
         if not self.control:
             return False
         return self.control.CanAcceptFocus()
 
-    def enable(self):
+    def enable(self) -> None:
         self.enabled = True
 
-    def disable(self):
+    def disable(self) -> None:
         self.enabled = False
 
-    def freeze(self):
+    def freeze(self) -> None:
         self.control.Freeze()
 
-    def thaw(self):
+    def thaw(self) -> None:
         self.control.Thaw()
 
-    def destroy(self):
+    def destroy(self) -> None:
         if getattr(self, "label_control", None) is not None:
             try:
                 self.label_control.Destroy()
@@ -431,10 +475,10 @@ class WXWidget(Widget, Generic[ControlType]):
         except PyDeadObjectError:
             pass
 
-    def hide(self):
+    def hide(self) -> None:
         self.control.Hide()
 
-    def show(self):
+    def show(self) -> None:
         self.control.Show()
 
     def is_shown(self) -> bool:
@@ -446,11 +490,11 @@ class WXWidget(Widget, Generic[ControlType]):
     def set_tool_tip_text(self, text: str):
         return self.control.SetToolTipString(unicode(text))
 
-    def raise_widget(self):
+    def raise_widget(self) -> None:
         """Raises the window to the top of the window hierarchy (Z-order)."""
         return self.control.Raise()
 
-    def display(self):
+    def display(self) -> None:
         self.raise_widget()
         self.show()
 
@@ -458,7 +502,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return self.control
 
     def get_parent_control(self) -> wx.Window:
-        if and isinstance(self.parent, Widget):
+        if self.parent and isinstance(self.parent, Widget):
             return self.parent.get_control()
         return self.parent
 
@@ -504,10 +548,10 @@ class WXWidget(Widget, Generic[ControlType]):
 
 
 class ChoiceWidget(WXWidget):
-    def get_items(self):
+    def get_items(self) -> List[str]:
         return self.control.GetItems()
 
-    def set_items(self, items):
+    def set_items(self, items: Sequence[str]) -> None:
         return self.control.SetItems([unicode(item) for item in items])
 
     def get_item(self, index: int) -> str:
@@ -522,68 +566,71 @@ class ChoiceWidget(WXWidget):
     def set_index(self, index: Optional[int]):
         return self.control.SetSelection(index)
 
-    def get_choice(self):
+    def get_choice(self) -> str:
         return self.get_item(self.get_index())
 
     def get_value(self):
         return self.get_choice()
 
-    def get_count(self):
+    def get_count(self) -> int:
         return self.control.GetCount()
 
-    def delete_item(self, index):
+    def delete_item(self, index: int) -> None:
         self.control.Delete(index)
 
-    def insert_item(self, index, item):
+    def insert_item(self, index: int, item: str) -> None:
         return self.control.InsertItems([item], index)
 
-    def update_item(self, index, item):
+    def update_item(self, index: int, item: str) -> None:
         self.delete_item(index)
         self.insert_item(index, item)
 
-    def clear(self):
+    def clear(self) -> None:
         self.control.Clear()
 
 
 class BaseText(WXWidget[ControlType]):
     event_prefix = "EVT_TEXT"
-    def __init__(self, max_length=None, *args, **kwargs):
+
+    def __init__(
+        self, max_length: Optional[int] = None, *args: Any, **kwargs: Any
+    ) -> None:
         super(BaseText, self).__init__(*args, **kwargs)
         self.max_length = max_length
 
-    def select_range(self, start, end):
+    def select_range(self, start: int, end: int) -> None:
         self.control.SetSelection(start, end)
 
-    def get_length(self):
+    def get_length(self) -> int:
         return self.control.GetLastPosition()
 
-    def get_insertion_point(self):
+    def get_insertion_point(self) -> int:
         return self.control.GetInsertionPoint()
 
-    def set_insertion_point(self, insertion_point):
+    def set_insertion_point(self, insertion_point: int) -> None:
         self.control.SetInsertionPoint(insertion_point)
 
-    def set_max_length(self, length):
+    def set_max_length(self, length: int) -> None:
         self.control.SetMaxLen(length)
 
-    def get_line(self, line_number):
+    def get_line(self, line_number: int) -> str:
         return self.control.GetLineText(line_number)
 
-    def render(self, *args, **kwargs):
+    def render(self, *args: Any, **kwargs: Any) -> None:
         super(BaseText, self).render(*args, **kwargs)
         if self.max_length is not None:
             self.set_max_length(self.max_length)
 
-    def set_label(self, label):
+    def set_label(self, label: str) -> None:
         self.label_control.SetLabel(label)
 
-    def set_value(self, value):
+    def set_value(self, value: Any) -> None:
         super(BaseText, self).set_value(unicode(value))
 
-    def append(self, text):
+    def append(self, text: str) -> None:
         self.control.AppendText(text)
 
-    def write(self, text):
+    def write(self, text: str) -> None:
         self.control.WriteText(text)
 
 
@@ -616,7 +663,7 @@ class Text(BaseText[wx.TextCtrl]):
         return self.control.Clear()
 
 
-class IntText(Text[intctrl.IntCtrl]):
+class IntText(Text):
     widget_type = intctrl.IntCtrl
 
     def set_value(self, value):
@@ -1028,6 +1075,7 @@ class ButtonSizer(WXWidget):
 
 ContainerWidgetType = TypeVar("ContainerWidgetType", bound=wx.TopLevelWindow)
 
+
 class BaseContainer(WXWidget[ContainerWidgetType]):
     unlabeled = True
 
@@ -1152,7 +1200,7 @@ class MDIChildFrame(BaseFrame):
     control_type = wx.MDIChildFrame
 
 
-class Dialog(BaseDialog[wx.Dialog]):
+class Dialog(BaseDialog):
     control_type = wx.Dialog
 
 
@@ -1324,10 +1372,12 @@ class Notebook(BaseContainer):
         return self.control.SetSelection(selection)
 
     def find_event_target(self, callback):
+        if self.parent is None:
+            return None
         return self.parent.field
 
 
-class RadioBox(ChoiceWidget):
+class RadioBox(ChoiceWidget[wx.RadioBox]):
     control_type = wx.RadioBox
     default_callback_type = "RADIOBOX"
     selflabeled = True
@@ -1398,7 +1448,7 @@ class Menu(WXWidget):
         self.control.DestroyItem(item.control)
 
 
-class MenuItem(WXWidget):
+class MenuItem(WXWidget[wx.MenuItem]):
     control_type = wx.MenuItem
     default_callback_type = "MENU"
     focusable = False
@@ -1410,6 +1460,9 @@ class MenuItem(WXWidget):
         self.checkable = checkable
         self.control_id = None
         super(MenuItem, self).__init__(**kwargs)
+
+    def get_parent_control(self) -> wx.Menu:
+        return super(MenuItem, self).get_parent_control()
 
     def create_control(self, **kwargs):
         label = unicode(kwargs.get("label", self.label_text))
@@ -1430,7 +1483,8 @@ class MenuItem(WXWidget):
         parent = self.parent
         while isinstance(parent, SubMenu):
             parent = parent.parent
-        parent.control.Bind(callback_event, wrapped_callback, self.control)
+        if parent and isinstance(parent, (WXWidget)):
+            parent.control.Bind(callback_event, wrapped_callback, self.control)
         # Fix if we're called from a menu bar
         if isinstance(self.parent, SubMenu):
             self.parent.control.Bind(callback_event, wrapped_callback, self.control)
@@ -1694,12 +1748,15 @@ class ToolBar(WXWidget[wx.ToolBar]):
 
 
 class FrameToolBar(ToolBar):
+    parent: BaseFrame
+
     def create_control(self, *args, **kwargs):
         self.control = self.parent.control.CreateToolBar(*args, **kwargs)
 
 
 class ToolBarItem(WXWidget):
     default_callback_type = "menu"
+    parent: ToolBar
 
     def create_control(self, bitmap=None, id=None, *args, **kwargs):
         if not self.label_text:
