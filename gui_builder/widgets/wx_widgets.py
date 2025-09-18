@@ -34,12 +34,7 @@ ControlType = TypeVar("ControlType", bound=wx.Window)
 
 MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
 
-IS_PHOENIX = "phoenix" in wx.version()
-
-try:
-    from wx import calendar
-except ImportError:
-    from wx.lib import calendar
+from wx.lib import calendar
 
 try:
     import wx.dataview as dataview
@@ -51,11 +46,6 @@ try:
 except ImportError:
     pass
 
-
-try:
-    unicode
-except NameError:
-    unicode = str
 
 try:
     PyDeadObjectError = wx._core.PyDeadObjectError
@@ -280,10 +270,10 @@ class WXWidget(Widget, Generic[ControlType]):
         )
         kwargs = self.create_label_control(**kwargs)
         if "title" in kwargs:
-            kwargs["title"] = unicode(kwargs["title"])
+            kwargs["title"] = str(kwargs["title"])
         super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
         if self.label_text:
-            self.set_label(unicode(self.label_text))
+            self.set_label(str(self.label_text))
         elif self.accessible_label:
             self.set_accessible_label(self.accessible_label)
         if self.min_size is not None:
@@ -304,12 +294,12 @@ class WXWidget(Widget, Generic[ControlType]):
             return kwargs
         if self.selflabeled:
             if label:
-                kwargs["label"] = unicode(label)
+                kwargs["label"] = str(label)
             return kwargs
         if label:
             try:
                 self.label_control = wx.StaticText(
-                    parent=self.get_parent_control(), label=unicode(label)
+                    parent=self.get_parent_control(), label=str(label)
                 )
             except:
                 logger.exception(
@@ -319,7 +309,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return kwargs
 
     def set_accessible_label(self, label: str) -> None:
-        self.control.SetLabel(unicode(label))
+        self.control.SetLabel(str(label))
 
     def render(self, **runtime_kwargs):
         super(WXWidget, self).render(**runtime_kwargs)
@@ -488,7 +478,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return self.control.GetToolTipString()
 
     def set_tool_tip_text(self, text: str):
-        return self.control.SetToolTipString(unicode(text))
+        return self.control.SetToolTipString(str(text))
 
     def raise_widget(self) -> None:
         """Raises the window to the top of the window hierarchy (Z-order)."""
@@ -559,7 +549,7 @@ class ChoiceWidget(WXWidget[ChoiceControlType]):
         return self.control.GetItems()
 
     def set_items(self, items: Sequence[str]) -> None:
-        return self.control.SetItems([unicode(item) for item in items])
+        return self.control.SetItems([str(item) for item in items])
 
     def get_item(self, index: int) -> str:
         return self.control.GetString(index)
@@ -635,7 +625,7 @@ class BaseText(WXWidget[TextControlType]):
         self.label_control.SetLabel(label)
 
     def set_value(self, value: Any) -> None:
-        super(BaseText, self).set_value(unicode(value))
+        super(BaseText, self).set_value(str(value))
 
     def append(self, text: str) -> None:
         self.control.AppendText(text)
@@ -677,7 +667,7 @@ class IntText(Text):
     widget_type = intctrl.IntCtrl
 
     def set_value(self, value):
-        self.control.SetValue(unicode(value))
+        self.control.SetValue(str(value))
 
     def get_value(self):
         value = super(IntText, self).get_value()
@@ -904,7 +894,7 @@ class ListView(ChoiceWidget):
 
     def set_item(self, index, item):
         for column, subitem in enumerate(item):
-            self.set_item_column(index, column, unicode(subitem))
+            self.set_item_column(index, column, str(subitem))
 
     def update_item(self, index, item):
         self.set_item(index, item)
@@ -962,7 +952,7 @@ class ListViewColumn(WXWidget):
     def create_control(self, **runtime_kwargs):
         kwargs = self.control_kwargs
         kwargs.update(runtime_kwargs)
-        kwargs["label"] = unicode(self.label_text)
+        kwargs["label"] = str(self.label_text)
         translated_kwargs = self.translate_control_arguments(**kwargs)
         self.control = self.parent.add_column(**translated_kwargs)
 
@@ -1226,7 +1216,7 @@ class Notebook(BaseContainer):
     default_callback_type = "page_changed"
 
     def add_item(self, name, item):
-        self.control.AddPage(item.control, unicode(name))
+        self.control.AddPage(item.control, str(name))
         # Now, we shall have much hackyness to work around WX bug 11909
         if not list(self.field.get_all_children()):
             return
@@ -1397,7 +1387,7 @@ class RadioBox(ChoiceWidget[wx.RadioBox]):
         return self.control.GetStringSelection()
 
     def set_value(self, value):
-        self.control.SetStringSelection([unicode(i) for i in value])
+        self.control.SetStringSelection([str(i) for i in value])
 
     def get_items(self):
         return self.control.GetChoices()
@@ -1442,7 +1432,7 @@ class Menu(WXWidget):
     focusable = False
 
     def create_control(self, **kwargs):
-        label = unicode(kwargs.get("label", self.label_text))
+        label = str(kwargs.get("label", self.label_text))
         self.control = wx.Menu()
         if self.get_parent_control() is not None and (
             isinstance(self.parent, MenuBar) or isinstance(self.parent, Menu)
@@ -1476,7 +1466,7 @@ class MenuItem(WXWidget[wx.MenuItem]):
         return super(MenuItem, self).get_parent_control()
 
     def create_control(self, **kwargs):
-        label = unicode(kwargs.get("label", self.label_text))
+        label = str(kwargs.get("label", self.label_text))
         if not label:  # This menu item is a separator
             self.control = self.get_parent_control().AppendSeparator()
             return
@@ -1534,12 +1524,13 @@ class SubMenu(Menu):
     parent: MenuBar | Menu
 
     def create_control(self, **kwargs):
-        text = unicode(kwargs.get("label", self.label_text))
+        text = str(kwargs.get("label", self.label_text))
         self.control = wx.Menu()
         self.parent.control.AppendSubMenu(self.control, text=text)
 
 
 class StatusBar(WXWidget[wx.StatusBar]):
+    parent: BaseFrame
     control_type = wx.StatusBar
     style_prefix = "SB"
 
@@ -1595,9 +1586,7 @@ class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
 
     def get_value(self):
         value: wx.DateTime = super(DatePicker, self).get_value()
-        if hasattr(wx, "wxdate2pydate"):
-            return wx.wxdate2pydate(value)
-        return datetime.date(value.year, value.month, value.day)
+        return wx.wxdate2pydate(value)
 
     def set_value(self, value):
         super(DatePicker, self).set_value(self.convert_datetime(value))
@@ -1660,8 +1649,6 @@ class TreeView(WXWidget[wx.TreeCtrl]):
             image = -1
         if selected_image is None:
             selected_image = -1
-        if data is not None and not IS_PHOENIX:
-            data = wx.TreeItemData(data)
         return self.control.AddRoot(text, image, selected_image, data)
 
     def get_root_item(self):
@@ -1680,11 +1667,7 @@ class TreeView(WXWidget[wx.TreeCtrl]):
             if self.image_list is None:
                 self.create_image_list(image.Width, image.Height)
             image = self.image_list.Add(image.ConvertToBitmap())
-        if data is not None and not IS_PHOENIX:
-            data = wx.TreeItemData(data)
-        return self.control.AppendItem(
-            parent, unicode(text), image, selected_image, data
-        )
+        return self.control.AppendItem(parent, str(text), image, selected_image, data)
 
     def create_image_list(self, width=32, height=32):
         self.image_list = wx.ImageList(width, height)
@@ -1706,9 +1689,7 @@ class TreeView(WXWidget[wx.TreeCtrl]):
         self.control.SelectItem(item)
 
     def get_data(self, item):
-        if IS_PHOENIX:
-            return self.control.GetItemData(item)
-        return self.control.GetPyData(item)
+        return self.control.GetItemData(item)
 
     def set_item_has_children(self, item, val):
         self.control.SetItemHasChildren(item, val)
@@ -1736,7 +1717,7 @@ class ToolBar(WXWidget[wx.ToolBar]):
                 .Scale(quality=wx.IMAGE_QUALITY_HIGH, *self.tool_bitmap_size)
                 .ConvertToBitmap()
             )
-        short_text = unicode(short_text)
+        short_text = str(short_text)
         if hasattr(self.control, "AddSimpleTool"):
             return self.control.AddSimpleTool(
                 id, bitmap=bitmap, shortHelpString=short_text, *args, **kwargs
