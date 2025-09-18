@@ -1,4 +1,7 @@
 from logger_setup import setup_logging
+import sys
+
+sys.path.insert(0, "..")
 
 setup_logging(console_level=10)
 from gui_builder import fields, forms

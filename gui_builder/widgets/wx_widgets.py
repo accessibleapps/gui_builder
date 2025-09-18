@@ -547,7 +547,14 @@ class WXWidget(Widget, Generic[ControlType]):
         return cls.control_type is not None and cls.focusable
 
 
-class ChoiceWidget(WXWidget):
+class ChoiceControl(wx.ItemContainer, wx.Control):
+    pass
+
+
+ChoiceControlType = TypeVar("ChoiceControlType", bound=ChoiceControl)
+
+
+class ChoiceWidget(WXWidget[ChoiceControlType]):
     def get_items(self) -> List[str]:
         return self.control.GetItems()
 
@@ -589,7 +596,10 @@ class ChoiceWidget(WXWidget):
         self.control.Clear()
 
 
-class BaseText(WXWidget[ControlType]):
+TextControlType = TypeVar("TextControlType", bound=wx.TextCtrl)
+
+
+class BaseText(WXWidget[TextControlType]):
     event_prefix = "EVT_TEXT"
 
     def __init__(
@@ -1450,6 +1460,7 @@ class Menu(WXWidget):
 
 class MenuItem(WXWidget[wx.MenuItem]):
     control_type = wx.MenuItem
+    parent: Menu
     default_callback_type = "MENU"
     focusable = False
     unlabled = True
@@ -1520,6 +1531,8 @@ class MenuItem(WXWidget[wx.MenuItem]):
 
 
 class SubMenu(Menu):
+    parent: MenuBar | Menu
+
     def create_control(self, **kwargs):
         text = unicode(kwargs.get("label", self.label_text))
         self.control = wx.Menu()
