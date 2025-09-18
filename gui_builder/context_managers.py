@@ -1,5 +1,11 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .widgets.wx_widgets import WXWidget
+
+
 class FreezeAndThaw(object):
-    def __init__(self, to_freeze):
+    def __init__(self, to_freeze: WXWidget):
         self.to_freeze = to_freeze
 
     def __enter__(self):
