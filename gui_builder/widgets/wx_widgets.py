@@ -8,14 +8,18 @@ import wx
 from .widget import Widget
 from .. import APPLY, CANCEL, CLOSE, FIND, NO, OK, YES, VETO
 import weakref
-import sys
 import re
 import inspect
 import datetime
 from logging import getLogger
+from typing import Any, Callable, Optional, Sequence, TypeVar, Generic, Type
 
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
+# Type variable for generic wx.Control subclasses
+ControlType = TypeVar("ControlType", bound=wx.Control)
+
+MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
 
 IS_PHOENIX = "phoenix" in wx.version()
 
@@ -63,9 +67,10 @@ def inheritors(klass):
     return subclasses
 
 
-def is_labeled(control): return is_subclass_or_instance(
-    control, [cls for cls in inheritors(WXWidget) if cls.selflabeled]
-)
+def is_labeled(control):
+    return is_subclass_or_instance(
+        control, [cls for cls in inheritors(WXWidget) if cls.selflabeled]
+    )
 
 
 MODAL_RESULTS = {
@@ -109,12 +114,10 @@ def wx_attributes(prefix="", result_key="style", modules=None, **attrs):
             continue
         for module in modules:
             try:
-                answer[result_key] |= find_wx_attribute(
-                    prefix, k, module=module)
+                answer[result_key] |= find_wx_attribute(prefix, k, module=module)
             except AttributeError:
                 try:
-                    answer[result_key] |= find_wx_attribute(
-                        "", k, module=module)
+                    answer[result_key] |= find_wx_attribute("", k, module=module)
                 except AttributeError:
                     continue
             break
@@ -193,23 +196,25 @@ def translate_none(val):
     return val
 
 
-class WXWidget(Widget):
+class WXWidget(Widget, Generic[ControlType]):
     style_prefix = ""
     event_prefix = "EVT"
     event_module = wx
     style_module = None
-    selflabeled = False
-    unlabeled = False
-    focusable = True
-    default_callback_type = (
-        None
-    )  # the default event which triggers this widget's callback
-    callback = None
-    label = ""
+    selflabeled: bool = False
+    unlabeled: bool = False
+    focusable: bool = True
+    default_callback_type: Optional[str] = (
+        None  # the default event which triggers this widget's callback
+    )
+    callback: Optional[Callable[..., Any]] = None
+    label: str = ""
+    control_type: Type[ControlType] = None
+    control: ControlType
 
     def __init__(
         self,
-        parent=None,
+        parent: Optional[Widget] = None,
         label="",
         accessible_label="",
         callback=None,
@@ -220,7 +225,7 @@ class WXWidget(Widget):
         expand=False,
         proportion=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super(WXWidget, self).__init__(*args, **kwargs)
         if callback is None:
@@ -250,8 +255,7 @@ class WXWidget(Widget):
         kwargs = self.create_label_control(**kwargs)
         if "title" in kwargs:
             kwargs["title"] = unicode(kwargs["title"])
-        super(WXWidget, self).create_control(
-            parent=self.get_parent_control(), **kwargs)
+        super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
         if self.label_text:
             self.set_label(unicode(self.label_text))
         elif self.accessible_label:
@@ -312,14 +316,12 @@ class WXWidget(Widget):
 
         wrapped_callback = callback_wrapper(self, callback)
         self.wrapped_callbacks[callback] = wrapped_callback
-        super(WXWidget, self).register_callback(
-            callback_type, wrapped_callback)
+        super(WXWidget, self).register_callback(callback_type, wrapped_callback)
         self.bind_event(callback_event, wrapped_callback)
 
     def unregister_callback(self, callback_type, callback):
         wrapped_callback = self.wrapped_callbacks.pop(callback)
-        super(WXWidget, self).unregister_callback(
-            callback_type, wrapped_callback)
+        super(WXWidget, self).unregister_callback(callback_type, wrapped_callback)
         callback_event = self.resolve_callback_type(callback_type)
         self.unbind_event(callback_event, wrapped_callback)
 
@@ -348,6 +350,15 @@ class WXWidget(Widget):
         return res
 
     def find_event_target(self, callback):
+        """Find the widget instance whose field contains the given callback.
+        This is used to determine the 'self' argument when calling a callback.
+        The search order is:
+        1. This widget's field
+        2. This widget's parent's field
+        3. This widget's children's fields (if any)
+        If the callback is not found, a ValueError is raised.
+        """
+
         if self.find_callback_in_dict(callback):
             return self.field
         if self.parent is not None and self.parent.find_callback_in_dict(callback):
@@ -363,24 +374,32 @@ class WXWidget(Widget):
             % (callback, self)
         )
 
-    def find_callback_in_dict(self, callback):
+    def find_callback_in_dict(self, callback) -> bool:
         dic = dict(inspect.getmembers(self.field))
         dic.pop("callback", None)
         for val in dic.values():
             func = getattr(val, "__func__", getattr(val, "im_func", None))
             if func is callback:
                 return True
+        return False
 
     @property
-    def enabled(self):
+    def enabled(self) -> bool:
         return self.control.Enabled
 
     @enabled.setter
-    def enabled(self, val):
-        old_enabled = getattr(self.control, 'Enabled', None)
+    def enabled(self, val: bool):
+        old_enabled = getattr(self.control, "Enabled", None)
         self.control.Enabled = bool(val)
         # Invalidate parent form's descendant cache if enabled state changed
-        if old_enabled is not None and old_enabled != bool(val) and hasattr(self, 'field') and hasattr(self.field, 'parent') and self.field.parent and hasattr(self.field.parent, 'invalidate_descendant_cache'):
+        if (
+            old_enabled is not None
+            and old_enabled != bool(val)
+            and hasattr(self, "field")
+            and hasattr(self.field, "parent")
+            and self.field.parent
+            and hasattr(self.field.parent, "invalidate_descendant_cache")
+        ):
             self.field.parent.invalidate_descendant_cache()
 
     def can_accept_focus(self):
@@ -490,7 +509,7 @@ class ChoiceWidget(WXWidget):
     def set_items(self, items):
         return self.control.SetItems([unicode(item) for item in items])
 
-    def get_item(self, index):
+    def get_item(self, index: int) -> str:
         return self.control.GetString(index)
 
     def __getitem___(self, index):
@@ -525,7 +544,7 @@ class ChoiceWidget(WXWidget):
         self.control.Clear()
 
 
-class BaseText(WXWidget):
+class BaseText(WXWidget, Generic[ControlType]):
     event_prefix = "EVT_TEXT"
 
     def __init__(self, max_length=None, *args, **kwargs):
@@ -568,7 +587,7 @@ class BaseText(WXWidget):
         self.control.WriteText(text)
 
 
-class Text(BaseText):
+class Text(BaseText[wx.TextCtrl]):
     control_type = wx.TextCtrl
     style_prefix = "TE"
     default_callback_type = "text"
@@ -646,7 +665,7 @@ class ComboBox(ChoiceWidget):
         return self.control.Insert(item, index)
 
 
-class Button(WXWidget):
+class Button(WXWidget[wx.Button]):
     control_type = wx.Button
     default_callback_type = "button"
     selflabeled = True
@@ -655,8 +674,8 @@ class Button(WXWidget):
         super(Button, self).__init__(*args, **kwargs)
         self.default = default
 
-    def render(self):
-        super(Button, self).render()
+    def render(self, *args, **kwargs):
+        super(Button, self).render(*args, **kwargs)
         if self.default:
             self.make_default()
 
@@ -666,9 +685,16 @@ class Button(WXWidget):
     def make_default(self):
         self.control.SetDefault()
 
+    def get_auth_needed(self) -> bool:
+        return self.control.GetAuthNeeded()
+
+    def set_auth_needed(self, needed: bool):
+        self.control.SetAuthNeeded(needed)
+
+    auth_needed = property(get_auth_needed, set_auth_needed)
+
 
 class FixedSlider(wx.Slider):
-
     EVENT_OBJECT_VALUECHANGE = 0x800E
     CHILDID_SELF = 0
     OBJID_CLIENT = -4
@@ -677,9 +703,9 @@ class FixedSlider(wx.Slider):
         super(FixedSlider, self).__init__(*args, **kwargs)
         self.Bind(wx.EVT_CHAR, self.onSliderChar)
 
-    def SetValue(self, i):
-        i = int(i)
-        super(FixedSlider, self).SetValue(i)
+    def SetValue(self, value):
+        value = int(value)
+        super(FixedSlider, self).SetValue(value)
         ctypes.windll.user32.NotifyWinEvent(
             self.EVENT_OBJECT_VALUECHANGE,
             self.Handle,
@@ -707,7 +733,7 @@ class FixedSlider(wx.Slider):
         self.SetValue(newValue)
 
 
-class Slider(WXWidget):
+class Slider(WXWidget[wx.Slider]):
     style_prefix = "SL"
     if platform.system() == "Windows":
         control_type = FixedSlider
@@ -728,26 +754,26 @@ class Slider(WXWidget):
         self.set_min_value(self._min_value)
         self.set_max_value(self._max_value)
 
-    def set_min_value(self, value):
+    def set_min_value(self, value: int):
         self.control.SetMin(value)
 
-    def set_max_value(self, value):
+    def set_max_value(self, value: int):
         self.control.SetMax(value)
 
-    def get_page_size(self):
+    def get_page_size(self) -> int:
         return self.control.GetPageSize()
 
-    def set_page_size(self, page_size):
+    def set_page_size(self, page_size: int):
         return self.control.SetPageSize(page_size)
 
     def set_line_size(self, value):
         self.control.SetLineSize(value)
 
-    def get_line_size(self):
+    def get_line_size(self) -> int:
         return self.control.GetLineSize()
 
 
-class ScrollBar(WXWidget):
+class ScrollBar(WXWidget[wx.ScrollBar]):
     control_type = wx.ScrollBar
     style_prefix = "SB"
     default_callback_type = "scrollbar"
@@ -792,7 +818,7 @@ class ListView(ChoiceWidget):
     def get_column_count(self):
         return self.control.GetColumnCount()
 
-    def get_item(self, index):
+    def get_item(self, index: int) -> tuple:
         res = []
         for column in range(self.get_column_count()):
             res.append(self.get_item_column(index, column))
@@ -804,7 +830,7 @@ class ListView(ChoiceWidget):
             res.append(self.get_item(num))
         return res
 
-    def get_item_column(self, index, column):
+    def get_item_column(self, index: int, column: int) -> str:
         return self.control.GetItemText(index, column)
 
     def set_item_column(self, index, column, data):
@@ -853,8 +879,7 @@ class ListView(ChoiceWidget):
         self._last_added_column = column_number
 
     def create_column(self, column_number, label, width, format):
-        self.control.InsertColumn(
-            column_number, label, width=width, format=format)
+        self.control.InsertColumn(column_number, label, width=width, format=format)
 
     def delete_column(self, column_number):
         self.control.DeleteColumn(column_number)
@@ -867,6 +892,8 @@ class ListView(ChoiceWidget):
 
 
 class ListViewColumn(WXWidget):
+    parent: ListView
+
     def create_control(self, **runtime_kwargs):
         kwargs = self.control_kwargs
         kwargs.update(runtime_kwargs)
@@ -874,11 +901,11 @@ class ListViewColumn(WXWidget):
         translated_kwargs = self.translate_control_arguments(**kwargs)
         self.control = self.parent.add_column(**translated_kwargs)
 
-    def render(self):
+    def render(self, *args, **kwargs):
         logger.debug("Rendering ListView column")
         self.create_control()
 
-    def set_item(self, index, item):
+    def set_item(self, index: int, item: Sequence[str]):
         for column, subitem in enumerate(item):
             self.control.SetStringItem(index, column, subitem)
 
@@ -925,7 +952,7 @@ if dataview:
             self.control.SetTextValue(data, index, column)
 
 
-class SpinBox(WXWidget):
+class SpinBox(WXWidget[wx.SpinCtrl]):
     control_type = wx.SpinCtrl
     style_prefix = "SP"
     default_callback_type = "SPINCTRL"
@@ -951,6 +978,10 @@ class SpinBox(WXWidget):
 
 class ButtonSizer(WXWidget):
     control_type = wx.StdDialogButtonSizer
+    control: wx.StdDialogButtonSizer
+    unlabeled = True
+    focusable = False
+    parent: WXWidget
 
     def translate_control_arguments(self, **kwargs):
         return wx_attributes("", result_key="flags", **kwargs)
@@ -971,33 +1002,31 @@ class ButtonSizer(WXWidget):
                 except AttributeError:
                     pass
         control_kwargs = self.translate_control_arguments(**kwargs)
-        self.control = self.parent.control.CreateStdDialogButtonSizer(
-            **control_kwargs)
+        self.control = self.parent.control.CreateStdDialogButtonSizer(**control_kwargs)
         for control_id, callback in callbacks.values():
             for child_sizer in self.control.GetChildren():
                 window = child_sizer.GetWindow()
                 if window is not None and window.GetId() == control_id:
-                    window.Bind(wx.EVT_BUTTON,
-                                callback_wrapper(self, callback))
+                    window.Bind(wx.EVT_BUTTON, callback_wrapper(self, callback))
                     logger.debug("Bound callback %s" % str(callback))
                     if window.GetId() == wx.ID_CLOSE:
                         self.parent.control.SetEscapeId(wx.ID_CLOSE)
                     break
 
-    def render(self):
+    def render(self, **kwargs):
         self.create_control()
         self.parent.control.SetButtonSizer(self.control)
 
 
-class BaseContainer(WXWidget):
+class BaseContainer(WXWidget[ControlType]):
     unlabeled = True
 
     def __init__(self, top_level_window=False, *args, **kwargs):
         super(BaseContainer, self).__init__(*args, **kwargs)
         self.top_level_window = top_level_window
 
-    def render(self):
-        super(BaseContainer, self).render()
+    def render(self, *args, **kwargs):
+        super(BaseContainer, self).render(*args, **kwargs)
         if self.top_level_window:
             wx.GetApp().SetTopWindow(self.control)
 
@@ -1008,13 +1037,13 @@ class BaseContainer(WXWidget):
         return self.control.GetTitle()
 
     def set_label(self, label):
-        pass
+        logger.warning("set_label called on container %r" % self)
 
     def close(self):
         self.control.Close()
 
 
-class BaseDialog(BaseContainer):
+class BaseDialog(BaseContainer[ControlType]):
     def __init__(self, *args, **kwargs):
         super(BaseDialog, self).__init__(*args, **kwargs)
         self._modal_result = None
@@ -1090,10 +1119,10 @@ class SizedFrame(BaseFrame):
 
     def get_control(self):
         return self.control.mainPanel
-    
+
     def set_content_padding(self, padding):
         """Set padding around the frame's content area.
-        
+
         Args:
             padding (int): Padding in pixels around all content
         """
@@ -1109,7 +1138,7 @@ class MDIChildFrame(BaseFrame):
     control_type = wx.MDIChildFrame
 
 
-class Dialog(BaseDialog):
+class Dialog(BaseDialog[wx.Dialog]):
     control_type = wx.Dialog
 
 
@@ -1136,42 +1165,49 @@ class Notebook(BaseContainer):
             # Get the currently focused window using FindFocus instead of evt.GetCurrentFocus
             focused_window = wx.Window.FindFocus()
             direction = evt.GetDirection()  # True = forward, False = backward
-            
+
             # Get the enabled, focusable children of this page
             enabled_children = [
-                child for child in item.field.get_all_children() 
-                if child.widget.enabled and child.can_be_focused() and child.widget.can_accept_focus()
+                child
+                for child in item.field.get_all_children()
+                if child.widget.enabled
+                and child.can_be_focused()
+                and child.widget.can_accept_focus()
             ]
-            
+
             if not enabled_children:
                 evt.Skip()
                 return
-                
+
             first_child = enabled_children[0]
             last_child = enabled_children[-1]
-            
+
             # Check if we're at a boundary that should go to notebook
             current_control = None
             for child in enabled_children:
-                if hasattr(child.widget, 'get_control'):
+                if hasattr(child.widget, "get_control"):
                     control = child.widget.get_control()
                     if control == focused_window:
                         current_control = child
                         break
-                    
+
             if current_control:
                 # Forward tab from last control -> go to notebook
                 if direction and current_control == last_child:
-                    logger.debug(f"Tab navigation: transferring from last control '{current_control.bound_name}' to notebook")
+                    logger.debug(
+                        f"Tab navigation: transferring from last control '{current_control.bound_name}' to notebook"
+                    )
                     self.set_focus()
                     return  # Consume the event
-                    
-                # Backward tab from first control -> go to notebook  
+
+                # Backward tab from first control -> go to notebook
                 elif not direction and current_control == first_child:
-                    logger.debug(f"Shift+Tab navigation: transferring from first control '{current_control.bound_name}' to notebook")
+                    logger.debug(
+                        f"Shift+Tab navigation: transferring from first control '{current_control.bound_name}' to notebook"
+                    )
                     self.set_focus()
                     return  # Consume the event
-            
+
             # Normal intra-page navigation
             evt.Skip()
 
@@ -1197,36 +1233,58 @@ class Notebook(BaseContainer):
             focused_window = wx.Window.FindFocus()
             event_object = evt.GetEventObject()
 
-            logger.info(f"[NOTEBOOK_NAV] Navigation event: direction={'forward' if direction else 'backward'}")
+            logger.info(
+                f"[NOTEBOOK_NAV] Navigation event: direction={'forward' if direction else 'backward'}"
+            )
             logger.info(f"[NOTEBOOK_NAV] Current page: {current_page_index}")
             logger.info(f"[NOTEBOOK_NAV] Focused window: {focused_window}")
             logger.info(f"[NOTEBOOK_NAV] Event object: {event_object}")
             logger.info(f"[NOTEBOOK_NAV] Notebook control: {self.control}")
-            logger.info(f"[NOTEBOOK_NAV] Focus on notebook? {focused_window == self.control}")
+            logger.info(
+                f"[NOTEBOOK_NAV] Focus on notebook? {focused_window == self.control}"
+            )
 
             if direction:
                 # Forward tab from notebook -> focus first control of current page
-                current_page = self.control.GetPage(current_page_index) if current_page_index >= 0 else None
+                current_page = (
+                    self.control.GetPage(current_page_index)
+                    if current_page_index >= 0
+                    else None
+                )
                 if current_page:
                     # Find the field object for this page
                     for field in self.field.get_children():
-                        if hasattr(field.widget, 'control') and field.widget.control == current_page:
+                        if (
+                            hasattr(field.widget, "control")
+                            and field.widget.control == current_page
+                        ):
                             first_child = field.get_first_enabled_descendant()
                             if first_child:
-                                logger.info(f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to first control '{first_child.bound_name}'")
+                                logger.info(
+                                    f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to first control '{first_child.bound_name}'"
+                                )
                                 first_child.set_focus()
                                 return  # Consume the event
                             break
             else:
                 # Backward tab from notebook -> focus last control of current page
-                current_page = self.control.GetPage(current_page_index) if current_page_index >= 0 else None
+                current_page = (
+                    self.control.GetPage(current_page_index)
+                    if current_page_index >= 0
+                    else None
+                )
                 if current_page:
                     # Find the field object for this page
                     for field in self.field.get_children():
-                        if hasattr(field.widget, 'control') and field.widget.control == current_page:
+                        if (
+                            hasattr(field.widget, "control")
+                            and field.widget.control == current_page
+                        ):
                             last_child = field.get_last_enabled_descendant()
                             if last_child:
-                                logger.info(f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to last control '{last_child.bound_name}'")
+                                logger.info(
+                                    f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to last control '{last_child.bound_name}'"
+                                )
                                 last_child.set_focus()
                                 return  # Consume the event
                             break
@@ -1291,8 +1349,8 @@ class MenuBar(WXWidget):
         self.control = wx.MenuBar()
         wx.GetApp().GetTopWindow().SetMenuBar(self.control)
 
-    def render(self):
-        super(MenuBar, self).render()
+    def render(self, *args, **kwargs):
+        super(MenuBar, self).render(*args, **kwargs)
         if platform.system() == "Darwin":
             wx.MenuBar.MacSetCommonMenuBar(self.control)
 
@@ -1360,11 +1418,10 @@ class MenuItem(WXWidget):
         parent.control.Bind(callback_event, wrapped_callback, self.control)
         # Fix if we're called from a menu bar
         if isinstance(self.parent, SubMenu):
-            self.parent.control.Bind(
-                callback_event, wrapped_callback, self.control)
+            self.parent.control.Bind(callback_event, wrapped_callback, self.control)
 
-    def render(self):
-        super(MenuItem, self).render()
+    def render(self, *args, **kwargs):
+        super(MenuItem, self).render(*args, **kwargs)
         if not self.control_enabled:
             self.disable()
 
@@ -1400,7 +1457,7 @@ class SubMenu(Menu):
         self.parent.control.AppendSubMenu(self.control, text=text)
 
 
-class StatusBar(WXWidget):
+class StatusBar(WXWidget[wx.StatusBar]):
     control_type = wx.StatusBar
     style_prefix = "SB"
 
@@ -1417,7 +1474,7 @@ class StatusBar(WXWidget):
         self.control.SetStatusText(text, field)
 
 
-class Link(WXWidget):
+class Link(WXWidget[wx.adv.HyperlinkCtrl]):
     if hasattr(wx, "adv"):
         control_type = wx.adv.HyperlinkCtrl
         event_module = wx.adv
@@ -1437,7 +1494,7 @@ class Link(WXWidget):
         return super(Link, self).create_control(**kwargs)
 
 
-class DatePicker(WXWidget):
+class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
     if hasattr(wx, "adv"):
         control_type = wx.adv.DatePickerCtrl
         event_module = wx.adv
@@ -1452,10 +1509,10 @@ class DatePicker(WXWidget):
     def render(self, *args, **kwargs):
         super(DatePicker, self).render(*args, **kwargs)
         if self.range is not None:
-            self.set_range(self.range)
+            self.set_range(*self.range)
 
     def get_value(self):
-        value = super(DatePicker, self).get_value()
+        value: wx.DateTime = super(DatePicker, self).get_value()
         if hasattr(wx, "wxdate2pydate"):
             return wx.wxdate2pydate(value)
         return datetime.date(value.year, value.month, value.day)
@@ -1475,7 +1532,7 @@ class DatePicker(WXWidget):
         start = self.convert_datetime(start)
         end = self.convert_datetime(end)
         self.control.SetRange(start, end)
-        self.range = range
+        self.range = (start, end)
 
 
 class VirtualListView(wx.ListCtrl):
@@ -1483,16 +1540,16 @@ class VirtualListView(wx.ListCtrl):
         super(VirtualListView, self).__init__(*args, **kwargs)
         self.items = []
 
-    def Append(self, item):
-        self.items.append(item)
+    def Append(self, entry):
+        self.items.append(entry)
         self.SetItemCount(len(self.items))
 
     def SetItems(self, items):
         self.items = items
         self.SetItemCount(len(self.items))
 
-    def OnGetItemText(self, item, col):
-        return self.items[item][col]
+    def OnGetItemText(self, item, column):
+        return self.items[item][column]
 
     def DeleteAllItems(self):
         self.items = []
@@ -1504,7 +1561,7 @@ class VirtualListView(wx.ListCtrl):
         self.items[index] = row
 
 
-class TreeView(WXWidget):
+class TreeView(WXWidget[wx.TreeCtrl]):
     control_type = wx.TreeCtrl
     style_prefix = "TR"
     event_prefix = "EVT_TREE"
@@ -1547,8 +1604,8 @@ class TreeView(WXWidget):
             parent, unicode(text), image, selected_image, data
         )
 
-    def create_image_list(self, width, height):
-        self.image_list = wx.ImageList(32, 32)
+    def create_image_list(self, width=32, height=32):
+        self.image_list = wx.ImageList(width, height)
         self.control.AssignImageList(self.image_list)
 
     def clear(self):
@@ -1575,12 +1632,12 @@ class TreeView(WXWidget):
         self.control.SetItemHasChildren(item, val)
 
 
-class ProgressBar(WXWidget):
+class ProgressBar(WXWidget[wx.Gauge]):
     control_type = wx.Gauge
     focusable = False
 
 
-class ToolBar(WXWidget):
+class ToolBar(WXWidget[wx.ToolBar]):
     control_type = wx.ToolBar
     style_prefix = "TB"
 
@@ -1643,7 +1700,7 @@ class ToolBarItem(WXWidget):
         self.parent.bind_event(callback_type, callback, id=self.control)
 
 
-class StaticBitmap(WXWidget):
+class StaticBitmap(WXWidget[wx.StaticBitmap]):
     control_type = wx.StaticBitmap
 
     def load_image(self, image):
