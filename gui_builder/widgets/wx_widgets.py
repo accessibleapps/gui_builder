@@ -17,7 +17,7 @@ from typing import Any, Callable, Optional, Sequence, TypeVar, Generic, Type
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
 # Type variable for generic wx.Control subclasses
-ControlType = TypeVar("ControlType", bound=wx.Control)
+ControlType = TypeVar("ControlType", bound=wx.Window)
 
 MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
 
@@ -190,7 +190,7 @@ def callback_wrapper(widget, callback):
     return wrapper
 
 
-def translate_none(val):
+def translate_to_none(val):
     if val == -1:
         val = None
     return val
@@ -209,7 +209,7 @@ class WXWidget(Widget, Generic[ControlType]):
     )
     callback: Optional[Callable[..., Any]] = None
     label: str = ""
-    control_type: Type[ControlType] = None
+    control_type: Type[ControlType]
     control: ControlType
 
     def __init__(
@@ -437,13 +437,13 @@ class WXWidget(Widget, Generic[ControlType]):
     def show(self):
         self.control.Show()
 
-    def is_shown(self):
+    def is_shown(self) -> bool:
         return self.control.IsShown()
 
-    def get_tool_tip_text(self):
+    def get_tool_tip_text(self) -> str:
         return self.control.GetToolTipString()
 
-    def set_tool_tip_text(self, text):
+    def set_tool_tip_text(self, text: str):
         return self.control.SetToolTipString(unicode(text))
 
     def raise_widget(self):
@@ -457,17 +457,17 @@ class WXWidget(Widget, Generic[ControlType]):
     def get_control(self):
         return self.control
 
-    def get_parent_control(self):
-        if isinstance(self.parent, Widget):
+    def get_parent_control(self) -> wx.Window:
+        if and isinstance(self.parent, Widget):
             return self.parent.get_control()
         return self.parent
 
-    def get_label(self):
+    def get_label(self) -> str:
         if self.label_control is not None:
             return self.label_control.GetLabel()
         return self.control.GetLabel()
 
-    def set_label(self, label):
+    def set_label(self, label: str):
         if self.label_control is not None:
             self.label_control.SetLabel(label)
         self.control.SetLabel(label)
@@ -491,10 +491,11 @@ class WXWidget(Widget, Generic[ControlType]):
             self.style_prefix, result_key="style", modules=modules, **kwargs
         )
 
-    def is_focused(self):
+    def is_focused(self) -> bool:
         return self.control.HasFocus()
 
     def set_focus(self):
+        """Set focus to this control, if it can accept focus."""
         self.control.SetFocus()
 
     @classmethod
@@ -515,10 +516,10 @@ class ChoiceWidget(WXWidget):
     def __getitem___(self, index):
         return self.get_item(index)
 
-    def get_index(self):
-        return translate_none(self.control.GetSelection())
+    def get_index(self) -> int:
+        return self.control.GetSelection()
 
-    def set_index(self, index):
+    def set_index(self, index: Optional[int]):
         return self.control.SetSelection(index)
 
     def get_choice(self):
@@ -544,9 +545,8 @@ class ChoiceWidget(WXWidget):
         self.control.Clear()
 
 
-class BaseText(WXWidget, Generic[ControlType]):
+class BaseText(WXWidget[ControlType]):
     event_prefix = "EVT_TEXT"
-
     def __init__(self, max_length=None, *args, **kwargs):
         super(BaseText, self).__init__(*args, **kwargs)
         self.max_length = max_length
@@ -616,7 +616,7 @@ class Text(BaseText[wx.TextCtrl]):
         return self.control.Clear()
 
 
-class IntText(Text):
+class IntText(Text[intctrl.IntCtrl]):
     widget_type = intctrl.IntCtrl
 
     def set_value(self, value):
@@ -632,15 +632,15 @@ class IntText(Text):
         return value
 
 
-class StaticText(WXWidget):
+class StaticText(WXWidget[wx.StaticText]):
     control_type = wx.StaticText
     selflabeled = True
 
-    def set_value(self, value):
+    def set_value(self, value: str):
         self.control.SetLabel(value)
 
 
-class CheckBox(WXWidget):
+class CheckBox(WXWidget[wx.CheckBox]):
     control_type = wx.CheckBox
     default_callback_type = "checkbox"
     selflabeled = True
@@ -661,7 +661,7 @@ class ComboBox(ChoiceWidget):
     def select_all(self):
         self.control.SelectAll()
 
-    def insert_item(self, index, item):
+    def insert_item(self, index: int, item: str):
         return self.control.Insert(item, index)
 
 
@@ -757,6 +757,12 @@ class Slider(WXWidget[wx.Slider]):
     def set_min_value(self, value: int):
         self.control.SetMin(value)
 
+    def get_min_value(self) -> int:
+        return self.control.GetMin()
+
+    def get_max_value(self) -> int:
+        return self.control.GetMax()
+
     def set_max_value(self, value: int):
         self.control.SetMax(value)
 
@@ -804,7 +810,7 @@ class ListView(ChoiceWidget):
         self._last_added_column = -1
 
     def get_index(self):
-        return translate_none(self.control.GetFirstSelected())
+        return translate_to_none(self.control.GetFirstSelected())
 
     def set_index(self, index):
         if index is None:
@@ -878,10 +884,12 @@ class ListView(ChoiceWidget):
         self.create_column(column_number, label, width=width, format=format)
         self._last_added_column = column_number
 
-    def create_column(self, column_number, label, width, format):
-        self.control.InsertColumn(column_number, label, width=width, format=format)
+    def create_column(self, column_number: int, label: str, width: int, format: int):
+        return self.control.InsertColumn(
+            column_number, label, width=width, format=format
+        )
 
-    def delete_column(self, column_number):
+    def delete_column(self, column_number: int):
         self.control.DeleteColumn(column_number)
 
     def get_value(self):
@@ -932,7 +940,7 @@ if dataview:
             return self.control.GetStore().GetColumnCount()
 
         def get_index(self):
-            return translate_none(self.control.GetSelectedRow())
+            return translate_to_none(self.control.GetSelectedRow())
 
         def set_index(self, index):
             if index is None:
@@ -1018,7 +1026,9 @@ class ButtonSizer(WXWidget):
         self.parent.control.SetButtonSizer(self.control)
 
 
-class BaseContainer(WXWidget[ControlType]):
+ContainerWidgetType = TypeVar("ContainerWidgetType", bound=wx.TopLevelWindow)
+
+class BaseContainer(WXWidget[ContainerWidgetType]):
     unlabeled = True
 
     def __init__(self, top_level_window=False, *args, **kwargs):
@@ -1043,7 +1053,7 @@ class BaseContainer(WXWidget[ControlType]):
         self.control.Close()
 
 
-class BaseDialog(BaseContainer[ControlType]):
+class BaseDialog(BaseContainer[wx.Dialog]):
     def __init__(self, *args, **kwargs):
         super(BaseDialog, self).__init__(*args, **kwargs)
         self._modal_result = None
@@ -1077,6 +1087,7 @@ class SizedDialog(BaseDialog):
 
 class SizedPanel(BaseContainer):
     control_type = sc.SizedPanel
+    control: sc.SizedPanel
     focusable = False
 
     def __init__(self, sizer_type="vertical", *args, **kwargs):
@@ -1089,6 +1100,8 @@ class SizedPanel(BaseContainer):
 
 
 class BaseFrame(BaseContainer):
+    control: wx.Frame
+
     def __init__(self, maximized=False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
@@ -1116,6 +1129,7 @@ class Frame(BaseContainer):
 
 class SizedFrame(BaseFrame):
     control_type = sc.SizedFrame
+    control: sc.SizedFrame
 
     def get_control(self):
         return self.control.mainPanel
@@ -1149,6 +1163,7 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
     control_type = wx.Notebook
+    control: wx.Notebook
     event_prefix = "EVT_NOTEBOOK"
     default_callback_type = "page_changed"
 
