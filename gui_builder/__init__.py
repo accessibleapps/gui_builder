@@ -3,6 +3,7 @@ try:
 except ImportError:
     from backports.strenum import StrEnum
 
+
 class DialogResult(StrEnum):
     OK = "ok"
     APPLY = "apply"
@@ -12,6 +13,7 @@ class DialogResult(StrEnum):
     CLOSE = "close"
     FIND = "find"
     VETO = "veto"
+
 
 # Maintain backward compatibility
 OK = DialogResult.OK
