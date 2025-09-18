@@ -1,9 +1,10 @@
-from .widgets import wx_widgets as widgets
-from .fields import GUIField, ChoiceField
-import six
-import traceback
 import platform
 from logging import getLogger
+
+import six
+
+from .fields import ChoiceField, GUIField
+from .widgets import wx_widgets as widgets
 
 logger = getLogger("gui_builder.forms")
 
@@ -75,8 +76,10 @@ class BaseForm(GUIField):
         if self._last_enabled_descendant is not None:
             return self._last_enabled_descendant
         enabled_focusable_children = [
-            child for child in self.get_all_children() 
-            if child.widget.enabled and child.can_be_focused()
+            child
+            for child in self.get_all_children()
+            if child.widget.enabled
+            and child.can_be_focused()
             and child.widget.can_accept_focus()
         ]
         if not enabled_focusable_children:
@@ -88,8 +91,10 @@ class BaseForm(GUIField):
     def get_first_enabled_descendant(self):
         """Returns the first child that is both enabled and focusable."""
         enabled_focusable_children = [
-            child for child in self.get_all_children() 
-            if child.widget.enabled and child.can_be_focused()
+            child
+            for child in self.get_all_children()
+            if child.widget.enabled
+            and child.can_be_focused()
             and child.widget.can_accept_focus()
         ]
         if not enabled_focusable_children:
@@ -148,7 +153,7 @@ class BaseForm(GUIField):
             logger.debug("Rendering field %r" % field)
             try:
                 field.render()
-            except Exception as e:
+            except Exception:
                 logger.exception("Failed rendering field %r." % field)
                 raise
         self.set_default_value()
@@ -169,8 +174,7 @@ class BaseForm(GUIField):
         child = self.get_first_focusable_child()
         if child is not None:
             child.set_focus()
-            logger.debug(
-                "Setting default focus to first focusable child %r" % child)
+            logger.debug("Setting default focus to first focusable child %r" % child)
             return
         self.set_focus()
 
@@ -253,7 +257,7 @@ class Form(six.with_metaclass(FormMeta, BaseForm)):
             super(Form, self).__delattr__(name)
 
     def __iter__(self):
-        """ Iterates form fields in their order of definition on the form. """
+        """Iterates form fields in their order of definition on the form."""
         for name, _ in self._unbound_fields + self._extra_fields:
             if name in self._fields:
                 yield self._fields[name]
@@ -295,7 +299,7 @@ class BaseFrame(UIForm):
         return self.widget.maximize()
 
     def restore(self):
-        "Restores the frame" ""
+        "Restores the frame"
         return self.widget.restore()
 
     def minimize(self):
@@ -334,10 +338,10 @@ class SizedDialog(BaseDialog):
 
 class SizedFrame(BaseFrame):
     widget_type = widgets.SizedFrame
-    
+
     def set_content_padding(self, padding):
         """Set padding around the frame's content area.
-        
+
         Args:
             padding (int): Padding in pixels around all content
         """
