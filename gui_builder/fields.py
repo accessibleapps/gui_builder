@@ -294,6 +294,10 @@ class GUIField(object):
         """Display's this field's widget on the screen."""
         self.widget.display()
 
+    def raise_widget(self):
+        """Raises the window to the top of the window hierarchy (Z-order)."""
+        return self.widget.raise_widget()
+
     def display_modal(self):
         self.widget.display_modal()
 

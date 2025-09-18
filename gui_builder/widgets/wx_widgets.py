@@ -427,8 +427,12 @@ class WXWidget(Widget):
     def set_tool_tip_text(self, text):
         return self.control.SetToolTipString(unicode(text))
 
+    def raise_widget(self):
+        """Raises the window to the top of the window hierarchy (Z-order)."""
+        return self.control.Raise()
+
     def display(self):
-        self.control.Raise()
+        self.raise_widget()
         self.show()
 
     def get_control(self):
@@ -1016,7 +1020,7 @@ class BaseDialog(BaseContainer):
         self._modal_result = None
 
     def display_modal(self):
-        self.control.Raise()
+        self.raise_widget()
         self._modal_result = self.control.ShowModal()
         return self.get_modal_result()
 
@@ -1190,7 +1194,16 @@ class Notebook(BaseContainer):
         def on_notebook_navigation(evt):
             direction = evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
-            
+            focused_window = wx.Window.FindFocus()
+            event_object = evt.GetEventObject()
+
+            logger.info(f"[NOTEBOOK_NAV] Navigation event: direction={'forward' if direction else 'backward'}")
+            logger.info(f"[NOTEBOOK_NAV] Current page: {current_page_index}")
+            logger.info(f"[NOTEBOOK_NAV] Focused window: {focused_window}")
+            logger.info(f"[NOTEBOOK_NAV] Event object: {event_object}")
+            logger.info(f"[NOTEBOOK_NAV] Notebook control: {self.control}")
+            logger.info(f"[NOTEBOOK_NAV] Focus on notebook? {focused_window == self.control}")
+
             if direction:
                 # Forward tab from notebook -> focus first control of current page
                 current_page = self.control.GetPage(current_page_index) if current_page_index >= 0 else None
@@ -1200,7 +1213,7 @@ class Notebook(BaseContainer):
                         if hasattr(field.widget, 'control') and field.widget.control == current_page:
                             first_child = field.get_first_enabled_descendant()
                             if first_child:
-                                logger.debug(f"Notebook navigation: transferring focus to first control '{first_child.bound_name}'")
+                                logger.info(f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to first control '{first_child.bound_name}'")
                                 first_child.set_focus()
                                 return  # Consume the event
                             break
@@ -1213,12 +1226,13 @@ class Notebook(BaseContainer):
                         if hasattr(field.widget, 'control') and field.widget.control == current_page:
                             last_child = field.get_last_enabled_descendant()
                             if last_child:
-                                logger.debug(f"Notebook navigation: transferring focus to last control '{last_child.bound_name}'")
+                                logger.info(f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to last control '{last_child.bound_name}'")
                                 last_child.set_focus()
                                 return  # Consume the event
                             break
-            
+
             # If we can't find appropriate controls, allow normal navigation
+            logger.info("[NOTEBOOK_NAV] SKIPPING EVENT: allowing normal navigation")
             evt.Skip()
 
         self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
