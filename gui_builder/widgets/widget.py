@@ -1,8 +1,8 @@
+import weakref
+from collections import defaultdict
 from logging import getLogger
 
 logger = getLogger("gui_builder.widgets.widget")
-from collections import defaultdict
-import weakref
 
 
 class Widget(object):
