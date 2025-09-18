@@ -1,10 +1,11 @@
 from __future__ import absolute_import
+
 from logging import getLogger
+from typing import Generic, Optional, Type, TypeVar
 
 logger = getLogger("gui_builder.fields")
 
 import traceback
-
 
 from .widgets import wx_widgets as widgets
 
@@ -33,7 +34,7 @@ class UnboundField(object):
             parent=parent,
             extra_callbacks=self.extra_callbacks,
             *self.args,
-            **kwargs
+            **kwargs,
         )
 
     def add_callback(self, trigger=None):
@@ -48,8 +49,12 @@ class UnboundField(object):
         return add_callback_decorator
 
 
-class GUIField(object):
-    widget_type = None
+WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
+
+
+class GUIField(Generic[WidgetType]):
+    widget_type: Type[WidgetType]
+    widget: WidgetType
     __autolabel__ = False
     widget_args = ()
     widget_kwargs = {}
@@ -74,7 +79,7 @@ class GUIField(object):
         default_focus=False,
         extra_callbacks=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         if widget_type is None:
             widget_type = self.widget_type
@@ -103,7 +108,6 @@ class GUIField(object):
         self.callback = callback
         self.default_value = default_value
         self.default_focus = default_focus
-        self.widget = None
         if extra_callbacks is not None:
             if self.extra_callbacks is None:
                 self.extra_callbacks = []
@@ -162,7 +166,7 @@ class GUIField(object):
             logger.exception("Error creating widget.")
             raise RuntimeError(
                 "Unable to create widget with type %r" % self.widget_type,
-                traceback.format_exc(e),
+                traceback.format_exception(e),
                 e,
             )
         self.widget.render()
@@ -281,7 +285,7 @@ class GUIField(object):
             parent = parent.parent
         return current
 
-    def is_shown(self):
+    def is_shown(self) -> bool:
         """Returns a boolean. If it is False, this control is hidden. If it is true, it is not."""
         return self.widget.is_shown()
 
@@ -289,7 +293,7 @@ class GUIField(object):
         """Destroys the visual counterpart of this field."""
         self.widget.destroy()
         logger.debug("Destroyed widget for field %r" % self)
-        
+
     def display(self):
         """Display's this field's widget on the screen."""
         self.widget.display()
@@ -324,10 +328,14 @@ class GUIField(object):
         return self.default_value
 
 
-class Text(GUIField):
+TextWidgetType = TypeVar("TextWidgetType", bound=widgets.Text)
+
+
+class Text(GUIField[TextWidgetType]):
     """A text field"""
 
     widget_type = widgets.Text
+    widget: widgets.Text
 
     def set_default_value(self):
         super(Text, self).set_default_value()
@@ -382,13 +390,13 @@ class Text(GUIField):
         return self.widget.clear()
 
 
-class IntText(Text):
+class IntText(Text[widgets.IntText]):
     """This text field will only allow the input of numbers."""
 
     widget_type = widgets.IntText
 
 
-class Button(GUIField):
+class Button(GUIField[widgets.Button]):
     """A standard button"""
 
     widget_type = widgets.Button
@@ -397,18 +405,29 @@ class Button(GUIField):
         """Called before rendering, sets this to be the default button in a dialog"""
         return self.widget.make_default()
 
+    def get_auth_needed(self):
+        return self.widget.get_auth_needed()
 
-class CheckBox(GUIField):
+    def set_auth_needed(self, auth_needed):
+        self.widget.set_auth_needed(auth_needed)
+
+    auth_needed = property(get_auth_needed, set_auth_needed)
+
+
+class CheckBox(GUIField[widgets.CheckBox]):
     """A standard Check Box"""
 
     widget_type = widgets.CheckBox
 
 
-class ButtonSizer(GUIField):
+class ButtonSizer(GUIField[widgets.ButtonSizer]):
     widget_type = widgets.ButtonSizer
 
 
-class ChoiceField(GUIField):
+ChoiceWidgetType = TypeVar("ChoiceWidgetType", bound=widgets.ChoiceWidget)
+
+
+class ChoiceField(GUIField[ChoiceWidgetType]):
     """A base class defining the methods available on choice fields."""
 
     def __init__(self, default_index=0, choices=None, *args, **kwargs):
@@ -425,7 +444,7 @@ class ChoiceField(GUIField):
     def populate(self, value):
         self.set_items(value)
 
-    def set_items(self, items):
+    def set_items(self, items: ):
         self.widget.set_items(items)
 
     def set_default_value(self):
@@ -491,7 +510,7 @@ class ChoiceField(GUIField):
         self.set_items(value)
 
 
-class ComboBox(ChoiceField):
+class ComboBox(ChoiceField[widgets.ComboBox]):
     """An Edit Combo Box. Pass read_only=True to the constructor for a combo box."""
 
     widget_type = widgets.ComboBox
@@ -500,13 +519,13 @@ class ComboBox(ChoiceField):
         return self.widget.select_all()
 
 
-class ListBox(ChoiceField):
+class ListBox(ChoiceField[widgets.ListBox]):
     """A standard list box."""
 
     widget_type = widgets.ListBox
 
 
-class RadioButtonGroup(ChoiceField):
+class RadioButtonGroup(ChoiceField[widgets.RadioBox]):
     """A group of choices, expressed as radio buttons."""
 
     widget_type = widgets.RadioBox
@@ -516,18 +535,40 @@ class ListViewColumn(GUIField):
     widget_type = widgets.ListViewColumn
 
 
-class Slider(GUIField):
+class Slider(GUIField[widgets.Slider]):
     """A moveable slider."""
 
     widget_type = widgets.Slider
 
-    def get_page_size(self):
+    def get_min_value(self) -> int:
+        """Returns the minimum value of this slider."""
+        return self.widget.get_min_value()
+
+    def set_min_value(self, value: int):
+        """Sets the minimum value of this slider."""
+        self.widget.set_min_value(value)
+
+    min_value = property(get_min_value, set_min_value)
+
+    def get_max_value(self) -> int:
+        """Returns the maximum value of this slider."""
+        return self.widget.get_max_value()
+
+    def set_max_value(self, value: int):
+        """Sets the maximum value of this slider."""
+        self.widget.set_max_value(value)
+
+    max_value = property(get_max_value, set_max_value)
+
+    def get_page_size(self) -> int:
         """Returns the number representing how many units this control will skip when the user presses page up/down."""
         return self.widget.get_page_size()
 
-    def set_page_size(self, page_size):
+    def set_page_size(self, page_size: int):
         """Sets the number representing how many units this control will skip when the user presses page up/down."""
         return self.widget.set_page_size(page_size)
+
+    page_size = property(get_page_size, set_page_size)
 
     def set_line_size(self, value):
         self.widget.set_line_size(value)
@@ -535,12 +576,14 @@ class Slider(GUIField):
     def get_line_size(self):
         return self.widget.get_line_size()
 
+    line_size = property(get_line_size, set_line_size)
+
 
 class FilePicker(GUIField):
     widget_type = widgets.FilePicker
 
 
-class MenuItem(GUIField):
+class MenuItem(GUIField[widgets.MenuItem]):
     """An item in a menu which is not a submenu."""
 
     widget_type = widgets.MenuItem
@@ -606,7 +649,7 @@ class StaticText(GUIField):
     widget_type = widgets.StaticText
 
 
-class DatePicker(GUIField):
+class DatePicker(GUIField[widgets.DatePicker]):
     widget_type = widgets.DatePicker
 
     def set_range(self, start, end):
@@ -614,7 +657,7 @@ class DatePicker(GUIField):
         self.widget.set_range(start, end)
 
 
-class TreeView(GUIField):
+class TreeView(GUIField[widgets.TreeView]):
     """A treeview"""
 
     widget_type = widgets.TreeView
@@ -662,26 +705,26 @@ class TreeView(GUIField):
         self.widget.set_item_has_children(item, val)
 
 
-class ProgressBar(GUIField):
+class ProgressBar(GUIField[widgets.ProgressBar]):
     widget_type = widgets.ProgressBar
 
 
-class ToolBarItem(GUIField):
+class ToolBarItem(GUIField[widgets.ToolBarItem]):
     widget_type = widgets.ToolBarItem
 
 
-class Image(GUIField):
+class Image(GUIField[widgets.StaticBitmap]):
     widget_type = widgets.StaticBitmap
 
     def load_image(self, image):
         return self.widget.load_image(image)
 
 
-class SpinBox(GUIField):
+class SpinBox(GUIField[widgets.SpinBox]):
     widget_type = widgets.SpinBox
 
     def set_min(self, min):
         self.widget.set_min(min)
 
     def set_max(self, max):
-        self.control.set_max(max)
+        self.widget.set_max(max)
