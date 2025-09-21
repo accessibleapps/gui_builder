@@ -1,8 +1,13 @@
+from abc import abstractmethod
 import weakref
 from collections import defaultdict
 from logging import getLogger
 
 logger = getLogger("gui_builder.widgets.widget")
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..fields import GUIField
 
 
 class Widget(object):
@@ -10,7 +15,7 @@ class Widget(object):
 
     control_type = None  # the underlying control
 
-    def __init__(self, field, callbacks=None, **kwargs):
+    def __init__(self, field: GUIField, callbacks=None, **kwargs):
         self.field = weakref.proxy(field)
         self.control_kwargs = kwargs
         self.control = None
@@ -63,7 +68,9 @@ class Widget(object):
         """Sets focus to this widget. Must be provided by subclasses."""
         raise NotImplementedError
 
-    def can_be_focused(self):
+    @classmethod
+    @abstractmethod
+    def can_be_focused(cls):
         raise NotImplementedError
 
     def display(self):

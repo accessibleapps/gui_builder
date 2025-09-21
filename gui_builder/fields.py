@@ -16,8 +16,8 @@ except NameError:
 
 
 # Type variables for proper generic descriptor support
-FieldType = TypeVar('FieldType', bound='GUIField[Any]', covariant=True)
-FormInstanceType = TypeVar('FormInstanceType')
+FieldType = TypeVar("FieldType", bound="GUIField[Any]", covariant=True)
+FormInstanceType = TypeVar("FormInstanceType")
 
 
 class UnboundField(Generic[FieldType]):
@@ -33,14 +33,16 @@ class UnboundField(Generic[FieldType]):
         self.creation_counter = UnboundField.creation_counter
 
     @overload
-    def __get__(self: 'UnboundField[FieldType]',
-                obj: None,
-                owner: Type[FormInstanceType]) -> 'UnboundField[FieldType]': ...
+    def __get__(
+        self: "UnboundField[FieldType]", obj: None, owner: Type[FormInstanceType]
+    ) -> "UnboundField[FieldType]": ...
 
     @overload
-    def __get__(self: 'UnboundField[FieldType]',
-                obj: FormInstanceType,
-                owner: Type[FormInstanceType]) -> FieldType: ...
+    def __get__(
+        self: "UnboundField[FieldType]",
+        obj: FormInstanceType,
+        owner: Type[FormInstanceType],
+    ) -> FieldType: ...
 
     def __get__(self, obj: Optional[Any], owner: Any) -> Any:
         if obj is None:
@@ -52,7 +54,9 @@ class UnboundField(Generic[FieldType]):
                 return obj._fields[name]
         raise AttributeError(f"Field not found in {owner}")
 
-    def bind(self, parent: Any = None, name: Optional[str] = None, **kwargs: Any) -> FieldType:
+    def bind(
+        self, parent: Any = None, name: Optional[str] = None, **kwargs: Any
+    ) -> FieldType:
         kwargs.update(self.kwargs)
         return self.field(
             bound_name=name,
@@ -104,14 +108,14 @@ class GUIField(Generic[WidgetType]):
     default_value = None
 
     @overload
-    def __new__(cls: Type[FieldType]) -> 'UnboundField[FieldType]': ...
+    def __new__(cls: Type[FieldType]) -> "UnboundField[FieldType]": ...
 
     @overload
     def __new__(cls: Type[FieldType], **kwargs: Any) -> FieldType: ...
 
     def __new__(cls, *args, **kwargs):
         # Check if this is a form class (has FormMeta as metaclass)
-        if hasattr(cls, '_unbound_fields'):
+        if hasattr(cls, "_unbound_fields"):
             # This is a form - always create the actual instance
             return super(GUIField, cls).__new__(cls)
         elif "parent" in kwargs or kwargs.get("top_level_window"):

@@ -1,31 +1,32 @@
 import ctypes
-
-import platform
-from wx.lib.agw import hyperlink
-from wx.lib import sized_controls as sc
-from wx.lib import intctrl
-import wx
-from .widget import Widget
-from .. import APPLY, CANCEL, CLOSE, FIND, NO, OK, YES, VETO
-import weakref
-import re
-import inspect
 import datetime
+import inspect
+import platform
+import re
+import weakref
 from logging import getLogger
 from typing import (
     Any,
     Callable,
+    Dict,
+    Generic,
+    List,
     Optional,
     Sequence,
-    TypeVar,
-    Generic,
-    Type,
-    Union,
-    List,
     Tuple,
-    Dict,
+    Type,
+    TypeVar,
+    Union,
     overload,
 )
+
+import wx
+from wx.lib import intctrl
+from wx.lib import sized_controls as sc
+from wx.lib.agw import hyperlink
+
+from .. import APPLY, CANCEL, CLOSE, FIND, NO, OK, VETO, YES
+from .widget import Widget
 
 logger = getLogger("gui_builder.widgets.wx_widgets")
 
@@ -650,10 +651,10 @@ class Text(BaseText[wx.TextCtrl]):
         # Fix: ReadOnly TextCtrl's fail to appear in tab order.
         self.control.AcceptsFocusFromKeyboard = lambda: True
 
-    def get_number_of_lines(self):
+    def get_number_of_lines(self) -> int:
         return self.control.GetNumberOfLines()
 
-    def get_insertion_point_from_x_y(self, x, y):
+    def get_insertion_point_from_x_y(self, x: int, y: int) -> int:
         return self.control.XYToPosition(x, y)
 
     def get_x_y_from_insertion_point(self, insertion_point):
@@ -669,7 +670,7 @@ class IntText(Text):
     def set_value(self, value):
         self.control.SetValue(str(value))
 
-    def get_value(self):
+    def get_value(self) -> Optional[int]:
         value = super(IntText, self).get_value()
         if value:
             try:
@@ -693,7 +694,7 @@ class CheckBox(WXWidget[wx.CheckBox]):
     selflabeled = True
 
 
-class ComboBox(ChoiceWidget):
+class ComboBox(ChoiceWidget[wx.ComboBox]):
     control_type = wx.ComboBox
     style_prefix = "CB"
     default_callback_type = "combobox"
@@ -709,7 +710,7 @@ class ComboBox(ChoiceWidget):
         self.control.SelectAll()
 
     def insert_item(self, index: int, item: str):
-        return self.control.Insert(item, index)
+        self.control.Insert(item, index)
 
 
 class Button(WXWidget[wx.Button]):
@@ -1012,7 +1013,7 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
     style_prefix = "SP"
     default_callback_type = "SPINCTRL"
 
-    def __init__(self, min=0, max=100, *args, **kwargs):
+    def __init__(self, min: int = 0, max: int = 100, *args, **kwargs):
         super(SpinBox, self).__init__(*args, **kwargs)
         self.min = min
         self.max = max
@@ -1022,11 +1023,11 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
         self.set_min(self.min)
         self.set_max(self.max)
 
-    def set_min(self, min):
+    def set_min(self, min: int):
         self.control.SetMin(min)
         self.min = min
 
-    def set_max(self, max):
+    def set_max(self, max: int):
         self.control.SetMax(max)
         self.max = max
 
@@ -1150,7 +1151,7 @@ class SizedPanel(BaseContainer):
 class BaseFrame(BaseContainer):
     control: wx.Frame
 
-    def __init__(self, maximized=False, *args, **kwargs):
+    def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
 
@@ -1224,10 +1225,10 @@ class Notebook(BaseContainer):
         def on_focus(evt):
             evt.Skip()
 
-        def on_navigation_key(evt):
+        def on_navigation_key(evt: wx.NavigationKeyEvent):
             # Get the currently focused window using FindFocus instead of evt.GetCurrentFocus
             focused_window = wx.Window.FindFocus()
-            direction = evt.GetDirection()  # True = forward, False = backward
+            direction: bool = evt.GetDirection()  # True = forward, False = backward
 
             # Get the enabled, focusable children of this page
             enabled_children = [
@@ -1290,8 +1291,8 @@ class Notebook(BaseContainer):
             self.control_down = evt.ControlDown()
             evt.Skip()
 
-        def on_notebook_navigation(evt):
-            direction = evt.GetDirection()  # True = forward, False = backward
+        def on_notebook_navigation(evt: wx.NavigationKeyEvent):
+            direction: bool = evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
             focused_window = wx.Window.FindFocus()
             event_object = evt.GetEventObject()
