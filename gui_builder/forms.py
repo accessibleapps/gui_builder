@@ -56,7 +56,7 @@ class BaseForm(GUIField[FormWidgetType]):
                 kwargs.pop(key)
             except KeyError:
                 pass
-        super(BaseForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.is_rendered = False
         self._last_child = None
         self._last_enabled_descendant = None
