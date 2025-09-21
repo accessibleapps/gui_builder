@@ -1554,31 +1554,21 @@ class StatusBar(WXWidget[wx.StatusBar]):
 
 
 class Link(WXWidget[wx.adv.HyperlinkCtrl]):
-    if hasattr(wx, "adv"):
-        control_type = wx.adv.HyperlinkCtrl
-        event_module = wx.adv
-        default_callback_type = "hyperlink"
-    else:
-        control_type = hyperlink.HyperLinkCtrl
-        event_module = hyperlink
-        default_callback_type = "hyperlink_left"
+    control_type = wx.adv.HyperlinkCtrl
+    event_module = wx.adv
+    default_callback_type = "hyperlink"
     selflabeled = True
 
     def create_control(self, **kwargs):
-        # prefer wx.adv.HyperlinkCtrl when available
-        # otherwise, standardize URL case for backward compatibility
-        if hasattr(wx, "adv") and "URL" in kwargs:
+        if "URL" in kwargs:
             kwargs["url"] = kwargs["URL"]
             del kwargs["URL"]
         return super(Link, self).create_control(**kwargs)
 
 
 class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
-    if hasattr(wx, "adv"):
-        control_type = wx.adv.DatePickerCtrl
-        event_module = wx.adv
-    else:
-        control_type = wx.DatePickerCtrl
+    control_type = wx.adv.DatePickerCtrl
+    event_module = wx.adv
     default_callback_type = "date_changed"
 
     def __init__(self, range=None, *args, **kwargs):
@@ -1715,9 +1705,9 @@ class ToolBar(WXWidget[wx.ToolBar]):
         self.tool_bitmap_size = tool_bitmap_size
 
     def add_simple_tool(
-        self, id=wx.ID_ANY, bitmap=wx.NullBitmap, short_text="", *args, **kwargs
+        self, id=wx.ID_ANY, bitmap=None, short_text="", *args, **kwargs
     ):
-        if bitmap is not wx.NullBitmap:
+        if bitmap is not None:
             bitmap = (
                 wx.Image(bitmap, wx.BITMAP_TYPE_PNG)
                 .Scale(quality=wx.IMAGE_QUALITY_HIGH, *self.tool_bitmap_size)
@@ -1732,8 +1722,8 @@ class ToolBar(WXWidget[wx.ToolBar]):
     def add_separator(self):
         return self.control.AddSeparator()
 
-    def bind_event(self, callback_type, callback, id=None):
-        return self.control.Bind(callback_type, callback, id)
+    def bind_event(self, callback_event, wrapped_callback, id=None):
+        return self.control.Bind(callback_event, wrapped_callback, id)
 
     def realize(self):
         return self.control.Realize()
@@ -1768,8 +1758,8 @@ class ToolBarItem(WXWidget):
             id=id, short_text=self.label_text, bitmap=bitmap, *args, **kwargs
         )
 
-    def bind_event(self, callback_type, callback):
-        self.parent.bind_event(callback_type, callback, id=self.control)
+    def bind_event(self, callback_event, wrapped_callback):
+        self.parent.bind_event(callback_event, wrapped_callback, id=self.control)
 
 
 class StaticBitmap(WXWidget[wx.StaticBitmap]):
