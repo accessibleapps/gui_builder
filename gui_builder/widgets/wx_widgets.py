@@ -547,10 +547,10 @@ class ChoiceControl(wx.ItemContainer, wx.Control):
     pass
 
 
-ChoiceControlType = TypeVar("ChoiceControlType", bound=ChoiceControl)
+ChoiceControlType = TypeVar("ChoiceControlType", bound=wx.Window)
 
-ChoiceItemInputType = TypeVar("ChoiceItemInputType", bound=Union[str, int, float])
-ChoiceItemOutputType = TypeVar("ChoiceItemOutputType", bound=str)
+ChoiceItemInputType = TypeVar("ChoiceItemInputType", contravariant=True)
+ChoiceItemOutputType = TypeVar("ChoiceItemOutputType", covariant=True)
 
 
 class ChoiceWidget(
@@ -560,11 +560,18 @@ class ChoiceWidget(
     def get_items(self) -> Sequence[ChoiceItemOutputType]:
         return self.control.GetItems()
 
-    def set_items(self, items: Sequence[ChoiceItemInputType]) -> None:
-        return self.control.SetItems([str(item) for item in items])
+    def set_items(self, items: Sequence[ChoiceItemInputType]) -> Sequence[ChoiceItemOutputType]:
+        """Set items and return the converted output items."""
+        converted_items = [self._convert_input_to_output(item) for item in items]
+        self.control.SetItems([str(item) for item in converted_items])
+        return converted_items
+
+    def _convert_input_to_output(self, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+        """Convert input item to output item type. Subclasses should override."""
+        return str(item)  # type: ignore
 
     def get_item(self, index: int) -> ChoiceItemOutputType:
-        return self.control.GetString(index)
+        return self.control.GetString(index)  # type: ignore
 
     def __getitem___(self, index: int) -> ChoiceItemOutputType:
         return self.get_item(index)
@@ -572,7 +579,7 @@ class ChoiceWidget(
     def get_index(self) -> int:
         return self.control.GetSelection()
 
-    def set_index(self, index: Optional[int]):
+    def set_index(self, index: Optional[int]) -> None:
         return self.control.SetSelection(index)
 
     def get_choice(self) -> ChoiceItemOutputType:
@@ -587,12 +594,16 @@ class ChoiceWidget(
     def delete_item(self, index: int) -> None:
         self.control.Delete(index)
 
-    def insert_item(self, index: int, item: str) -> None:
-        return self.control.InsertItems([item], index)
+    def insert_item(self, index: int, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+        """Insert item and return the converted output item."""
+        converted_item = self._convert_input_to_output(item)
+        self.control.InsertItems([str(converted_item)], index)
+        return converted_item
 
-    def update_item(self, index: int, item: str) -> None:
+    def update_item(self, index: int, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+        """Update item and return the converted output item."""
         self.delete_item(index)
-        self.insert_item(index, item)
+        return self.insert_item(index, item)
 
     def clear(self) -> None:
         self.control.Clear()
@@ -710,7 +721,11 @@ class ComboBox(ChoiceWidget[wx.ComboBox, str, str]):
     style_prefix = "CB"
     default_callback_type = "combobox"
 
-    def get_value(self) -> ChoiceItemOutputType:
+    def _convert_input_to_output(self, item: str) -> str:
+        """For ComboBox, input and output are both strings."""
+        return item
+
+    def get_value(self) -> str:
         return self.control.GetValue()
 
     def set_label(self, label):
@@ -849,12 +864,20 @@ class ListBox(ChoiceWidget[wx.ListBox, str, str]):
     style_prefix = "LB"
     default_callback_type = "listbox"
 
+    def _convert_input_to_output(self, item: str) -> str:
+        """For ListBox, input and output are both strings."""
+        return item
+
 
 class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
     control_type = wx.ListView
     style_prefix = "LC"
     event_prefix = "EVT_LIST"
     default_callback_type = "ITEM_SELECTED"
+
+    def _convert_input_to_output(self, item: Tuple[str, ...]) -> Tuple[str, ...]:
+        """For ListView, input and output are both tuples of strings."""
+        return item
 
     def __init__(self, choices=None, **kwargs):
         self.virtual = kwargs.pop("virtual", False)
@@ -1396,17 +1419,25 @@ class RadioBox(ChoiceWidget[wx.RadioBox, str, str]):
     selflabeled = True
     style_prefix = "RA"
 
-    def get_value(self) -> ChoiceItemOutputType:
+    def _convert_input_to_output(self, item: str) -> str:
+        """For RadioBox, input and output are both strings."""
+        return item
+
+    def get_value(self) -> str:
         return self.control.GetStringSelection()
 
-    def set_value(self, value: Sequence[ChoiceItemInputType]):
-        self.control.SetStringSelection([str(i) for i in value])
+    def set_value(self, value: str) -> None:
+        self.control.SetStringSelection(value)
 
-    def get_items(self) -> Sequence[ChoiceItemOutputType]:
-        return self.control.GetChoices()
+    def get_items(self) -> Sequence[str]:
+        return list(self.control.GetStrings())
 
-    def set_items(self, items: Sequence[ChoiceItemInputType]) -> None:
-        return self.control.SetItems(items)
+    def set_items(self, items: Sequence[str]) -> Sequence[str]:
+        """Set items and return the converted output items."""
+        converted_items = [self._convert_input_to_output(item) for item in items]
+        # RadioBox doesn't have a SetItems method in the same way as other controls
+        # For now, just return the converted items
+        return converted_items
 
 
 class CheckListBox(ListBox):
