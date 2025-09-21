@@ -1,10 +1,7 @@
 from __future__ import absolute_import
 
 from logging import getLogger
-from typing import Generic, Optional, Type, TypeVar, Union, overload, Any
-
-# TypeVar for class self-references
-SelfType = TypeVar('SelfType', bound='GUIField[Any]')
+from typing import Generic, Optional, Type, TypeVar, overload, Any
 
 logger = getLogger("gui_builder.fields")
 
@@ -18,8 +15,9 @@ except NameError:
     unicode = str
 
 
-# Type variable for field types
-FieldType = TypeVar('FieldType', bound='GUIField[Any]')
+# Type variables for proper generic descriptor support
+FieldType = TypeVar('FieldType', bound='GUIField[Any]', covariant=True)
+FormInstanceType = TypeVar('FormInstanceType')
 
 
 class UnboundField(Generic[FieldType]):
@@ -35,10 +33,14 @@ class UnboundField(Generic[FieldType]):
         self.creation_counter = UnboundField.creation_counter
 
     @overload
-    def __get__(self, obj: None, owner: Any) -> 'UnboundField[FieldType]': ...
+    def __get__(self: 'UnboundField[FieldType]',
+                obj: None,
+                owner: Type[FormInstanceType]) -> 'UnboundField[FieldType]': ...
 
     @overload
-    def __get__(self, obj: Any, owner: Any) -> FieldType: ...
+    def __get__(self: 'UnboundField[FieldType]',
+                obj: FormInstanceType,
+                owner: Type[FormInstanceType]) -> FieldType: ...
 
     def __get__(self, obj: Optional[Any], owner: Any) -> Any:
         if obj is None:
@@ -77,6 +79,17 @@ class UnboundField(Generic[FieldType]):
         return func
 
 
+# Helper function for clean type inference in field declarations
+def Field(field_cls: Type[FieldType], **kwargs: Any) -> UnboundField[FieldType]:
+    """Factory that returns the descriptor with the right generic parameter.
+
+    Usage:
+        class MyForm(forms.Frame):
+            text = Field(fields.Text, label="Name")  # -> UnboundField[Text]
+    """
+    return UnboundField(field_cls, **kwargs)
+
+
 WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
 
 
@@ -91,13 +104,10 @@ class GUIField(Generic[WidgetType]):
     default_value = None
 
     @overload
-    def __new__(cls, **kwargs: Any) -> 'UnboundField[Any]': ...
+    def __new__(cls: Type[FieldType]) -> 'UnboundField[FieldType]': ...
 
     @overload
-    def __new__(cls, *, parent: Any, **kwargs: Any) -> Any: ...
-
-    @overload
-    def __new__(cls, *, top_level_window: Any, **kwargs: Any) -> Any: ...
+    def __new__(cls: Type[FieldType], **kwargs: Any) -> FieldType: ...
 
     def __new__(cls, *args, **kwargs):
         # Check if this is a form class (has FormMeta as metaclass)
