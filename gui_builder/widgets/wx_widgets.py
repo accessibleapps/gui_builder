@@ -60,8 +60,8 @@ UNFOCUSABLE_CONTROLS = (
 )  # controls which cannot directly take focus
 
 
-def inheritors(klass: type) -> set:
-    subclasses = set()
+def inheritors(klass: type) -> set[Type[Any]]:
+    subclasses: set[Type[Any]] = set()
     work = [klass]
     while work:
         parent = work.pop()
@@ -164,9 +164,9 @@ def extract_event_data(event: wx.Event) -> Dict[str, Any]:
 
 
 def callback_wrapper(
-    widget: "WXWidget", callback: Callable[..., Any]
+    widget: "WXWidget[wx.Control]", callback: Callable[..., Any]
 ) -> Callable[[wx.Event], None]:
-    def wrapper(evt, *a, **k):
+    def wrapper(evt: wx.Event, *a, **k):
         a = list(a)
         # Use getfullargspec for Python 3.3+ compatibility, fallback to getargspec for older versions
         try:
@@ -245,7 +245,7 @@ class WXWidget(Widget, Generic[ControlType]):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        super(WXWidget, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if callback is None:
             callback = self.callback
         self.callback = callback
@@ -273,7 +273,7 @@ class WXWidget(Widget, Generic[ControlType]):
         kwargs = self.create_label_control(**kwargs)
         if "title" in kwargs:
             kwargs["title"] = str(kwargs["title"])
-        super(WXWidget, self).create_control(parent=self.get_parent_control(), **kwargs)
+        super().create_control(parent=self.get_parent_control(), **kwargs)
         if self.label_text:
             self.set_label(str(self.label_text))
         elif self.accessible_label:
@@ -549,18 +549,24 @@ class ChoiceControl(wx.ItemContainer, wx.Control):
 
 ChoiceControlType = TypeVar("ChoiceControlType", bound=ChoiceControl)
 
+ChoiceItemInputType = TypeVar("ChoiceItemInputType", bound=Union[str, int, float])
+ChoiceItemOutputType = TypeVar("ChoiceItemOutputType", bound=str)
 
-class ChoiceWidget(WXWidget[ChoiceControlType]):
-    def get_items(self) -> List[str]:
+
+class ChoiceWidget(
+    WXWidget[ChoiceControlType],
+    Generic[ChoiceControlType, ChoiceItemInputType, ChoiceItemOutputType],
+):
+    def get_items(self) -> Sequence[ChoiceItemOutputType]:
         return self.control.GetItems()
 
-    def set_items(self, items: Sequence[str]) -> None:
+    def set_items(self, items: Sequence[ChoiceItemInputType]) -> None:
         return self.control.SetItems([str(item) for item in items])
 
-    def get_item(self, index: int) -> str:
+    def get_item(self, index: int) -> ChoiceItemOutputType:
         return self.control.GetString(index)
 
-    def __getitem___(self, index):
+    def __getitem___(self, index: int) -> ChoiceItemOutputType:
         return self.get_item(index)
 
     def get_index(self) -> int:
@@ -569,10 +575,10 @@ class ChoiceWidget(WXWidget[ChoiceControlType]):
     def set_index(self, index: Optional[int]):
         return self.control.SetSelection(index)
 
-    def get_choice(self) -> str:
+    def get_choice(self) -> ChoiceItemOutputType:
         return self.get_item(self.get_index())
 
-    def get_value(self):
+    def get_value(self) -> ChoiceItemOutputType:
         return self.get_choice()
 
     def get_count(self) -> int:
@@ -662,7 +668,7 @@ class Text(BaseText[wx.TextCtrl]):
     def get_insertion_point_from_x_y(self, x: int, y: int) -> int:
         return self.control.XYToPosition(x, y)
 
-    def get_x_y_from_insertion_point(self, insertion_point):
+    def get_x_y_from_insertion_point(self, insertion_point) -> Tuple[int, int]:
         return self.control.PositionToXY(insertion_point)
 
     def clear(self):
@@ -699,12 +705,12 @@ class CheckBox(WXWidget[wx.CheckBox]):
     selflabeled = True
 
 
-class ComboBox(ChoiceWidget[wx.ComboBox]):
+class ComboBox(ChoiceWidget[wx.ComboBox, str, str]):
     control_type = wx.ComboBox
     style_prefix = "CB"
     default_callback_type = "combobox"
 
-    def get_value(self):
+    def get_value(self) -> ChoiceItemOutputType:
         return self.control.GetValue()
 
     def set_label(self, label):
@@ -714,7 +720,7 @@ class ComboBox(ChoiceWidget[wx.ComboBox]):
     def select_all(self):
         self.control.SelectAll()
 
-    def insert_item(self, index: int, item: str):
+    def insert_item(self, index: int, item: ChoiceItemInputType) -> None:
         self.control.Insert(item, index)
 
 
@@ -838,13 +844,13 @@ class ScrollBar(WXWidget[wx.ScrollBar]):
     default_callback_type = "scrollbar"
 
 
-class ListBox(ChoiceWidget):
+class ListBox(ChoiceWidget[wx.ListBox, str, str]):
     control_type = wx.ListBox
     style_prefix = "LB"
     default_callback_type = "listbox"
 
 
-class ListView(ChoiceWidget):
+class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
     control_type = wx.ListView
     style_prefix = "LC"
     event_prefix = "EVT_LIST"
@@ -856,7 +862,7 @@ class ListView(ChoiceWidget):
             self.control_type = VirtualListView
             kwargs["style"] = kwargs.get("style", 0)
             kwargs["style"] |= wx.LC_VIRTUAL | wx.LC_REPORT
-        super(ListView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if choices is None:
             choices = []
         self.choices = choices
@@ -871,19 +877,19 @@ class ListView(ChoiceWidget):
         self.control.Select(index)
         self.control.Focus(index)
 
-    def get_count(self):
+    def get_count(self) -> int:
         return self.control.GetItemCount()
 
-    def get_column_count(self):
+    def get_column_count(self) -> int:
         return self.control.GetColumnCount()
 
-    def get_item(self, index: int) -> tuple:
+    def get_item(self, index: int) -> ChoiceItemOutputType:
         res = []
         for column in range(self.get_column_count()):
             res.append(self.get_item_column(index, column))
         return tuple(res)
 
-    def get_items(self):
+    def get_items(self) -> Sequence[ChoiceItemOutputType]:
         res = []
         for num in range(self.get_count()):
             res.append(self.get_item(num))
@@ -895,14 +901,14 @@ class ListView(ChoiceWidget):
     def set_item_column(self, index, column, data):
         self.control.SetStringItem(index, column, data)
 
-    def add_item(self, item):
+    def add_item(self, item: ChoiceItemInputType):
         self.control.Append(item)
 
-    def set_item(self, index, item):
+    def set_item(self, index: int, item: ChoiceItemInputType) -> None:
         for column, subitem in enumerate(item):
             self.set_item_column(index, column, str(subitem))
 
-    def update_item(self, index, item):
+    def update_item(self, index: int, item: ChoiceItemInputType) -> None:
         self.set_item(index, item)
 
     def set_items(self, items):
@@ -913,7 +919,7 @@ class ListView(ChoiceWidget):
         for item in items:
             self.add_item(item)
 
-    def insert_item(self, index, item):
+    def insert_item(self, index: int, item: ChoiceItemInputType) -> None:
         self.control.InsertStringItem(index, item)
 
     def delete_item(self, index):
@@ -1009,7 +1015,7 @@ if dataview:
         def get_item_column(self, index, column):
             return self.control.GetTextValue(index, column)
 
-        def set_item_column(self, index, column, data):
+        def set_item_column(self, index: int, column: int, data: str) -> None:
             self.control.SetTextValue(data, index, column)
 
 
@@ -1037,12 +1043,12 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
         self.max = max
 
 
-class ButtonSizer(WXWidget):
+class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
     control_type = wx.StdDialogButtonSizer
     control: wx.StdDialogButtonSizer
     unlabeled = True
     focusable = False
-    parent: WXWidget
+    parent: BaseContainer
 
     def translate_control_arguments(self, **kwargs):
         return wx_attributes("", result_key="flags", **kwargs)
@@ -1056,8 +1062,9 @@ class ButtonSizer(WXWidget):
         for kwarg, val in kwargs.items():
             if callable(val):
                 kwargs[kwarg] = True
+                logger.debug("Finding id for kwarg %s" % kwarg)
+
                 try:
-                    logger.debug("Finding id for kwarg %s" % kwarg)
                     callbacks[kwarg] = (find_wx_attribute("ID", kwarg), val)
                     logger.debug("Found callback %s" % str(callbacks[kwarg]))
                 except AttributeError:
@@ -1109,7 +1116,7 @@ class BaseContainer(WXWidget[ContainerWidgetType]):
 
 class BaseDialog(BaseContainer[wx.Dialog]):
     def __init__(self, *args, **kwargs):
-        super(BaseDialog, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._modal_result = None
 
     def display_modal(self):
@@ -1185,10 +1192,10 @@ class SizedFrame(BaseFrame):
     control_type = sc.SizedFrame
     control: sc.SizedFrame
 
-    def get_control(self):
+    def get_control(self) -> wx.Panel:
         return self.control.mainPanel
 
-    def set_content_padding(self, padding):
+    def set_content_padding(self, padding: int):
         """Set padding around the frame's content area.
 
         Args:
@@ -1283,7 +1290,7 @@ class Notebook(BaseContainer):
         item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
         item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
-    def delete_page(self, page):
+    def delete_page(self, page: BaseContainer[wx.Panel]):
         self.control.DeletePage(self.find_page_number(page))
 
     def render(self, *args, **kwargs):
@@ -1292,7 +1299,7 @@ class Notebook(BaseContainer):
         self.control_down = False
         self._setting_notebook_focus = False  # Guard against recursive focus calls
 
-        def key_down_up(evt):
+        def key_down_up(evt: wx.KeyEvent):
             self.control_down = evt.ControlDown()
             evt.Skip()
 
@@ -1383,22 +1390,22 @@ class Notebook(BaseContainer):
         return self.parent.field
 
 
-class RadioBox(ChoiceWidget[wx.RadioBox]):
+class RadioBox(ChoiceWidget[wx.RadioBox, str, str]):
     control_type = wx.RadioBox
     default_callback_type = "RADIOBOX"
     selflabeled = True
     style_prefix = "RA"
 
-    def get_value(self):
+    def get_value(self) -> ChoiceItemOutputType:
         return self.control.GetStringSelection()
 
-    def set_value(self, value):
+    def set_value(self, value: Sequence[ChoiceItemInputType]):
         self.control.SetStringSelection([str(i) for i in value])
 
-    def get_items(self):
+    def get_items(self) -> Sequence[ChoiceItemOutputType]:
         return self.control.GetChoices()
 
-    def set_items(self, items):
+    def set_items(self, items: Sequence[ChoiceItemInputType]) -> None:
         return self.control.SetItems(items)
 
 
@@ -1407,7 +1414,7 @@ class CheckListBox(ListBox):
     control_type = wx.CheckListBox
 
 
-class FilePicker(WXWidget):
+class FilePicker(WXWidget[wx.FilePickerCtrl]):
     control_type = wx.FilePickerCtrl
 
 
@@ -1587,7 +1594,9 @@ class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
     def set_value(self, value):
         super(DatePicker, self).set_value(self.convert_datetime(value))
 
-    def convert_datetime(self, dt):
+    def convert_datetime(
+        self, dt: Union[wx.DateTime, datetime.date, datetime.datetime]
+    ):
         pydate2wxdate = getattr(
             calendar, "_pydate2wxdate", getattr(wx, "pydate2wxdate")
         )
@@ -1604,25 +1613,25 @@ class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
 
 class VirtualListView(wx.ListCtrl):
     def __init__(self, *args, **kwargs):
-        super(VirtualListView, self).__init__(*args, **kwargs)
-        self.items = []
+        super().__init__(*args, **kwargs)
+        self.items: list[Sequence[str]] = []
 
-    def Append(self, entry):
+    def Append(self, entry: Sequence[str]):
         self.items.append(entry)
         self.SetItemCount(len(self.items))
 
-    def SetItems(self, items):
+    def SetItems(self, items: list[Sequence[str]]):
         self.items = items
         self.SetItemCount(len(self.items))
 
-    def OnGetItemText(self, item, column):
+    def OnGetItemText(self, item: int, column: int) -> str:
         return self.items[item][column]
 
     def DeleteAllItems(self):
         self.items = []
         self.SetItemCount(0)
 
-    def SetStringItem(self, index, column, data):
+    def SetStringItem(self, index: int, column: int, data: str):
         row = list(self.items[index])
         row[column] = data
         self.items[index] = row
