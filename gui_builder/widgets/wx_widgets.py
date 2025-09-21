@@ -1521,7 +1521,7 @@ class MenuItem(WXWidget[wx.MenuItem]):
 
 
 class SubMenu(Menu):
-    parent: MenuBar | Menu
+    parent: Union[MenuBar, Menu]
 
     def create_control(self, **kwargs):
         text = str(kwargs.get("label", self.label_text))
