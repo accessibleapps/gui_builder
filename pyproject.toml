@@ -40,4 +40,5 @@ Repository = "https://github.com/accessibleapps/gui_builder.git"
 [dependency-groups]
 dev = [
     "logger-setup>=0.17",
+    "pyright>=1.1.405",
 ]

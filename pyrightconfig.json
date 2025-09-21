@@ -1,0 +1,38 @@
+{
+  "include": [
+    "gui_builder",
+    "examples"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.git",
+    "**/node_modules"
+  ],
+  "pythonVersion": "3.7",
+  "pythonPlatform": "All",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "reportImportCycles": true,
+  "reportUnusedImport": true,
+  "reportUnusedClass": "warning",
+  "reportUnusedFunction": "warning",
+  "reportUnusedVariable": "warning",
+  "reportDuplicateImport": true,
+  "reportOptionalSubscript": true,
+  "reportOptionalMemberAccess": true,
+  "reportOptionalCall": true,
+  "reportOptionalIterable": true,
+  "reportOptionalContextManager": true,
+  "reportOptionalOperand": true,
+  "reportTypedDictNotRequiredAccess": false,
+  "reportPrivateImportUsage": false,
+  "reportConstantRedefinition": true,
+  "reportIncompatibleMethodOverride": true,
+  "reportIncompatibleVariableOverride": true,
+  "reportOverlappingOverloads": true,
+  "reportGeneralTypeIssues": true,
+  "strictListInference": false,
+  "strictDictionaryInference": false,
+  "strictSetInference": false
+}
