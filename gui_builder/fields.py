@@ -10,9 +10,9 @@ import traceback
 from .widgets import wx_widgets as widgets
 
 try:
-    unicode
+    unicode  # type: ignore  # Check if unicode exists in Python 2
 except NameError:
-    unicode = str
+    unicode = str  # Python 3 compatibility
 
 
 # Type variables for proper generic descriptor support
@@ -107,6 +107,7 @@ class GUIField(Generic[WidgetType]):
     callback = None
     extra_callbacks = None
     default_value = None
+    _last_enabled_descendant: Optional["GUIField[Any]"] = None
 
     @overload
     def __new__(cls: Type[SelfType]) -> "UnboundField[SelfType]": ...
@@ -114,7 +115,7 @@ class GUIField(Generic[WidgetType]):
     @overload
     def __new__(cls: Type[SelfType], **kwargs: Any) -> SelfType: ...
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         # Check if this is a form class (has FormMeta as metaclass)
         if hasattr(cls, "_unbound_fields"):
             # This is a form - always create the actual instance
@@ -221,10 +222,8 @@ class GUIField(Generic[WidgetType]):
         except Exception as e:
             logger.exception("Error creating widget.")
             raise RuntimeError(
-                "Unable to create widget with type %r" % self.widget_type,
-                traceback.format_exception(e),
-                e,
-            )
+                "Unable to create widget with type %r: %s" % (self.widget_type, str(e))
+            ) from e
         self.widget.render()
         self.register_extra_callbacks()
 
@@ -234,7 +233,7 @@ class GUIField(Generic[WidgetType]):
             return
         for callback_set in self.extra_callbacks:
             if len(callback_set) == 1:
-                callback_set = [None].extend(callback_set)
+                callback_set = [None] + list(callback_set)
             self.register_callback(*callback_set)
 
     def register_callback(self, trigger=None, callback=None):
@@ -389,10 +388,7 @@ class GUIField(Generic[WidgetType]):
         return func
 
 
-TextWidgetType = TypeVar("TextWidgetType", bound=widgets.Text)
-
-
-class Text(GUIField[TextWidgetType]):
+class Text(GUIField[widgets.Text]):
     """A text field"""
 
     widget_type = widgets.Text
@@ -451,7 +447,7 @@ class Text(GUIField[TextWidgetType]):
         return self.widget.clear()
 
 
-class IntText(Text[widgets.IntText]):
+class IntText(Text):
     """This text field will only allow the input of numbers."""
 
     widget_type = widgets.IntText
