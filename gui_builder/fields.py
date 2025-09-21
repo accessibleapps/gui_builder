@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 
 from logging import getLogger
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, Optional, Type, TypeVar, Union, overload, Any
+
+# TypeVar for class self-references
+SelfType = TypeVar('SelfType', bound='GUIField[Any]')
 
 logger = getLogger("gui_builder.fields")
 
@@ -15,11 +18,15 @@ except NameError:
     unicode = str
 
 
-class UnboundField(object):
+# Type variable for field types
+FieldType = TypeVar('FieldType', bound='GUIField[Any]')
+
+
+class UnboundField(Generic[FieldType]):
     creation_counter = 0
     _GUI_FIELD = True
 
-    def __init__(self, field, *args, **kwargs):
+    def __init__(self, field: Type[FieldType], *args: Any, **kwargs: Any) -> None:
         self.field = field
         self.args = args
         self.kwargs = kwargs
@@ -27,7 +34,23 @@ class UnboundField(object):
         UnboundField.creation_counter += 1
         self.creation_counter = UnboundField.creation_counter
 
-    def bind(self, parent=None, name=None, **kwargs):
+    @overload
+    def __get__(self, obj: None, owner: Type[Any]) -> 'UnboundField[FieldType]': ...
+
+    @overload
+    def __get__(self, obj: Any, owner: Type[Any]) -> FieldType: ...
+
+    def __get__(self, obj: Optional[Any], owner: Type[Any]) -> Union['UnboundField[FieldType]', FieldType]:
+        if obj is None:
+            return self  # Class access returns UnboundField
+        # Instance access - get bound field from form's _fields dict
+        # We need to find the field name by searching the owner class
+        for name, attr in owner.__dict__.items():
+            if attr is self:
+                return obj._fields[name]  # type: ignore[no-any-return]
+        raise AttributeError(f"Field not found in {owner}")
+
+    def bind(self, parent: Any = None, name: Optional[str] = None, **kwargs: Any) -> FieldType:
         kwargs.update(self.kwargs)
         return self.field(
             bound_name=name,
@@ -48,6 +71,44 @@ class UnboundField(object):
 
         return add_callback_decorator
 
+    # Proxy methods for common field operations that might be called on unbound fields
+    def display(self) -> None:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call display() on unbound field. Field must be bound to a parent first.")
+
+    def get_value(self) -> Any:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call get_value() on unbound field. Field must be bound to a parent first.")
+
+    def set_value(self, value: Any) -> None:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call set_value() on unbound field. Field must be bound to a parent first.")
+
+    def show(self) -> None:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call show() on unbound field. Field must be bound to a parent first.")
+
+    def hide(self) -> None:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call hide() on unbound field. Field must be bound to a parent first.")
+
+    def is_shown(self) -> bool:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call is_shown() on unbound field. Field must be bound to a parent first.")
+
+    def set_focus(self) -> None:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call set_focus() on unbound field. Field must be bound to a parent first.")
+
+    def get_index(self) -> int:
+        """Placeholder method - this should not be called on unbound fields."""
+        raise RuntimeError("Cannot call get_index() on unbound field. Field must be bound to a parent first.")
+
+    def __call__(self, func: Any) -> Any:
+        """Support for using fields as decorators."""
+        self.kwargs["callback"] = func
+        return func
+
 
 WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
 
@@ -61,6 +122,9 @@ class GUIField(Generic[WidgetType]):
     callback = None
     extra_callbacks = None
     default_value = None
+
+# Note: Complex overloads removed for now - the proxy methods on UnboundField
+    # provide better type checker compatibility for the common use cases
 
     def __new__(cls, *args, **kwargs):
         if "parent" in kwargs or kwargs.get("top_level_window"):
@@ -326,6 +390,11 @@ class GUIField(Generic[WidgetType]):
 
     def get_default_value(self):
         return self.default_value
+
+    def __call__(self, func: Any) -> Any:
+        """Support for using fields as decorators - typically for callback assignment."""
+        self.callback = func
+        return func
 
 
 TextWidgetType = TypeVar("TextWidgetType", bound=widgets.Text)
