@@ -505,9 +505,6 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
     def populate(self, value):
         self.set_items(value)
 
-    def set_items(self, items):
-        self.widget.set_items(items)
-
     def set_default_value(self):
         super(ChoiceField, self).set_default_value()
         self.set_default_index()

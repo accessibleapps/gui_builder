@@ -491,6 +491,10 @@ class WXWidget(Widget, Generic[ControlType]):
         self.raise_widget()
         self.show()
 
+    def display_modal(self) -> Any:
+        """Display widget modally. Only supported for dialog-type widgets."""
+        raise NotImplementedError("Modal display not supported for this widget type")
+
     def get_control(self):
         return self.control
 
