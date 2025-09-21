@@ -35,19 +35,19 @@ class UnboundField(Generic[FieldType]):
         self.creation_counter = UnboundField.creation_counter
 
     @overload
-    def __get__(self, obj: None, owner: Type[Any]) -> 'UnboundField[FieldType]': ...
+    def __get__(self, obj: None, owner: Any) -> 'UnboundField[FieldType]': ...
 
     @overload
-    def __get__(self, obj: Any, owner: Type[Any]) -> FieldType: ...
+    def __get__(self, obj: Any, owner: Any) -> FieldType: ...
 
-    def __get__(self, obj: Optional[Any], owner: Type[Any]) -> Union['UnboundField[FieldType]', FieldType]:
+    def __get__(self, obj: Optional[Any], owner: Any) -> Any:
         if obj is None:
             return self  # Class access returns UnboundField
         # Instance access - get bound field from form's _fields dict
         # We need to find the field name by searching the owner class
         for name, attr in owner.__dict__.items():
             if attr is self:
-                return obj._fields[name]  # type: ignore[no-any-return]
+                return obj._fields[name]
         raise AttributeError(f"Field not found in {owner}")
 
     def bind(self, parent: Any = None, name: Optional[str] = None, **kwargs: Any) -> FieldType:
@@ -71,39 +71,6 @@ class UnboundField(Generic[FieldType]):
 
         return add_callback_decorator
 
-    # Proxy methods for common field operations that might be called on unbound fields
-    def display(self) -> None:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call display() on unbound field. Field must be bound to a parent first.")
-
-    def get_value(self) -> Any:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call get_value() on unbound field. Field must be bound to a parent first.")
-
-    def set_value(self, value: Any) -> None:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call set_value() on unbound field. Field must be bound to a parent first.")
-
-    def show(self) -> None:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call show() on unbound field. Field must be bound to a parent first.")
-
-    def hide(self) -> None:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call hide() on unbound field. Field must be bound to a parent first.")
-
-    def is_shown(self) -> bool:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call is_shown() on unbound field. Field must be bound to a parent first.")
-
-    def set_focus(self) -> None:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call set_focus() on unbound field. Field must be bound to a parent first.")
-
-    def get_index(self) -> int:
-        """Placeholder method - this should not be called on unbound fields."""
-        raise RuntimeError("Cannot call get_index() on unbound field. Field must be bound to a parent first.")
-
     def __call__(self, func: Any) -> Any:
         """Support for using fields as decorators."""
         self.kwargs["callback"] = func
@@ -123,11 +90,21 @@ class GUIField(Generic[WidgetType]):
     extra_callbacks = None
     default_value = None
 
-# Note: Complex overloads removed for now - the proxy methods on UnboundField
-    # provide better type checker compatibility for the common use cases
+    @overload
+    def __new__(cls, **kwargs: Any) -> 'UnboundField[Any]': ...
+
+    @overload
+    def __new__(cls, *, parent: Any, **kwargs: Any) -> Any: ...
+
+    @overload
+    def __new__(cls, *, top_level_window: Any, **kwargs: Any) -> Any: ...
 
     def __new__(cls, *args, **kwargs):
-        if "parent" in kwargs or kwargs.get("top_level_window"):
+        # Check if this is a form class (has FormMeta as metaclass)
+        if hasattr(cls, '_unbound_fields'):
+            # This is a form - always create the actual instance
+            return super(GUIField, cls).__new__(cls)
+        elif "parent" in kwargs or kwargs.get("top_level_window"):
             return super(GUIField, cls).__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
