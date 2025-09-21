@@ -562,7 +562,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
         return self.widget.get_item(index)
 
     def set_item(self, index, item):
-        return self.widget.set_item(index, item)
+        return self.widget.update_item(index, item)
 
     def set_value(self, value):
         self.set_items(value)

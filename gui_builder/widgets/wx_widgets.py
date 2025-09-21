@@ -19,7 +19,6 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    overload,
 )
 
 import wx

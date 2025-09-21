@@ -74,3 +74,11 @@ class Widget(object):
 
     def display(self):
         raise NotImplementedError
+
+    def find_callback_in_dict(self, callback) -> bool:
+        """Find callback in widget's dictionary. Must be provided by subclasses."""
+        raise NotImplementedError
+
+    def get_control(self):
+        """Get the underlying control. Must be provided by subclasses."""
+        raise NotImplementedError
