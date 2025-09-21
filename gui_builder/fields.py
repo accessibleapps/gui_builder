@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, annotations
 
 from logging import getLogger
 from typing import Generic, Optional, Type, TypeVar, overload, Any
@@ -18,6 +18,7 @@ except NameError:
 # Type variables for proper generic descriptor support
 FieldType = TypeVar("FieldType", bound="GUIField[Any]", covariant=True)
 FormInstanceType = TypeVar("FormInstanceType")
+SelfType = TypeVar("SelfType", bound="GUIField[Any]")
 
 
 class UnboundField(Generic[FieldType]):
@@ -108,10 +109,10 @@ class GUIField(Generic[WidgetType]):
     default_value = None
 
     @overload
-    def __new__(cls: Type[FieldType]) -> "UnboundField[FieldType]": ...
+    def __new__(cls: Type[SelfType]) -> "UnboundField[SelfType]": ...
 
     @overload
-    def __new__(cls: Type[FieldType], **kwargs: Any) -> FieldType: ...
+    def __new__(cls: Type[SelfType], **kwargs: Any) -> SelfType: ...
 
     def __new__(cls, *args, **kwargs):
         # Check if this is a form class (has FormMeta as metaclass)

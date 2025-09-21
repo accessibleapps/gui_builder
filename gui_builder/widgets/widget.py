@@ -1,13 +1,12 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 import weakref
 from collections import defaultdict
 from logging import getLogger
+# Note: Using string annotation to avoid circular import with fields.py
 
 logger = getLogger("gui_builder.widgets.widget")
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ..fields import GUIField
 
 
 class Widget(object):
@@ -15,7 +14,7 @@ class Widget(object):
 
     control_type = None  # the underlying control
 
-    def __init__(self, field: GUIField, callbacks=None, **kwargs):
+    def __init__(self, field: "GUIField", callbacks=None, **kwargs):
         self.field = weakref.proxy(field)
         self.control_kwargs = kwargs
         self.control = None
