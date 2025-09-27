@@ -107,7 +107,6 @@ class GUIField(Generic[WidgetType]):
     callback = None
     extra_callbacks = None
     default_value = None
-    _last_enabled_descendant: Optional["GUIField[Any]"] = None
 
     @overload
     def __new__(cls: Type[SelfType]) -> "UnboundField[SelfType]": ...
@@ -165,6 +164,7 @@ class GUIField(Generic[WidgetType]):
         self.callback = callback
         self.default_value = default_value
         self.default_focus = default_focus
+        self._last_enabled_descendant: Optional["GUIField[Any]"] = None
         if extra_callbacks is not None:
             if self.extra_callbacks is None:
                 self.extra_callbacks = []
