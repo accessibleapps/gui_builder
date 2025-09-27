@@ -387,6 +387,30 @@ class GUIField(Generic[WidgetType]):
         self.callback = func
         return func
 
+    def add_callback(self, trigger=None):
+        """Add callback to this field. Works on bound field instances.
+
+        Usage:
+            @field.add_callback              # Default callback
+            @field.add_callback("event")     # Event-specific callback
+        """
+        if not isinstance(trigger, str):
+            # Direct callback assignment (for @field.add_callback usage)
+            self.callback = trigger
+            return trigger
+
+        def add_callback_decorator(function):
+            # Event-specific callback (for @field.add_callback("event") usage)
+            if self.extra_callbacks is None:
+                self.extra_callbacks = []
+            self.extra_callbacks.append((trigger, function))
+            # If we're already rendered, register immediately
+            if hasattr(self, 'widget') and self.widget is not None:
+                self.register_callback(trigger, function)
+            return function
+
+        return add_callback_decorator
+
 
 class Text(GUIField[widgets.Text]):
     """A text field"""
