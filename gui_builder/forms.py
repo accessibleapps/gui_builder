@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Tuple,
     TypeVar,
+    TYPE_CHECKING,
     Union,
 )
 
@@ -20,6 +21,11 @@ from .fields import ChoiceField, GUIField, UnboundField
 from .widgets import wx_widgets as widgets
 
 logger = getLogger("gui_builder.forms")
+
+# Type annotations for static analysis only - prevents runtime class attributes
+if TYPE_CHECKING:
+    # These would create problematic class attributes if defined at class level
+    widget: widgets.SizedFrame
 
 
 FormWidgetType = TypeVar("FormWidgetType", bound=widgets.BaseContainer)
@@ -380,7 +386,6 @@ class SizedDialog(BaseDialog):
 
 class SizedFrame(BaseFrame):
     widget_type = widgets.SizedFrame
-    widget: widgets.SizedFrame
 
     def set_content_padding(self, padding: int):
         """Set padding around the frame's content area.

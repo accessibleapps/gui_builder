@@ -1,7 +1,7 @@
 from __future__ import absolute_import, annotations
 
 from logging import getLogger
-from typing import Generic, Optional, Type, TypeVar, overload, Any
+from typing import Generic, Optional, Type, TypeVar, overload, Any, TYPE_CHECKING
 
 logger = getLogger("gui_builder.fields")
 
@@ -97,10 +97,13 @@ def Field(field_cls: Type[FieldType], **kwargs: Any) -> UnboundField[FieldType]:
 
 WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
 
-
-class GUIField(Generic[WidgetType]):
+# Type annotations for static analysis only - prevents runtime class attributes
+if TYPE_CHECKING:
+    # These would create problematic class attributes if defined at class level
     widget_type: Type[WidgetType]
     widget: WidgetType
+
+class GUIField(Generic[WidgetType]):
     __autolabel__ = False
     widget_args = ()
     widget_kwargs = {}
@@ -288,12 +291,14 @@ class GUIField(Generic[WidgetType]):
     def disable(self):
         """Disables this field, I.E. makes it unuseable."""
         self._reset_last_enabled_descendant()
-        return self.widget.disable()
+        if 'widget' in self.__dict__:
+            return self.widget.disable()
 
     def enable(self):
         """Enables this field, making it useable."""
         self._reset_last_enabled_descendant()
-        return self.widget.enable()
+        if 'widget' in self.__dict__:
+            return self.widget.enable()
 
     def set_enabled(self, enabled):
         """A method to enable/disable this field based on the truthyness of the passed in value"""
@@ -306,11 +311,11 @@ class GUIField(Generic[WidgetType]):
         next_field = self
         while next_field is not None:
             if (
-                hasattr(next_field, "_last_enabled_descendant")
+                "_last_enabled_descendant" in next_field.__dict__
                 and next_field._last_enabled_descendant is not None
             ):
                 next_field._last_enabled_descendant = None
-            if hasattr(next_field.parent, "widget"):
+            if "widget" in next_field.parent.__dict__:
                 next_field = next_field.parent
             else:
                 break
