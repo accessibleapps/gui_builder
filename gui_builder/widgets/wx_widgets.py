@@ -20,12 +20,12 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 import wx
 from wx.lib import intctrl
 from wx.lib import sized_controls as sc
-from wx.lib.agw import hyperlink
 
 from .. import APPLY, CANCEL, CLOSE, FIND, NO, OK, VETO, YES
 from .widget import Widget
@@ -37,11 +37,6 @@ ControlType = TypeVar("ControlType", bound=wx.Window)
 
 MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
 
-# Type annotations for static analysis only - prevents runtime class attributes
-if TYPE_CHECKING:
-    # These would create problematic class attributes if defined at class level
-    control_type: Type[ControlType]
-    control: ControlType
 
 from wx.lib import calendar
 
@@ -55,11 +50,7 @@ try:
 except ImportError:
     pass
 
-
-try:
-    PyDeadObjectError = wx._core.PyDeadObjectError
-except AttributeError:
-    PyDeadObjectError = RuntimeError
+PyDeadObjectError = RuntimeError
 
 UNFOCUSABLE_CONTROLS = (
     wx.StaticText,
@@ -234,7 +225,11 @@ class WXWidget(Widget, Generic[ControlType]):
     )
     callback: Optional[Callable[..., Any]] = None
     label: str = ""
-    control_type = None
+
+    if TYPE_CHECKING:
+        # These would create problematic class attributes if defined at class level
+        control_type: Type[ControlType]
+        control: ControlType
 
     def __init__(
         self,
@@ -463,9 +458,10 @@ class WXWidget(Widget, Generic[ControlType]):
         self.control.Thaw()
 
     def destroy(self) -> None:
-        if getattr(self, "label_control", None) is not None:
+        label: Optional[wx.StaticText] = getattr(self, "label_control", None)
+        if label is not None:
             try:
-                self.label_control.Destroy()
+                label.Destroy()
             except PyDeadObjectError:
                 pass
         try:
@@ -521,10 +517,12 @@ class WXWidget(Widget, Generic[ControlType]):
     def remove_child(self, child):
         self.get_control().RemoveChild(child.get_control())
 
-    def get_value(self):
+    def get_value(self) -> Any:
         """Returns the most Pythonic representation of this control's current value."""
-        if hasattr(self.control, "GetValue"):
-            return self.control.GetValue()
+        get_value_method = getattr(self.control, "GetValue", None)
+        if callable(get_value_method):
+            return get_value_method()
+        return None
 
     def set_value(self, value):
         self.control.SetValue(value)
@@ -553,9 +551,11 @@ class ChoiceControl(wx.ItemContainer, wx.Control):
     pass
 
 
-ChoiceControlType = TypeVar("ChoiceControlType", bound=wx.Window)
+ChoiceControlType = TypeVar("ChoiceControlType", bound=wx.Choice)
 
-ChoiceItemInputType = TypeVar("ChoiceItemInputType", contravariant=True)
+ChoiceItemInputType = TypeVar(
+    "ChoiceItemInputType", bound=Sequence[Any], contravariant=True
+)
 ChoiceItemOutputType = TypeVar("ChoiceItemOutputType", covariant=True)
 
 
@@ -581,7 +581,7 @@ class ChoiceWidget(
         return str(item)  # type: ignore
 
     def get_item(self, index: int) -> ChoiceItemOutputType:
-        return self.control.GetString(index)  # type: ignore
+        return cast(ChoiceItemOutputType, self.control.GetString(index))
 
     def __getitem___(self, index: int) -> ChoiceItemOutputType:
         return self.get_item(index)
@@ -604,6 +604,9 @@ class ChoiceWidget(
     def delete_item(self, index: int) -> None:
         self.control.Delete(index)
 
+    def is_empty(self) -> bool:
+        return self.control.IsEmpty()
+
     def insert_item(
         self, index: int, item: ChoiceItemInputType
     ) -> ChoiceItemOutputType:
@@ -612,12 +615,10 @@ class ChoiceWidget(
         self.control.InsertItems([str(converted_item)], index)
         return converted_item
 
-    def update_item(
-        self, index: int, item: ChoiceItemInputType
-    ) -> ChoiceItemOutputType:
-        """Update item and return the converted output item."""
+    def update_item(self, index: int, item: ChoiceItemInputType):
+        """Update item."""
         self.delete_item(index)
-        return self.insert_item(index, item)
+        self.insert_item(index, item)
 
     def clear(self) -> None:
         self.control.Clear()
@@ -648,7 +649,7 @@ class BaseText(WXWidget[TextControlType]):
         self.control.SetInsertionPoint(insertion_point)
 
     def set_max_length(self, length: int) -> None:
-        self.control.SetMaxLen(length)
+        self.control.SetMaxLength(length)
 
     def get_line(self, line_number: int) -> str:
         return self.control.GetLineText(line_number)
@@ -663,6 +664,10 @@ class BaseText(WXWidget[TextControlType]):
 
     def set_value(self, value: Any) -> None:
         super(BaseText, self).set_value(str(value))
+
+    def paste(self) -> None:
+        """Paste text from the clipboard into the text control at the current insertion point."""
+        self.control.Paste()
 
     def append(self, text: str) -> None:
         self.control.AppendText(text)
@@ -749,8 +754,8 @@ class ComboBox(ChoiceWidget[wx.ComboBox, str, str]):
     def select_all(self):
         self.control.SelectAll()
 
-    def insert_item(self, index: int, item: ChoiceItemInputType) -> None:
-        self.control.Insert(item, index)
+    def insert_item(self, index: int, item: ChoiceItemInputType):
+        return self.control.Insert(item, index)
 
 
 class Button(WXWidget[wx.Button]):
@@ -905,10 +910,10 @@ class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
         self.choices = choices
         self._last_added_column = -1
 
-    def get_index(self):
+    def get_index(self) -> Optional[int]:
         return translate_to_none(self.control.GetFirstSelected())
 
-    def set_index(self, index):
+    def set_index(self, index: Optional[int]) -> None:
         if index is None:
             index = -1
         self.control.Select(index)
@@ -924,13 +929,13 @@ class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
         res = []
         for column in range(self.get_column_count()):
             res.append(self.get_item_column(index, column))
-        return tuple(res)
+        return cast(ChoiceItemOutputType, tuple(res))
 
     def get_items(self) -> Sequence[ChoiceItemOutputType]:
         res = []
         for num in range(self.get_count()):
             res.append(self.get_item(num))
-        return res
+        return cast(Sequence[ChoiceItemOutputType], res)
 
     def get_item_column(self, index: int, column: int) -> str:
         return self.control.GetItemText(index, column)
@@ -945,19 +950,19 @@ class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
         for column, subitem in enumerate(item):
             self.set_item_column(index, column, str(subitem))
 
-    def update_item(self, index: int, item: ChoiceItemInputType) -> None:
-        self.set_item(index, item)
+    def update_item(self, index: int, item: ChoiceItemInputType):
+        return self.set_item(index, item)
 
     def set_items(self, items):
         if self.virtual:
-            self.control.SetItems(list(items))
-            return
+            return cast(VirtualListView, self.control).SetItems(list(items))
         self.clear()
+
         for item in items:
             self.add_item(item)
 
-    def insert_item(self, index: int, item: ChoiceItemInputType) -> None:
-        self.control.InsertStringItem(index, item)
+    def insert_item(self, index: int, item: ChoiceItemInputType):
+        return self.control.InsertStringItem(index, item)
 
     def delete_item(self, index):
         self.control.DeleteItem(index)
@@ -1035,7 +1040,7 @@ if dataview:
         def get_column_count(self):
             return self.control.GetStore().GetColumnCount()
 
-        def get_index(self):
+        def get_index(self) -> Optional[int]:
             return translate_to_none(self.control.GetSelectedRow())
 
         def set_index(self, index):

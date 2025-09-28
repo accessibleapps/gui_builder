@@ -1,11 +1,8 @@
 from __future__ import absolute_import, annotations
 
-from logging import getLogger
-from typing import Generic, Optional, Type, TypeVar, overload, Any, TYPE_CHECKING
-
-logger = getLogger("gui_builder.fields")
-
 import traceback
+from logging import getLogger
+from typing import TYPE_CHECKING, Any, Generic, Optional, Type, TypeVar, overload
 
 from .widgets import wx_widgets as widgets
 
@@ -13,7 +10,7 @@ try:
     unicode  # type: ignore  # Check if unicode exists in Python 2
 except NameError:
     unicode = str  # Python 3 compatibility
-
+logger = getLogger("gui_builder.fields")
 
 # Type variables for proper generic descriptor support
 FieldType = TypeVar("FieldType", bound="GUIField[Any]", covariant=True)
@@ -98,10 +95,7 @@ def Field(field_cls: Type[FieldType], **kwargs: Any) -> UnboundField[FieldType]:
 WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
 
 # Type annotations for static analysis only - prevents runtime class attributes
-if TYPE_CHECKING:
-    # These would create problematic class attributes if defined at class level
-    widget_type: Type[WidgetType]
-    widget: WidgetType
+
 
 class GUIField(Generic[WidgetType]):
     __autolabel__ = False
@@ -110,6 +104,10 @@ class GUIField(Generic[WidgetType]):
     callback = None
     extra_callbacks = None
     default_value = None
+    if TYPE_CHECKING:
+        # These would create problematic class attributes if defined at class level
+        widget_type: Type[WidgetType]
+        widget: WidgetType
 
     @overload
     def __new__(cls: Type[SelfType]) -> "UnboundField[SelfType]": ...
@@ -287,13 +285,13 @@ class GUIField(Generic[WidgetType]):
     def disable(self):
         """Disables this field, I.E. makes it unuseable."""
         self._reset_last_enabled_descendant()
-        if 'widget' in self.__dict__:
+        if "widget" in self.__dict__:
             return self.widget.disable()
 
     def enable(self):
         """Enables this field, making it useable."""
         self._reset_last_enabled_descendant()
-        if 'widget' in self.__dict__:
+        if "widget" in self.__dict__:
             return self.widget.enable()
 
     def set_enabled(self, enabled):
@@ -311,7 +309,11 @@ class GUIField(Generic[WidgetType]):
                 and next_field._last_enabled_descendant is not None
             ):
                 next_field._last_enabled_descendant = None
-            if "widget" in next_field.parent.__dict__:
+            if (
+                next_field
+                and next_field.parent
+                and "widget" in next_field.parent.__dict__
+            ):
                 next_field = next_field.parent
             else:
                 break
@@ -406,7 +408,7 @@ class GUIField(Generic[WidgetType]):
                 self.extra_callbacks = []
             self.extra_callbacks.append((trigger, function))
             # If we're already rendered, register immediately
-            if hasattr(self, 'widget') and self.widget is not None:
+            if hasattr(self, "widget") and self.widget is not None:
                 self.register_callback(trigger, function)
             return function
 
