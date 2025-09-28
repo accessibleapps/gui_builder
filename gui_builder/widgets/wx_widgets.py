@@ -888,7 +888,9 @@ class ListBox(ChoiceWidget[wx.ListBox, str, str]):
         return item
 
 
-class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
+class ListView(
+    ChoiceWidget[Union[wx.ListView, VirtualListView], Tuple[str, ...], Tuple[str, ...]]
+):
     control_type = wx.ListView
     style_prefix = "LC"
     event_prefix = "EVT_LIST"
@@ -993,7 +995,7 @@ class ListView(ChoiceWidget[wx.ListView, Tuple[str, ...], Tuple[str, ...]]):
     def delete_column(self, column_number: int):
         self.control.DeleteColumn(column_number)
 
-    def get_value(self):
+    def get_value(self) -> Sequence[ChoiceItemOutputType]:
         return self.get_items()
 
     def set_value(self, value):
@@ -1089,7 +1091,8 @@ class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
     control_type = wx.StdDialogButtonSizer
     unlabeled = True
     focusable = False
-    parent: BaseContainer
+    if TYPE_CHECKING:
+        parent: BaseContainer
 
     def translate_control_arguments(self, **kwargs):
         return wx_attributes("", result_key="flags", **kwargs)
@@ -1155,7 +1158,10 @@ class BaseContainer(WXWidget[ContainerWidgetType]):
         self.control.Close()
 
 
-class BaseDialog(BaseContainer[wx.Dialog]):
+DialogControlType = TypeVar("DialogControlType", bound=wx.Dialog)
+
+
+class BaseDialog(BaseContainer[Generic[DialogControlType]]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._modal_result = None
@@ -1183,7 +1189,7 @@ class BaseDialog(BaseContainer[wx.Dialog]):
             return result
 
 
-class SizedDialog(BaseDialog):
+class SizedDialog(BaseDialog[sc.SizedDialog]):
     control_type = sc.SizedDialog
 
 
