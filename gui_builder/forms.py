@@ -220,6 +220,12 @@ class BaseForm(GUIField[FormWidgetType]):
             return
         self.set_focus()
 
+    def get_first_focusable_child(self) -> Optional[GUIField[Any]]:
+        for child in self.get_all_children():
+            if child.can_be_focused():
+                return child
+        return None
+
     def display(self) -> None:
         """Does the work of actually displaying this form on the screen."""
         self._predisplay()
@@ -314,7 +320,7 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
 class UIForm(Form[FormWidgetType]):
     def set_value(self, items: Mapping[str, Any]) -> None:
         """Given a mapping of field ids to values, populates each field with the corresponding value"""
-        for key, value in items.iteritems():  # type: ignore[attr-defined]
+        for key, value in items.items():
             self[key].populate(value)
 
     def get_title(self) -> str:
@@ -324,11 +330,6 @@ class UIForm(Form[FormWidgetType]):
     def set_title(self, title: str):
         """Sets the form's title to the string provided."""
         return self.widget.set_title(title)
-
-    def get_first_focusable_child(self) -> Optional[GUIField[Any]]:
-        for child in self.get_all_children():
-            if child.can_be_focused():
-                return child
 
     def delete_child(self, name: str) -> None:
         child = self._fields[name]

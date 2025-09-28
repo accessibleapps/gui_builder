@@ -489,6 +489,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return self.control.Raise()
 
     def display(self) -> None:
+        """Display the widget. For top-level windows, this shows the window."""
         self.raise_widget()
         self.show()
 
@@ -663,7 +664,7 @@ class BaseText(WXWidget[TextControlType]):
         self.label_control.SetLabel(label)
 
     def set_value(self, value: Any) -> None:
-        super(BaseText, self).set_value(str(value))
+        super().set_value(str(value))
 
     def paste(self) -> None:
         """Paste text from the clipboard into the text control at the current insertion point."""
@@ -712,7 +713,7 @@ class IntText(Text):
         self.control.SetValue(str(value))
 
     def get_value(self) -> Optional[int]:
-        value = super(IntText, self).get_value()
+        value = super().get_value()
         if value:
             try:
                 value = int(value)
@@ -764,11 +765,11 @@ class Button(WXWidget[wx.Button]):
     selflabeled = True
 
     def __init__(self, default=False, *args, **kwargs):
-        super(Button, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.default = default
 
     def render(self, *args, **kwargs):
-        super(Button, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if self.default:
             self.make_default()
 
@@ -806,7 +807,7 @@ class FixedSlider(wx.Slider):
             self.CHILDID_SELF,
         )
 
-    def onSliderChar(self, evt):
+    def onSliderChar(self, evt: wx.KeyEvent):
         key = evt.KeyCode
         if key == wx.WXK_UP:
             newValue = min(self.Value + self.LineSize, self.Max)
@@ -889,7 +890,9 @@ class ListBox(ChoiceWidget[wx.ListBox, str, str]):
 
 
 class ListView(
-    ChoiceWidget[Union[wx.ListView, VirtualListView], Tuple[str, ...], Tuple[str, ...]]
+    ChoiceWidget[
+        Union[wx.ListView, "VirtualListView"], Tuple[str, ...], Tuple[str, ...]
+    ]
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1003,7 +1006,8 @@ class ListView(
 
 
 class ListViewColumn(WXWidget):
-    parent: ListView
+    if TYPE_CHECKING:
+        parent: ListView
 
     def create_control(self, **runtime_kwargs):
         kwargs = self.control_kwargs
@@ -1030,37 +1034,44 @@ if dataview:
         event_module = dataview
         default_callback_type = "selection_changed"
 
-        def add_item(self, item):
-            self.control.AppendItem(item)
+        def __init__(self, choices=None, **kwargs):
+            super().__init__(**kwargs)
+            if choices is None:
+                choices = []
 
-        def insert_item(self, index, item):
-            return self.control.InsertItem(index, item)
+            self.choices = choices
 
-        def get_count(self):
-            return self.control.GetStore().GetCount()
+            def add_item(self, item):
+                self.control.AppendItem(item)
 
-        def get_column_count(self):
-            return self.control.GetStore().GetColumnCount()
+            def insert_item(self, index, item):
+                return self.control.InsertItem(index, item)
 
-        def get_index(self) -> Optional[int]:
-            return translate_to_none(self.control.GetSelectedRow())
+            def get_count(self) -> int:
+                return self.control.GetStore().GetCount()
 
-        def set_index(self, index):
-            if index is None:
-                return
-            index = int(index)
-            if index == 0 and self.get_count() == 0:
-                return
-            self.control.SelectRow(index)
+            def get_column_count(self):
+                return self.control.GetStore().GetColumnCount()
 
-        def create_column(self, column_number, label, width, format):
-            self.control.AppendTextColumn(label, align=format, width=width)
+            def get_index(self) -> Optional[int]:
+                return translate_to_none(self.control.GetSelectedRow())
 
-        def get_item_column(self, index, column):
-            return self.control.GetTextValue(index, column)
+            def set_index(self, index):
+                if index is None:
+                    return
+                index = int(index)
+                if index == 0 and self.get_count() == 0:
+                    return
+                self.control.SelectRow(index)
 
-        def set_item_column(self, index: int, column: int, data: str) -> None:
-            self.control.SetTextValue(data, index, column)
+            def create_column(self, column_number, label, width, format):
+                self.control.AppendTextColumn(label, align=format, width=width)
+
+            def get_item_column(self, index, column):
+                return self.control.GetTextValue(index, column)
+
+            def set_item_column(self, index: int, column: int, data: str) -> None:
+                self.control.SetTextValue(data, index, column)
 
 
 class SpinBox(WXWidget[wx.SpinCtrl]):
@@ -1145,10 +1156,10 @@ class BaseContainer(WXWidget[ContainerWidgetType]):
         if self.top_level_window:
             wx.GetApp().SetTopWindow(self.control)
 
-    def set_title(self, title):
+    def set_title(self, title: str) -> None:
         self.control.SetTitle(title)
 
-    def get_title(self):
+    def get_title(self) -> str:
         return self.control.GetTitle()
 
     def set_label(self, label):
@@ -1161,7 +1172,7 @@ class BaseContainer(WXWidget[ContainerWidgetType]):
 DialogControlType = TypeVar("DialogControlType", bound=wx.Dialog)
 
 
-class BaseDialog(BaseContainer[Generic[DialogControlType]]):
+class BaseDialog(BaseContainer[DialogControlType]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._modal_result = None
@@ -1195,7 +1206,8 @@ class SizedDialog(BaseDialog[sc.SizedDialog]):
 
 class SizedPanel(BaseContainer):
     control_type = sc.SizedPanel
-    control: sc.SizedPanel
+    if TYPE_CHECKING:
+        control: sc.SizedPanel
     focusable = False
 
     def __init__(self, sizer_type="vertical", *args, **kwargs):
@@ -1207,7 +1219,10 @@ class SizedPanel(BaseContainer):
         self.control.SetSizerType(self.sizer_type)
 
 
-class BaseFrame(BaseContainer):
+FrameControlType = TypeVar("FrameControlType", bound=wx.Frame)
+
+
+class BaseFrame(BaseContainer[FrameControlType]):
     def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
@@ -1229,18 +1244,19 @@ class BaseFrame(BaseContainer):
         return self.control.Maximize(False)
 
 
-class Frame(BaseContainer):
+class Frame(BaseContainer[wx.Frame]):
     control_type = wx.Frame
 
 
-class SizedFrame(BaseFrame):
+class SizedFrame(BaseFrame[sc.SizedFrame]):
     control_type = sc.SizedFrame
-    control: sc.SizedFrame
+    if TYPE_CHECKING:
+        control: sc.SizedFrame
 
     def get_control(self) -> wx.Panel:
         return self.control.mainPanel
 
-    def set_content_padding(self, padding: int):
+    def set_content_padding(self, padding: int) -> None:
         """Set padding around the frame's content area.
 
         Args:
@@ -1250,15 +1266,15 @@ class SizedFrame(BaseFrame):
         pane.SetSizerProps(border=("all", padding))
 
 
-class MDIParentFrame(BaseFrame):
+class MDIParentFrame(BaseFrame[wx.MDIParentFrame]):
     control_type = wx.MDIParentFrame
 
 
-class MDIChildFrame(BaseFrame):
+class MDIChildFrame(BaseFrame[wx.MDIChildFrame]):
     control_type = wx.MDIChildFrame
 
 
-class Dialog(BaseDialog):
+class Dialog(BaseDialog[wx.Dialog]):
     control_type = wx.Dialog
 
 
@@ -1281,10 +1297,12 @@ class Notebook(BaseContainer[wx.Notebook]):
         def on_focus(evt):
             evt.Skip()
 
-        def on_navigation_key(evt: wx.NavigationKeyEvent):
+        def on_navigation_key(evt: wx.Event):
+            # Cast to the specific event type we expect
+            nav_evt = cast(wx.NavigationKeyEvent, evt)
             # Get the currently focused window using FindFocus instead of evt.GetCurrentFocus
             focused_window = wx.Window.FindFocus()
-            direction: bool = evt.GetDirection()  # True = forward, False = backward
+            direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
 
             # Get the enabled, focusable children of this page
             enabled_children = [
@@ -1296,7 +1314,7 @@ class Notebook(BaseContainer[wx.Notebook]):
             ]
 
             if not enabled_children:
-                evt.Skip()
+                nav_evt.Skip()
                 return
 
             first_child = enabled_children[0]
@@ -1329,7 +1347,7 @@ class Notebook(BaseContainer[wx.Notebook]):
                     return  # Consume the event
 
             # Normal intra-page navigation
-            evt.Skip()
+            nav_evt.Skip()
 
         item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
         item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
@@ -1347,11 +1365,13 @@ class Notebook(BaseContainer[wx.Notebook]):
             self.control_down = evt.ControlDown()
             evt.Skip()
 
-        def on_notebook_navigation(evt: wx.NavigationKeyEvent):
-            direction: bool = evt.GetDirection()  # True = forward, False = backward
+        def on_notebook_navigation(evt: wx.Event):
+            # Cast to the specific event type we expect
+            nav_evt = cast(wx.NavigationKeyEvent, evt)
+            direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
             focused_window = wx.Window.FindFocus()
-            event_object = evt.GetEventObject()
+            event_object = nav_evt.GetEventObject()
 
             logger.info(
                 f"[NOTEBOOK_NAV] Navigation event: direction={'forward' if direction else 'backward'}"
@@ -1411,7 +1431,7 @@ class Notebook(BaseContainer[wx.Notebook]):
 
             # If we can't find appropriate controls, allow normal navigation
             logger.info("[NOTEBOOK_NAV] SKIPPING EVENT: allowing normal navigation")
-            evt.Skip()
+            nav_evt.Skip()
 
         self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
         self.bind_event(wx.EVT_KEY_DOWN, key_down_up)
@@ -1480,7 +1500,7 @@ class MenuBar(WXWidget):
         wx.GetApp().GetTopWindow().SetMenuBar(self.control)
 
     def render(self, *args, **kwargs):
-        super(MenuBar, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if platform.system() == "Darwin":
             wx.MenuBar.MacSetCommonMenuBar(self.control)
 
@@ -1587,7 +1607,8 @@ class MenuItem(WXWidget[wx.MenuItem]):
 
 
 class SubMenu(Menu):
-    parent: Union[MenuBar, Menu]
+    if TYPE_CHECKING:
+        parent: Union[MenuBar, Menu]
 
     def create_control(self, **kwargs):
         text = str(kwargs.get("label", self.label_text))
@@ -1596,7 +1617,8 @@ class SubMenu(Menu):
 
 
 class StatusBar(WXWidget[wx.StatusBar]):
-    parent: BaseFrame
+    if TYPE_CHECKING:
+        parent: BaseFrame
     control_type = wx.StatusBar
     style_prefix = "SB"
     focusable = False
@@ -1607,10 +1629,10 @@ class StatusBar(WXWidget[wx.StatusBar]):
     def set_value(self, value):
         self.control.SetStatusText(value)
 
-    def get_value(self, field=0):
+    def get_value(self, field=0) -> str:
         return self.control.GetStatusText(field)
 
-    def set_status_text(self, text, field=0):
+    def set_status_text(self, text: str, field=0):
         self.control.SetStatusText(text, field)
 
 
@@ -1633,11 +1655,11 @@ class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
     default_callback_type = "date_changed"
 
     def __init__(self, range=None, *args, **kwargs):
-        super(DatePicker, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.range = range
 
     def render(self, *args, **kwargs):
-        super(DatePicker, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if self.range is not None:
             self.set_range(*self.range)
 
@@ -1646,7 +1668,7 @@ class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
         return wx.wxdate2pydate(value)
 
     def set_value(self, value):
-        super(DatePicker, self).set_value(self.convert_datetime(value))
+        super().set_value(self.convert_datetime(value))
 
     def convert_datetime(
         self, dt: Union[wx.DateTime, datetime.date, datetime.datetime]
@@ -1698,8 +1720,8 @@ class TreeView(WXWidget[wx.TreeCtrl]):
     default_callback_type = "SEL_CHANGED"
 
     def __init__(self, *args, **kwargs):
-        super(TreeView, self).__init__(*args, **kwargs)
-        self.image_list = None
+        super().__init__(*args, **kwargs)
+        self.image_list: Optional[wx.ImageList] = None
 
     def add_root(self, text=None, image=None, selected_image=None, data=None):
         if text is None:
@@ -1764,7 +1786,7 @@ class ToolBar(WXWidget[wx.ToolBar]):
     style_prefix = "TB"
 
     def __init__(self, tool_bitmap_size=(16, 16), *args, **kwargs):
-        super(ToolBar, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.tool_bitmap_size = tool_bitmap_size
 
     def add_simple_tool(
@@ -1792,7 +1814,7 @@ class ToolBar(WXWidget[wx.ToolBar]):
         return self.control.Realize()
 
     def render(self, **runtime_kwargs):
-        super(ToolBar, self).render(**runtime_kwargs)
+        super().render(**runtime_kwargs)
         self.set_tool_bitmap_size(self.tool_bitmap_size)
 
     def set_tool_bitmap_size(self, tool_bitmap_size):
