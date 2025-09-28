@@ -118,11 +118,7 @@ class GUIField(Generic[WidgetType]):
     def __new__(cls: Type[SelfType], **kwargs: Any) -> SelfType: ...
 
     def __new__(cls, *args, **kwargs):  # type: ignore
-        # Check if this is a form class (has FormMeta as metaclass)
-        if hasattr(cls, "_unbound_fields"):
-            # This is a form - always create the actual instance
-            return super(GUIField, cls).__new__(cls)
-        elif "parent" in kwargs or kwargs.get("top_level_window"):
+        if "parent" in kwargs or kwargs.get("top_level_window"):
             return super(GUIField, cls).__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
