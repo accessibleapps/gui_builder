@@ -17,6 +17,7 @@ from typing import (
     Sequence,
     Tuple,
     Type,
+    TYPE_CHECKING,
     TypeVar,
     Union,
 )
@@ -35,6 +36,12 @@ logger = getLogger("gui_builder.widgets.wx_widgets")
 ControlType = TypeVar("ControlType", bound=wx.Window)
 
 MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
+
+# Type annotations for static analysis only - prevents runtime class attributes
+if TYPE_CHECKING:
+    # These would create problematic class attributes if defined at class level
+    control_type: Type[ControlType]
+    control: ControlType
 
 from wx.lib import calendar
 
@@ -227,8 +234,7 @@ class WXWidget(Widget, Generic[ControlType]):
     )
     callback: Optional[Callable[..., Any]] = None
     label: str = ""
-    control_type: Type[ControlType]
-    control: ControlType
+    control_type = None
 
     def __init__(
         self,
@@ -1068,7 +1074,6 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
 
 class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
     control_type = wx.StdDialogButtonSizer
-    control: wx.StdDialogButtonSizer
     unlabeled = True
     focusable = False
     parent: BaseContainer
@@ -1184,7 +1189,6 @@ class SizedPanel(BaseContainer):
 
 
 class BaseFrame(BaseContainer):
-    control: wx.Frame
 
     def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
@@ -1247,7 +1251,6 @@ class Panel(BaseContainer):
 
 class Notebook(BaseContainer):
     control_type = wx.Notebook
-    control: wx.Notebook
     event_prefix = "EVT_NOTEBOOK"
     default_callback_type = "page_changed"
 
@@ -1577,6 +1580,7 @@ class StatusBar(WXWidget[wx.StatusBar]):
     parent: BaseFrame
     control_type = wx.StatusBar
     style_prefix = "SB"
+    focusable = False
 
     def create_control(self, **kwargs):
         self.control = self.parent.control.CreateStatusBar(**kwargs)
