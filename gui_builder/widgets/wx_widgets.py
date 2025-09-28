@@ -8,6 +8,7 @@ import re
 import weakref
 from logging import getLogger
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -17,7 +18,6 @@ from typing import (
     Sequence,
     Tuple,
     Type,
-    TYPE_CHECKING,
     TypeVar,
     Union,
 )
@@ -504,7 +504,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return self.control
 
     def get_parent_control(self) -> wx.Window:
-        if self.parent and isinstance(self.parent, Widget):
+        if self.parent is not None and hasattr(self.parent, "get_control"):
             return self.parent.get_control()
         return self.parent
 
@@ -566,13 +566,17 @@ class ChoiceWidget(
     def get_items(self) -> Sequence[ChoiceItemOutputType]:
         return self.control.GetItems()
 
-    def set_items(self, items: Sequence[ChoiceItemInputType]) -> Sequence[ChoiceItemOutputType]:
+    def set_items(
+        self, items: Sequence[ChoiceItemInputType]
+    ) -> Sequence[ChoiceItemOutputType]:
         """Set items and return the converted output items."""
         converted_items = [self._convert_input_to_output(item) for item in items]
         self.control.SetItems([str(item) for item in converted_items])
         return converted_items
 
-    def _convert_input_to_output(self, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+    def _convert_input_to_output(
+        self, item: ChoiceItemInputType
+    ) -> ChoiceItemOutputType:
         """Convert input item to output item type. Subclasses should override."""
         return str(item)  # type: ignore
 
@@ -600,13 +604,17 @@ class ChoiceWidget(
     def delete_item(self, index: int) -> None:
         self.control.Delete(index)
 
-    def insert_item(self, index: int, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+    def insert_item(
+        self, index: int, item: ChoiceItemInputType
+    ) -> ChoiceItemOutputType:
         """Insert item and return the converted output item."""
         converted_item = self._convert_input_to_output(item)
         self.control.InsertItems([str(converted_item)], index)
         return converted_item
 
-    def update_item(self, index: int, item: ChoiceItemInputType) -> ChoiceItemOutputType:
+    def update_item(
+        self, index: int, item: ChoiceItemInputType
+    ) -> ChoiceItemOutputType:
         """Update item and return the converted output item."""
         self.delete_item(index)
         return self.insert_item(index, item)
@@ -1189,7 +1197,6 @@ class SizedPanel(BaseContainer):
 
 
 class BaseFrame(BaseContainer):
-
     def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
@@ -1249,7 +1256,7 @@ class Panel(BaseContainer):
     focusable = False
 
 
-class Notebook(BaseContainer):
+class Notebook(BaseContainer[wx.Notebook]):
     control_type = wx.Notebook
     event_prefix = "EVT_NOTEBOOK"
     default_callback_type = "page_changed"
@@ -1497,7 +1504,8 @@ class Menu(WXWidget):
 
 class MenuItem(WXWidget[wx.MenuItem]):
     control_type = wx.MenuItem
-    parent: Menu
+    if TYPE_CHECKING:
+        parent: Menu
     default_callback_type = "MENU"
     focusable = False
     unlabled = True
