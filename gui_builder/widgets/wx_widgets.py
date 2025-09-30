@@ -982,7 +982,8 @@ ListViewType = TypeVar("ListViewType", bound=Union[wx.ListView, "VirtualListView
 
 
 class ListView(
-    ChoiceWidget[ListViewType, Tuple[str, ...], Tuple[str, Generic[ListViewType]]]
+    ChoiceWidget[ListViewType, Tuple[str, ...], Tuple[str]],
+    Generic[ListViewType]
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1724,7 +1725,8 @@ class StatusBar(WXWidget[wx.StatusBar]):
         return self.control.GetStatusText(field)
 
     def set_status_text(self, text: str, field=0):
-        self.control.SetStatusText(text, field)
+        if self.control is not None:
+            self.control.SetStatusText(text, field)
 
 
 class Link(WXWidget[wx.adv.HyperlinkCtrl]):
