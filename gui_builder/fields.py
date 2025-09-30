@@ -263,6 +263,38 @@ class GUIField(Generic[WidgetType]):
         """Sets focus to this field."""
         self.widget.set_focus()
 
+    def scroll_lines(self, lines: int):
+        """Scrolls the contents of this field by the number of lines specified."""
+        self.widget.scroll_lines(lines)
+
+    def scroll_pages(self, pages: int):
+        """Scrolls the contents of this field by the number of pages specified."""
+        self.widget.scroll_pages(pages)
+
+    def center(self):
+        """Centers this field's widget on the screen."""
+        self.widget.center()
+
+    def center_on_parent(self):
+        """Centers this field's widget on its parent."""
+        self.widget.center_on_parent()
+
+    def get_foreground_color(self):
+        return self.widget.get_foreground_color()
+
+    def set_foreground_color(self, color):
+        self.widget.set_foreground_color(color)
+
+    foreground_color = property(get_foreground_color, set_foreground_color)
+
+    def get_background_color(self):
+        return self.widget.get_background_color()
+
+    def set_background_color(self, color):
+        self.widget.set_background_color(color)
+
+    background_color = property(get_background_color, set_background_color)
+
     def populate(self, value):
         """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
         self.set_value(value)

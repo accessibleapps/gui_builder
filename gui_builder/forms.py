@@ -283,12 +283,12 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
     def add_child(
         self, field_name: str, field: Union[UnboundField, GUIField[Any]]
     ) -> GUIField[Any]:
-        field = super(Form, self).add_child(field_name, field)
-        item: Tuple[str, UnboundField] = (field_name, field)  # type: ignore[assignment]
-        setattr(self, field_name, field)
-        if self._unbound_fields and item not in self._unbound_fields:
+        new_field = super().add_child(field_name, field)
+        item: Tuple[str, UnboundField] = (field_name, new_field)
+        setattr(self, field_name, new_field)
+        if self._unbound_fields and not any(name == field_name for name, _ in self._unbound_fields):
             self._extra_fields.append(item)
-        return field
+        return new_field
 
     def delete_child(self, name: str) -> None:
         field = self._fields[name]
