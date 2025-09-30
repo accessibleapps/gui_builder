@@ -53,7 +53,6 @@ class Widget(object):
         control_args.update(self.translate_control_arguments(**runtime_kwargs))
         self.create_control(**control_args)
         self.register_unregistered_callbacks()
-        # super(Widget, self).render()
 
     def register_callback(self, callback_type=None, callback=None):
         if not callable(callback):

@@ -241,6 +241,8 @@ class WXWidget(Widget, Generic[ControlType]):
         enabled: bool = True,
         hidden: bool = False,
         tool_tip_text: Optional[str] = None,
+        background_color: Optional[wx.Colour] = None,
+        foreground_color: Optional[wx.Colour] = None,
         expand: bool = False,
         proportion: Optional[int] = None,
         *args: Any,
@@ -260,6 +262,8 @@ class WXWidget(Widget, Generic[ControlType]):
         self.min_size = min_size
         self.label_control = None
         self.control_enabled = enabled
+        self.control_background_color = background_color
+        self.control_foreground_color = foreground_color
         self.control_hidden = hidden
         self.tool_tip_text = tool_tip_text
         self.expand = expand
@@ -283,6 +287,10 @@ class WXWidget(Widget, Generic[ControlType]):
             self.control.SetMinSize(self.min_size)
         if self.tool_tip_text is not None:
             self.set_tool_tip_text(self.tool_tip_text)
+        if self.control_background_color is not None:
+            self.set_background_color(self.control_background_color)
+        if self.control_foreground_color is not None:
+            self.set_foreground_color(self.control_foreground_color)
         if self.expand:
             self.control.SetSizerProp("expand", True)
         if self.proportion is not None:
@@ -479,7 +487,7 @@ class WXWidget(Widget, Generic[ControlType]):
         return self.control.IsShown()
 
     def get_tool_tip_text(self) -> str:
-        return self.control.GetToolTipString()
+        return self.control.GetToolTipText()
 
     def set_tool_tip_text(self, text: str):
         return self.control.SetToolTipString(str(text))
@@ -526,7 +534,11 @@ class WXWidget(Widget, Generic[ControlType]):
         return None
 
     def set_value(self, value):
-        self.control.SetValue(value)
+        """Set the control's value. Subclasses may override for type conversion."""
+        if hasattr(self.control, "SetValue"):
+            self.control.SetValue(value)
+        else:
+            raise NotImplementedError("Control does not support setting value.")
 
     def translate_control_arguments(self, **kwargs):
         modules = [wx]
@@ -547,12 +559,80 @@ class WXWidget(Widget, Generic[ControlType]):
     def can_be_focused(cls):
         return cls.control_type is not None and cls.focusable
 
+    def scroll_lines(self, lines: int) -> None:
+        """Scroll the control vertically by the given number of lines."""
+        self.control.ScrollLines(lines)
 
-class ChoiceControl(wx.ItemContainer, wx.Control):
-    pass
+    def scroll_pages(self, pages: int) -> None:
+        """Scroll the control vertically by the given number of pages."""
+        self.control.ScrollPages(pages)
+
+    def center(self):
+        """Center the control on the screen."""
+        self.control.Center()
+
+    def center_on_parent(self):
+        """Center the control on its parent."""
+        self.control.CenterOnParent()
+
+    def get_foreground_color(self) -> wx.Colour:
+        """Get the window's foreground color."""
+        return self.control.GetForegroundColour()
+
+    def set_foreground_color(self, color: wx.Colour) -> None:
+        """Set the window's foreground color."""
+        self.control.SetForegroundColour(color)
+        self.control.Refresh()
+
+    foreground_color = property(get_foreground_color, set_foreground_color)
+
+    def get_background_color(self) -> wx.Colour:
+        """Get the window's background color."""
+        return self.control.GetBackgroundColour()
+
+    def set_background_color(self, color: wx.Colour) -> None:
+        """Set the window's background color."""
+        self.control.SetBackgroundColour(color)
+        self.control.Refresh()
+
+    background_color = property(get_background_color, set_background_color)
+
+    def get_font(self) -> wx.Font:
+        """Get the window's font."""
+        return self.control.GetFont()
+
+    def set_font(self, font: wx.Font) -> None:
+        """Set the window's font."""
+        self.control.SetFont(font)
+        self.control.Refresh()
+
+    def get_theme_enabled(self) -> bool:
+        """Get whether the window is using the current theme."""
+        return self.control.GetThemeEnabled()
+
+    def set_theme_enabled(self, enable: bool) -> None:
+        """Set whether the window should use the current theme."""
+        self.control.SetThemeEnabled(enable)
+        self.control.Refresh()
+
+    theme_enabled = property(get_theme_enabled, set_theme_enabled)
+
+    def capture_mouse(self) -> None:
+        """Capture all mouse input."""
+        self.control.CaptureMouse()
+
+    def release_mouse(self) -> None:
+        """Release the mouse capture."""
+        self.control.ReleaseMouse()
+
+    def has_mouse_capture(self) -> bool:
+        """Check if this control has mouse capture."""
+        return self.control.HasCapture()
+
+    mouse_capture = property(has_mouse_capture)
 
 
-ChoiceControlType = TypeVar("ChoiceControlType", bound=wx.Choice)
+ChoiceControlType = TypeVar("ChoiceControlType", bound=wx.ControlWithItems)
 
 ChoiceItemInputType = TypeVar(
     "ChoiceItemInputType", bound=Sequence[Any], contravariant=True
@@ -634,7 +714,7 @@ class BaseText(WXWidget[TextControlType]):
     def __init__(
         self, max_length: Optional[int] = None, *args: Any, **kwargs: Any
     ) -> None:
-        super(BaseText, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.max_length = max_length
 
     def select_range(self, start: int, end: int) -> None:
@@ -656,15 +736,24 @@ class BaseText(WXWidget[TextControlType]):
         return self.control.GetLineText(line_number)
 
     def render(self, *args: Any, **kwargs: Any) -> None:
-        super(BaseText, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if self.max_length is not None:
             self.set_max_length(self.max_length)
 
     def set_label(self, label: str) -> None:
-        self.label_control.SetLabel(label)
+        if self.label_control is not None:
+            self.label_control.SetLabel(label)
 
     def set_value(self, value: Any) -> None:
         super().set_value(str(value))
+
+    def copy(self) -> None:
+        """Copy the currently selected text to the clipboard."""
+        self.control.Copy()
+
+    def cut(self) -> None:
+        """Cut the currently selected text to the clipboard."""
+        self.control.Cut()
 
     def paste(self) -> None:
         """Paste text from the clipboard into the text control at the current insertion point."""
@@ -688,7 +777,7 @@ class Text(BaseText[wx.TextCtrl]):
             return True
 
     def render(self, *args, **kwargs):
-        super(Text, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         self.register_callback("char_hook", self.on_keypress)
         # Fix: ReadOnly TextCtrl's fail to appear in tab order.
         self.control.AcceptsFocusFromKeyboard = lambda: True
@@ -736,7 +825,7 @@ class CheckBox(WXWidget[wx.CheckBox]):
     selflabeled = True
 
 
-class ComboBox(ChoiceWidget[wx.ComboBox, str, str]):
+class ComboBox(Text, ChoiceWidget[wx.ComboBox, str, str]):
     control_type = wx.ComboBox
     style_prefix = "CB"
     default_callback_type = "combobox"
@@ -748,7 +837,7 @@ class ComboBox(ChoiceWidget[wx.ComboBox, str, str]):
     def get_value(self) -> str:
         return self.control.GetValue()
 
-    def set_label(self, label):
+    def set_label(self, label: str):
         if self.label_control is not None:
             self.label_control.SetLabel(label)
 
@@ -799,7 +888,7 @@ class FixedSlider(wx.Slider):
 
     def SetValue(self, value):
         value = int(value)
-        super(FixedSlider, self).SetValue(value)
+        super().SetValue(value)
         ctypes.windll.user32.NotifyWinEvent(
             self.EVENT_OBJECT_VALUECHANGE,
             self.Handle,
@@ -836,7 +925,7 @@ class Slider(WXWidget[wx.Slider]):
     default_callback_type = "slider"
 
     def __init__(self, page_size=None, min_value=0, max_value=100, *args, **kwargs):
-        super(Slider, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._page_size = page_size
         self._min_value = min_value
         self._max_value = max_value
@@ -889,10 +978,11 @@ class ListBox(ChoiceWidget[wx.ListBox, str, str]):
         return item
 
 
+ListViewType = TypeVar("ListViewType", bound=Union[wx.ListView, "VirtualListView"])
+
+
 class ListView(
-    ChoiceWidget[
-        Union[wx.ListView, "VirtualListView"], Tuple[str, ...], Tuple[str, ...]
-    ]
+    ChoiceWidget[ListViewType, Tuple[str, ...], Tuple[str, Generic[ListViewType]]]
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1027,7 +1117,7 @@ class ListViewColumn(WXWidget):
 
 if dataview:
 
-    class DataView(ListView):
+    class DataView(ListView[dataview.DataViewListCtrl]):
         control_type = dataview.DataViewListCtrl
         event_prefix = "EVT_DATAVIEW"
         style_prefix = ""
@@ -1050,13 +1140,13 @@ if dataview:
             def get_count(self) -> int:
                 return self.control.GetStore().GetCount()
 
-            def get_column_count(self):
+            def get_column_count(self) -> int:
                 return self.control.GetStore().GetColumnCount()
 
             def get_index(self) -> Optional[int]:
                 return translate_to_none(self.control.GetSelectedRow())
 
-            def set_index(self, index):
+            def set_index(self, index: Optional[int]) -> None:
                 if index is None:
                     return
                 index = int(index)
@@ -1496,7 +1586,7 @@ class MenuBar(WXWidget):
     unlabeled = True
 
     def create_control(self, **kwargs):
-        self.control = wx.MenuBar()
+        self.control = self.control_type()
         wx.GetApp().GetTopWindow().SetMenuBar(self.control)
 
     def render(self, *args, **kwargs):
@@ -1624,10 +1714,11 @@ class StatusBar(WXWidget[wx.StatusBar]):
     focusable = False
 
     def create_control(self, **kwargs):
+        logger.debug("Creating status bar")
         self.control = self.parent.control.CreateStatusBar(**kwargs)
 
     def set_value(self, value):
-        self.control.SetStatusText(value)
+        self.set_status_text(value)
 
     def get_value(self, field=0) -> str:
         return self.control.GetStatusText(field)
@@ -1746,13 +1837,14 @@ class TreeView(WXWidget[wx.TreeCtrl]):
             selected_image = -1
         if isinstance(image, wx.Image):
             if self.image_list is None:
-                self.create_image_list(image.Width, image.Height)
+                self.image_list = self.create_image_list(image.Width, image.Height)
             image = self.image_list.Add(image.ConvertToBitmap())
         return self.control.AppendItem(parent, str(text), image, selected_image, data)
 
-    def create_image_list(self, width=32, height=32):
-        self.image_list = wx.ImageList(width, height)
-        self.control.AssignImageList(self.image_list)
+    def create_image_list(self, width=32, height=32) -> wx.ImageList:
+        image_list = wx.ImageList(width, height)
+        self.control.AssignImageList(image_list)
+        return image_list
 
     def clear(self):
         self.control.DeleteAllItems()
@@ -1760,7 +1852,12 @@ class TreeView(WXWidget[wx.TreeCtrl]):
             self.image_list.RemoveAll()
             self.image_list = None
 
+    def collapse_all(self):
+        """Collapse all tree nodes."""
+        self.control.CollapseAll()
+
     def delete(self, item):
+        """Delete a tree item."""
         self.control.Delete(item)
 
     def get_selection(self):
@@ -1778,7 +1875,34 @@ class TreeView(WXWidget[wx.TreeCtrl]):
 
 class ProgressBar(WXWidget[wx.Gauge]):
     control_type = wx.Gauge
+    style_prefix = "GA"
     focusable = False
+
+    def __init__(self, range=100, *args, **kwargs):
+        super(ProgressBar, self).__init__(*args, **kwargs)
+        self.control_range = range
+
+    def render(self, *args, **kwargs):
+        super(ProgressBar, self).render(*args, **kwargs)
+        self.set_range(self.control_range)
+
+    def get_value(self) -> int:
+        return self.control.GetValue()
+
+    def set_value(self, value: int) -> None:
+        self.control.SetValue(value)
+
+    def set_range(self, range: int) -> None:
+        self.control.SetRange(range)
+        self.control_range = range
+
+    def get_range(self) -> int:
+        return self.control.GetRange()
+
+    range = property(get_range, set_range)
+
+    def pulse(self):
+        self.control.Pulse()
 
 
 class ToolBar(WXWidget[wx.ToolBar]):
