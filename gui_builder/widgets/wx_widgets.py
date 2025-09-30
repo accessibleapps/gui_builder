@@ -1134,7 +1134,7 @@ if dataview:
             def add_item(self, item):
                 self.control.AppendItem(item)
 
-            def insert_item(self, index, item):
+            def insert_item(self, index: int, item):
                 return self.control.InsertItem(index, item)
 
             def get_count(self) -> int:
@@ -1602,7 +1602,7 @@ class MenuBar(WXWidget):
         self.control.Append(control, name)
 
 
-class Menu(WXWidget):
+class Menu(WXWidget[wx.Menu]):
     control_type = wx.Menu
     focusable = False
 
@@ -1622,6 +1622,12 @@ class Menu(WXWidget):
     def destroy_item(self, item):
         self.control.DestroyItem(item.control)
 
+    def append_item(self, item):
+        self.control.Append(item.control)
+
+    def append_submenu(self, submenu, text):
+        self.control.AppendSubMenu(submenu.control, text=text)
+
 
 class MenuItem(WXWidget[wx.MenuItem]):
     control_type = wx.MenuItem
@@ -1636,10 +1642,11 @@ class MenuItem(WXWidget[wx.MenuItem]):
         self.help_message = help_message
         self.checkable = checkable
         self.control_id = None
-        super(MenuItem, self).__init__(**kwargs)
+        self.control_text_color = None
+        super().__init__(**kwargs)
 
     def get_parent_control(self) -> wx.Menu:
-        return super(MenuItem, self).get_parent_control()
+        return super().get_parent_control()
 
     def create_control(self, **kwargs):
         label = str(kwargs.get("label", self.label_text))
@@ -1667,15 +1674,20 @@ class MenuItem(WXWidget[wx.MenuItem]):
             self.parent.control.Bind(callback_event, wrapped_callback, self.control)
 
     def render(self, *args, **kwargs):
-        super(MenuItem, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if not self.control_enabled:
             self.disable()
+        if self.control_text_color is not None:
+            self.set_text_color(self.control_text_color)
 
     def enable(self):
         self.control.Enable(True)
 
     def disable(self):
         self.control.Enable(False)
+
+    def is_enabled(self) -> bool:
+        return self.control.IsEnabled()
 
     def check(self):
         self.control.Check(True)
@@ -1692,18 +1704,35 @@ class MenuItem(WXWidget[wx.MenuItem]):
     def set_as_mac_preferences_menu_item(self):
         wx.GetApp().SetMacPreferencesMenuItemId(self.control_id)
 
+    def is_separator(self) -> bool:
+        return self.control.IsSeparator()
+
+    def is_checked(self) -> bool:
+        return self.control.IsChecked()
+
+    def is_checkable(self) -> bool:
+        return self.control.IsCheckable()
+
+    def get_text_color(self) -> wx.Colour:
+        return self.control.GetTextColour()
+
+    def set_text_color(self, color: wx.Colour):
+        self.control.SetTextColour(color)
+
+    text_color = property(get_text_color, set_text_color)
+
     def destroy(self):
         self.parent.destroy_item(self)
 
 
 class SubMenu(Menu):
     if TYPE_CHECKING:
-        parent: Union[MenuBar, Menu]
+        parent: Menu
 
     def create_control(self, **kwargs):
         text = str(kwargs.get("label", self.label_text))
         self.control = wx.Menu()
-        self.parent.control.AppendSubMenu(self.control, text=text)
+        self.parent.append_submenu(self.control, text=text)
 
 
 class StatusBar(WXWidget[wx.StatusBar]):
@@ -1718,13 +1747,18 @@ class StatusBar(WXWidget[wx.StatusBar]):
         self.control = self.parent.control.CreateStatusBar(**kwargs)
 
     def set_value(self, value):
-        self.control.SetStatusText(value)
+        self.set_status_text(value)
 
     def get_value(self, field=0) -> str:
-        return self.control.GetStatusText(field)
+        return self.get_status_text(field)
 
     def set_status_text(self, text: str, field=0):
         self.control.SetStatusText(text, field)
+
+    def get_status_text(self, field=0) -> str:
+        return self.control.GetStatusText(field)
+
+    status_text = property(get_status_text, set_status_text)
 
 
 class Link(WXWidget[wx.adv.HyperlinkCtrl]):
@@ -1735,9 +1769,32 @@ class Link(WXWidget[wx.adv.HyperlinkCtrl]):
 
     def create_control(self, **kwargs):
         if "URL" in kwargs:
-            kwargs["url"] = kwargs["URL"]
-            del kwargs["URL"]
-        return super(Link, self).create_control(**kwargs)
+            kwargs["url"] = kwargs.pop("URL")
+        return super().create_control(**kwargs)
+
+    def get_normal_color(self) -> wx.Colour:
+        return self.control.GetNormalColour()
+
+    def set_normal_color(self, color: wx.Colour):
+        self.control.SetNormalColour(color)
+
+    normal_color = property(get_normal_color, set_normal_color)
+
+    def get_hover_color(self) -> wx.Colour:
+        return self.control.GetHoverColour()
+
+    def set_hover_color(self, color: wx.Colour):
+        self.control.SetHoverColour(color)
+
+    hover_color = property(get_hover_color, set_hover_color)
+
+    def get_visited_color(self) -> wx.Colour:
+        return self.control.GetVisitedColour()
+
+    def set_visited_color(self, color: wx.Colour):
+        self.control.SetVisitedColour(color)
+
+    visited_color = property(get_visited_color, set_visited_color)
 
 
 class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):

@@ -22,12 +22,6 @@ from .widgets import wx_widgets as widgets
 
 logger = getLogger("gui_builder.forms")
 
-# Type annotations for static analysis only - prevents runtime class attributes
-if TYPE_CHECKING:
-    # These would create problematic class attributes if defined at class level
-    widget: widgets.SizedFrame
-
-
 FormWidgetType = TypeVar("FormWidgetType", bound=widgets.BaseContainer)
 
 
@@ -286,7 +280,9 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
         new_field = super().add_child(field_name, field)
         item: Tuple[str, UnboundField] = (field_name, new_field)
         setattr(self, field_name, new_field)
-        if self._unbound_fields and not any(name == field_name for name, _ in self._unbound_fields):
+        if self._unbound_fields and not any(
+            name == field_name for name, _ in self._unbound_fields
+        ):
             self._extra_fields.append(item)
         return new_field
 
@@ -387,6 +383,9 @@ class SizedDialog(BaseDialog):
 
 class SizedFrame(BaseFrame):
     widget_type = widgets.SizedFrame
+    if TYPE_CHECKING:
+        # These would create problematic class attributes if defined at class level
+        widget: widgets.SizedFrame
 
     def set_content_padding(self, padding: int):
         """Set padding around the frame's content area.
@@ -486,7 +485,7 @@ class ListView(ChoiceField, UIForm[widgets.ListView]):
         else:
             self.widget_type = widgets.DataView
             virtual = False
-        super(ListView, self).__init__(virtual=virtual, *args, **kwargs)
+        super().__init__(virtual=virtual, *args, **kwargs)
 
     def get_children(self) -> List[GUIField[Any]]:
         return []
@@ -498,7 +497,6 @@ class ListView(ChoiceField, UIForm[widgets.ListView]):
     def set_item_column(self, index: int, column: int, data: Any):
         """Sets the string at the provided column and index to the provided value"""
         return self.widget.set_item_column(index, column, data)
-
 
 class ToolBar(UIForm):
     widget_type = widgets.ToolBar

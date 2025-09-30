@@ -6,10 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, Type, TypeVar, overloa
 
 from .widgets import wx_widgets as widgets
 
-try:
-    unicode  # type: ignore  # Check if unicode exists in Python 2
-except NameError:
-    unicode = str  # Python 3 compatibility
+
 logger = getLogger("gui_builder.fields")
 
 # Type variables for proper generic descriptor support
@@ -551,7 +548,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
         self.default_index = default_index
         if choices is None:
             choices = []
-        self.choices = [unicode(i) for i in choices]
+        self.choices = [str(i) for i in choices]
 
     def render(self, **runtime_kwargs):
         runtime_kwargs.setdefault("choices", self.choices)
