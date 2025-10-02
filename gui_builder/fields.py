@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, Type, TypeVar, overloa
 
 from .widgets import wx_widgets as widgets
 
-
 logger = getLogger("gui_builder.fields")
 
 # Type variables for proper generic descriptor support
@@ -799,6 +798,9 @@ class TreeView(GUIField[widgets.TreeView]):
         """Deletes all items out of this tree view"""
         self.widget.clear()
 
+    def collapse_all(self):
+        self.widget.collapse_all()
+
     def delete(self, item):
         self.widget.delete(item)
 
@@ -817,6 +819,14 @@ class TreeView(GUIField[widgets.TreeView]):
 
 class ProgressBar(GUIField[widgets.ProgressBar]):
     widget_type = widgets.ProgressBar
+
+    def set_range(self, range):
+        self.widget.set_range(range)
+
+    def get_range(self):
+        return self.widget.get_range()
+
+    range = property(get_range, set_range)
 
 
 class ToolBarItem(GUIField[widgets.ToolBarItem]):

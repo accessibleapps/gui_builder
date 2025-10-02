@@ -1664,14 +1664,18 @@ class MenuItem(WXWidget[wx.MenuItem]):
         )
 
     def bind_event(self, callback_event, wrapped_callback):
-        parent = self.parent
-        while isinstance(parent, SubMenu):
-            parent = parent.parent
+        parent = self.get_top_level_parent()
         if parent and isinstance(parent, (WXWidget)):
             parent.control.Bind(callback_event, wrapped_callback, self.control)
         # Fix if we're called from a menu bar
         if isinstance(self.parent, SubMenu):
             self.parent.control.Bind(callback_event, wrapped_callback, self.control)
+
+    def get_top_level_parent(self):
+        parent = self.parent
+        while isinstance(parent, SubMenu):
+            parent = parent.parent
+        return parent
 
     def render(self, *args, **kwargs):
         super().render(*args, **kwargs)
@@ -1732,7 +1736,7 @@ class SubMenu(Menu):
     def create_control(self, **kwargs):
         text = str(kwargs.get("label", self.label_text))
         self.control = wx.Menu()
-        self.parent.append_submenu(self.control, text=text)
+        self.parent.append_submenu(self, text=text)
 
 
 class StatusBar(WXWidget[wx.StatusBar]):
