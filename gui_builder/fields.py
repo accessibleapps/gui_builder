@@ -535,6 +535,12 @@ class CheckBox(GUIField[widgets.CheckBox]):
 class ButtonSizer(GUIField[widgets.ButtonSizer]):
     widget_type = widgets.ButtonSizer
 
+    def add_button(self, button: Button):
+        self.widget.add_button(button.widget)
+
+    def realize(self):
+        self.widget.realize()
+
 
 ChoiceWidgetType = TypeVar("ChoiceWidgetType", bound=widgets.ChoiceWidget)
 
@@ -551,7 +557,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
 
     def render(self, **runtime_kwargs):
         runtime_kwargs.setdefault("choices", self.choices)
-        super(ChoiceField, self).render(**runtime_kwargs)
+        super().render(**runtime_kwargs)
 
     def populate(self, value):
         self.set_items(value)
@@ -579,7 +585,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
     def clear(self):
         return self.widget.clear()
 
-    def get_index(self):
+    def get_index(self) -> Optional[int]:
         return self.widget.get_index()
 
     def set_index(self, index):
@@ -606,7 +612,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
     def update_item(self, index, new_item):
         return self.widget.update_item(index, new_item)
 
-    def get_count(self):
+    def get_count(self) -> int:
         return self.widget.get_count()
 
     def get_item(self, index):
@@ -705,7 +711,7 @@ class MenuItem(GUIField[widgets.MenuItem]):
         """Uncheck this menu item."""
         self.widget.uncheck()
 
-    def set_checked(self, checked):
+    def set_checked(self, checked: bool):
         """Pass in a boolean representing whether or not this menu item should be checked."""
         if checked:
             self.check()
@@ -756,6 +762,14 @@ class StaticText(GUIField):
     """Static text"""
 
     widget_type = widgets.StaticText
+
+    def wrap(self, width: int) -> None:
+        """Wraps the text in this control to the specified width."""
+        self.widget.wrap(width)
+
+    def is_ellipsized(self) -> bool:
+        """Returns a boolean indicating whether or not the text in this control is currently ellipsized."""
+        return self.widget.is_ellipsized()
 
 
 class DatePicker(GUIField[widgets.DatePicker]):
@@ -823,7 +837,7 @@ class ProgressBar(GUIField[widgets.ProgressBar]):
     def set_range(self, range):
         self.widget.set_range(range)
 
-    def get_range(self):
+    def get_range(self) -> int:
         return self.widget.get_range()
 
     range = property(get_range, set_range)

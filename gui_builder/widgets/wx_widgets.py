@@ -162,7 +162,7 @@ def extract_event_data(event: wx.Event) -> Dict[str, Any]:
 
 
 def callback_wrapper(
-    widget: "WXWidget[wx.Control]", callback: Callable[..., Any]
+    widget: "WXWidget[Any]", callback: Callable[..., Any]
 ) -> Callable[[wx.Event], None]:
     def wrapper(evt: wx.Event, *a, **k):
         a = list(a)
@@ -667,10 +667,12 @@ class ChoiceWidget(
     def __getitem___(self, index: int) -> ChoiceItemOutputType:
         return self.get_item(index)
 
-    def get_index(self) -> int:
-        return self.control.GetSelection()
+    def get_index(self) -> Optional[int]:
+        return translate_to_none(self.control.GetSelection())
 
     def set_index(self, index: Optional[int]) -> None:
+        if index is None:
+            index = -1
         return self.control.SetSelection(index)
 
     def get_choice(self) -> ChoiceItemOutputType:
@@ -788,10 +790,10 @@ class Text(BaseText[wx.TextCtrl]):
     def get_insertion_point_from_x_y(self, x: int, y: int) -> int:
         return self.control.XYToPosition(x, y)
 
-    def get_x_y_from_insertion_point(self, insertion_point) -> Tuple[int, int]:
+    def get_x_y_from_insertion_point(self, insertion_point: int) -> Tuple[int, int]:
         return self.control.PositionToXY(insertion_point)
 
-    def clear(self):
+    def clear(self) -> None:
         return self.control.Clear()
 
 
@@ -817,6 +819,14 @@ class StaticText(WXWidget[wx.StaticText]):
 
     def set_value(self, value: str):
         self.control.SetLabel(value)
+
+    def is_ellipsized(self) -> bool:
+        """Check if the text is ellipsized (truncated with '...')."""
+        return self.control.IsEllipsized()
+
+    def wrap(self, width: int) -> None:
+        """Wrap the text to fit within the specified width."""
+        self.control.Wrap(width)
 
 
 class CheckBox(WXWidget[wx.CheckBox]):
@@ -924,7 +934,14 @@ class Slider(WXWidget[wx.Slider]):
         control_type = wx.Slider
     default_callback_type = "slider"
 
-    def __init__(self, page_size=None, min_value=0, max_value=100, *args, **kwargs):
+    def __init__(
+        self,
+        page_size: Optional[int] = None,
+        min_value=0,
+        max_value=100,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self._page_size = page_size
         self._min_value = min_value
@@ -1048,7 +1065,9 @@ class ListView(
     def update_item(self, index: int, item: ChoiceItemInputType):
         return self.set_item(index, item)
 
-    def set_items(self, items):
+    def set_items(
+        self, items: Sequence[ChoiceItemInputType]
+    ) -> Sequence[ChoiceItemOutputType]:
         if self.virtual:
             return cast(VirtualListView, self.control).SetItems(list(items))
         self.clear()
@@ -1091,8 +1110,8 @@ class ListView(
     def get_value(self) -> Sequence[ChoiceItemOutputType]:
         return self.get_items()
 
-    def set_value(self, value):
-        return self.set_items(value)
+    def set_value(self, value: Sequence[ChoiceItemInputType]):
+        self.set_items(value)
 
 
 class ListViewColumn(WXWidget):
@@ -1175,7 +1194,7 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
         self.max = max
 
     def render(self, *args, **kwargs):
-        super(SpinBox, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         self.set_min(self.min)
         self.set_max(self.max)
 
@@ -1194,6 +1213,12 @@ class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
     focusable = False
     if TYPE_CHECKING:
         parent: BaseContainer
+
+    def realize(self):
+        self.control.Realize()
+
+    def add_button(self, button: Button):
+        self.control.AddButton(button.get_control())
 
     def translate_control_arguments(self, **kwargs):
         return wx_attributes("", result_key="flags", **kwargs)
@@ -1386,7 +1411,9 @@ class Notebook(BaseContainer[wx.Notebook]):
             list(item.field.get_all_children()) if hasattr(item, "field") else None
         )
         if not item_children:
-            logger.debug(f"Page '{name}' has no children, skipping navigation handler binding")
+            logger.debug(
+                f"Page '{name}' has no children, skipping navigation handler binding"
+            )
             return
 
         def on_focus(evt):
@@ -1399,7 +1426,9 @@ class Notebook(BaseContainer[wx.Notebook]):
             focused_window = wx.Window.FindFocus()
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
 
-            logger.debug(f"Page navigation: direction={'forward' if direction else 'backward'}")
+            logger.debug(
+                f"Page navigation: direction={'forward' if direction else 'backward'}"
+            )
 
             # Get the enabled, focusable children of this page
             enabled_children = [
@@ -1427,18 +1456,24 @@ class Notebook(BaseContainer[wx.Notebook]):
                         current_control = child
                         break
 
-            logger.debug(f"Current control: {current_control.bound_name if current_control else 'not found'}")
+            logger.debug(
+                f"Current control: {current_control.bound_name if current_control else 'not found'}"
+            )
 
             if current_control:
                 # Forward tab from last control -> go to notebook
                 if direction and current_control == last_child:
-                    logger.debug(f"At last control '{current_control.bound_name}', transferring focus to notebook")
+                    logger.debug(
+                        f"At last control '{current_control.bound_name}', transferring focus to notebook"
+                    )
                     self.set_focus()
                     return  # Consume the event
 
                 # Backward tab from first control -> go to notebook
                 elif not direction and current_control == first_child:
-                    logger.debug(f"At first control '{current_control.bound_name}', transferring focus to notebook")
+                    logger.debug(
+                        f"At first control '{current_control.bound_name}', transferring focus to notebook"
+                    )
                     self.set_focus()
                     return  # Consume the event
 
@@ -1469,7 +1504,9 @@ class Notebook(BaseContainer[wx.Notebook]):
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
 
-            logger.debug(f"Notebook navigation: direction={'forward' if direction else 'backward'}, page={current_page_index}")
+            logger.debug(
+                f"Notebook navigation: direction={'forward' if direction else 'backward'}, page={current_page_index}"
+            )
 
             if direction:
                 # Forward tab from notebook -> focus first control of current page
@@ -1487,7 +1524,9 @@ class Notebook(BaseContainer[wx.Notebook]):
                         ):
                             first_child = field.get_first_enabled_descendant()
                             if first_child:
-                                logger.debug(f"Transferring focus to first control '{first_child.bound_name}'")
+                                logger.debug(
+                                    f"Transferring focus to first control '{first_child.bound_name}'"
+                                )
                                 first_child.set_focus()
                                 return  # Consume the event
                             break
@@ -1507,7 +1546,9 @@ class Notebook(BaseContainer[wx.Notebook]):
                         ):
                             last_child = field.get_last_enabled_descendant()
                             if last_child:
-                                logger.debug(f"Transferring focus to last control '{last_child.bound_name}'")
+                                logger.debug(
+                                    f"Transferring focus to last control '{last_child.bound_name}'"
+                                )
                                 last_child.set_focus()
                                 return  # Consume the event
                             break
