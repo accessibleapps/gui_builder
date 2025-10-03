@@ -286,7 +286,7 @@ class WXWidget(Widget[FieldType], Generic[FieldType, ControlType]):
         elif self.accessible_label:
             self.set_accessible_label(self.accessible_label)
         if self.min_size is not None:
-            self.control.SetMinSize(self.min_size)
+            self.control.SetMinSize(wx.Size(*self.min_size))
         if self.tool_tip_text is not None:
             self.set_tool_tip_text(self.tool_tip_text)
         if self.control_background_color is not None:
@@ -677,10 +677,12 @@ class ChoiceWidget(
             index = -1
         return self.control.SetSelection(index)
 
-    def get_choice(self) -> ChoiceItemOutputType:
-        return self.get_item(self.get_index())
+    def get_choice(self) -> Optional[ChoiceItemOutputType]:
+        index = self.get_index()
+        if index is not None:
+            return self.get_item(index)
 
-    def get_value(self) -> ChoiceItemOutputType:
+    def get_value(self) -> Optional[ChoiceItemOutputType]:
         return self.get_choice()
 
     def get_count(self) -> int:
@@ -712,7 +714,9 @@ class ChoiceWidget(
 TextControlType = TypeVar("TextControlType", bound=wx.TextCtrl)
 
 
-class BaseText(WXWidget[FieldType, TextControlType], Generic[FieldType, TextControlType]):
+class BaseText(
+    WXWidget[FieldType, TextControlType], Generic[FieldType, TextControlType]
+):
     event_prefix = "EVT_TEXT"
 
     def __init__(
@@ -1001,7 +1005,8 @@ ListViewType = TypeVar("ListViewType", bound=Union[wx.ListView, "VirtualListView
 
 
 class ListView(
-    ChoiceWidget[FieldType, ListViewType, Tuple[str, ...], Tuple[str]], Generic[ListViewType]
+    ChoiceWidget[FieldType, ListViewType, Tuple[str, ...], Tuple[str]],
+    Generic[ListViewType],
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1067,11 +1072,9 @@ class ListView(
     def update_item(self, index: int, item: ChoiceItemInputType):
         return self.set_item(index, item)
 
-    def set_items(
-        self, items: Sequence[ChoiceItemInputType]
-    ) -> Sequence[ChoiceItemOutputType]:
+    def set_items(self, items: Sequence[ChoiceItemInputType]):
         if self.virtual:
-            return cast(VirtualListView, self.control).SetItems(list(items))
+            self.control.SetItems(list(items))
         self.clear()
 
         for item in items:
@@ -1080,14 +1083,14 @@ class ListView(
     def insert_item(self, index: int, item: ChoiceItemInputType):
         return self.control.InsertStringItem(index, item)
 
-    def delete_item(self, index):
+    def delete_item(self, index: int):
         self.control.DeleteItem(index)
 
     def clear(self):
         self.control.DeleteAllItems()
 
     def render(self, **kwargs):
-        super(ListView, self).render(**kwargs)
+        super().render(**kwargs)
         self.set_value(self.choices)
 
     def add_column(self, column_number=None, label="", width=None, **format):
@@ -1178,7 +1181,7 @@ if dataview:
             def create_column(self, column_number, label, width, format):
                 self.control.AppendTextColumn(label, align=format, width=width)
 
-            def get_item_column(self, index, column):
+            def get_item_column(self, index: int, column: int) -> str:
                 return self.control.GetTextValue(index, column)
 
             def set_item_column(self, index: int, column: int, data: str) -> None:
@@ -1261,7 +1264,9 @@ class ButtonSizer(WXWidget[FieldType, wx.StdDialogButtonSizer]):
 ContainerWidgetType = TypeVar("ContainerWidgetType", bound=wx.TopLevelWindow)
 
 
-class BaseContainer(WXWidget[FieldType, ContainerWidgetType], Generic[FieldType, ContainerWidgetType]):
+class BaseContainer(
+    WXWidget[FieldType, ContainerWidgetType], Generic[FieldType, ContainerWidgetType]
+):
     unlabeled = True
 
     def __init__(self, top_level_window=False, *args, **kwargs):
@@ -1289,7 +1294,9 @@ class BaseContainer(WXWidget[FieldType, ContainerWidgetType], Generic[FieldType,
 DialogControlType = TypeVar("DialogControlType", bound=wx.Dialog)
 
 
-class BaseDialog(BaseContainer[FieldType, DialogControlType], Generic[FieldType, DialogControlType]):
+class BaseDialog(
+    BaseContainer[FieldType, DialogControlType], Generic[FieldType, DialogControlType]
+):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._modal_result = None
@@ -1339,7 +1346,9 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
 FrameControlType = TypeVar("FrameControlType", bound=wx.Frame)
 
 
-class BaseFrame(BaseContainer[FieldType, FrameControlType], Generic[FieldType, FrameControlType]):
+class BaseFrame(
+    BaseContainer[FieldType, FrameControlType], Generic[FieldType, FrameControlType]
+):
     def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
@@ -1405,7 +1414,7 @@ class Notebook(BaseContainer[FieldType, wx.Notebook]):
     event_prefix = "EVT_NOTEBOOK"
     default_callback_type = "page_changed"
 
-    def add_item(self, name, item):
+    def add_item(self, name, item: WXWidget):
         self.control.AddPage(item.control, str(name))
         # Now, we shall have much hackyness to work around WX bug 11909
         logger.debug(f"Adding notebook page '{name}'")
@@ -1491,7 +1500,7 @@ class Notebook(BaseContainer[FieldType, wx.Notebook]):
         self.control.DeletePage(self.find_page_number(page))
 
     def render(self, *args, **kwargs):
-        super(Notebook, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
 
         self.control_down = False
         self._setting_notebook_focus = False  # Guard against recursive focus calls
@@ -1614,6 +1623,24 @@ class CheckListBox(ListBox):
 
 class FilePicker(WXWidget[FieldType, wx.FilePickerCtrl]):
     control_type = wx.FilePickerCtrl
+
+    def __init__(self, initial_directory: Optional[str] = None, **kwargs):
+        super().__init__(**kwargs)
+        self.initial_directory = initial_directory
+
+    def render(self, *args, **kwargs):
+        super().render(*args, **kwargs)
+        if self.initial_directory is not None:
+            self.set_initial_directory(self.initial_directory)
+
+    def get_path(self) -> str:
+        return self.control.GetPath()
+
+    def set_path(self, path: str) -> None:
+        self.control.SetPath(path)
+
+    def set_initial_directory(self, directory: str) -> None:
+        self.control.SetInitialDirectory(directory)
 
 
 class MenuBar(WXWidget[FieldType, wx.MenuBar]):
@@ -1976,11 +2003,11 @@ class ProgressBar(WXWidget[FieldType, wx.Gauge]):
     focusable = False
 
     def __init__(self, range=100, *args, **kwargs):
-        super(ProgressBar, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.control_range = range
 
     def render(self, *args, **kwargs):
-        super(ProgressBar, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         self.set_range(self.control_range)
 
     def get_value(self) -> int:
@@ -2006,7 +2033,7 @@ class ToolBar(WXWidget[FieldType, wx.ToolBar]):
     control_type = wx.ToolBar
     style_prefix = "TB"
 
-    def __init__(self, tool_bitmap_size=(16, 16), *args, **kwargs):
+    def __init__(self, tool_bitmap_size: Tuple[int, int] = (16, 16), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tool_bitmap_size = tool_bitmap_size
 
@@ -2038,8 +2065,8 @@ class ToolBar(WXWidget[FieldType, wx.ToolBar]):
         super().render(**runtime_kwargs)
         self.set_tool_bitmap_size(self.tool_bitmap_size)
 
-    def set_tool_bitmap_size(self, tool_bitmap_size):
-        self.control.SetToolBitmapSize(tool_bitmap_size)
+    def set_tool_bitmap_size(self, tool_bitmap_size: Tuple[int, int]):
+        self.control.SetToolBitmapSize(wx.Size(*tool_bitmap_size))
         self.tool_bitmap_size = tool_bitmap_size
 
 
