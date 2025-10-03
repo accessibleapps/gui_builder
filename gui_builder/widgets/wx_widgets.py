@@ -1141,7 +1141,7 @@ class ListViewColumn(WXWidget[FieldType, wx.ListItem]):
 
 if dataview:
 
-    class DataView(ListView[dataview.DataViewListCtrl]):
+    class DataView(ListView[FieldType, dataview.DataViewListCtrl]):
         control_type = dataview.DataViewListCtrl
         event_prefix = "EVT_DATAVIEW"
         style_prefix = ""
