@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gui_builder"
-version = "1.4.1"
+version = "1.5.0"
 description = "A declarative GUI framework for Python built on wxPython that makes creating complex interfaces simple and maintainable"
 readme = "README.md"
 license = {file = "license.txt"}
