@@ -34,6 +34,8 @@ logger = getLogger("gui_builder.widgets.wx_widgets")
 
 # Type variable for generic wx.Control subclasses
 ControlType = TypeVar("ControlType", bound=wx.Window)
+# Type variable for the field type that owns this widget
+FieldType = TypeVar("FieldType")
 
 MenuControlType = TypeVar("MenuControlType", bound=wx.EvtHandler)
 
@@ -162,7 +164,7 @@ def extract_event_data(event: wx.Event) -> Dict[str, Any]:
 
 
 def callback_wrapper(
-    widget: "WXWidget[Any]", callback: Callable[..., Any]
+    widget: "WXWidget[Any, Any]", callback: Callable[..., Any]
 ) -> Callable[[wx.Event], None]:
     def wrapper(evt: wx.Event, *a, **k):
         a = list(a)
@@ -212,7 +214,7 @@ def translate_to_none(val: int) -> Optional[int]:
     return res
 
 
-class WXWidget(Widget, Generic[ControlType]):
+class WXWidget(Widget[FieldType], Generic[FieldType, ControlType]):
     style_prefix = ""
     event_prefix = "EVT"
     event_module = wx
@@ -641,8 +643,8 @@ ChoiceItemOutputType = TypeVar("ChoiceItemOutputType", covariant=True)
 
 
 class ChoiceWidget(
-    WXWidget[ChoiceControlType],
-    Generic[ChoiceControlType, ChoiceItemInputType, ChoiceItemOutputType],
+    WXWidget[FieldType, ChoiceControlType],
+    Generic[FieldType, ChoiceControlType, ChoiceItemInputType, ChoiceItemOutputType],
 ):
     def get_items(self) -> Sequence[ChoiceItemOutputType]:
         return self.control.GetItems()
@@ -710,7 +712,7 @@ class ChoiceWidget(
 TextControlType = TypeVar("TextControlType", bound=wx.TextCtrl)
 
 
-class BaseText(WXWidget[TextControlType]):
+class BaseText(WXWidget[FieldType, TextControlType], Generic[FieldType, TextControlType]):
     event_prefix = "EVT_TEXT"
 
     def __init__(
@@ -768,7 +770,7 @@ class BaseText(WXWidget[TextControlType]):
         self.control.WriteText(text)
 
 
-class Text(BaseText[wx.TextCtrl]):
+class Text(BaseText[FieldType, wx.TextCtrl]):
     control_type = wx.TextCtrl
     style_prefix = "TE"
     default_callback_type = "text"
@@ -813,7 +815,7 @@ class IntText(Text):
         return value
 
 
-class StaticText(WXWidget[wx.StaticText]):
+class StaticText(WXWidget[FieldType, wx.StaticText]):
     control_type = wx.StaticText
     selflabeled = True
 
@@ -829,13 +831,13 @@ class StaticText(WXWidget[wx.StaticText]):
         self.control.Wrap(width)
 
 
-class CheckBox(WXWidget[wx.CheckBox]):
+class CheckBox(WXWidget[FieldType, wx.CheckBox]):
     control_type = wx.CheckBox
     default_callback_type = "checkbox"
     selflabeled = True
 
 
-class ComboBox(Text, ChoiceWidget[wx.ComboBox, str, str]):
+class ComboBox(Text, ChoiceWidget[FieldType, wx.ComboBox, str, str]):
     control_type = wx.ComboBox
     style_prefix = "CB"
     default_callback_type = "combobox"
@@ -858,7 +860,7 @@ class ComboBox(Text, ChoiceWidget[wx.ComboBox, str, str]):
         return self.control.Insert(item, index)
 
 
-class Button(WXWidget[wx.Button]):
+class Button(WXWidget[FieldType, wx.Button]):
     control_type = wx.Button
     default_callback_type = "button"
     selflabeled = True
@@ -926,7 +928,7 @@ class FixedSlider(wx.Slider):
         self.SetValue(newValue)
 
 
-class Slider(WXWidget[wx.Slider]):
+class Slider(WXWidget[FieldType, wx.Slider]):
     style_prefix = "SL"
     if platform.system() == "Windows":
         control_type = FixedSlider
@@ -979,13 +981,13 @@ class Slider(WXWidget[wx.Slider]):
         return self.control.GetLineSize()
 
 
-class ScrollBar(WXWidget[wx.ScrollBar]):
+class ScrollBar(WXWidget[FieldType, wx.ScrollBar]):
     control_type = wx.ScrollBar
     style_prefix = "SB"
     default_callback_type = "scrollbar"
 
 
-class ListBox(ChoiceWidget[wx.ListBox, str, str]):
+class ListBox(ChoiceWidget[FieldType, wx.ListBox, str, str]):
     control_type = wx.ListBox
     style_prefix = "LB"
     default_callback_type = "listbox"
@@ -999,7 +1001,7 @@ ListViewType = TypeVar("ListViewType", bound=Union[wx.ListView, "VirtualListView
 
 
 class ListView(
-    ChoiceWidget[ListViewType, Tuple[str, ...], Tuple[str]], Generic[ListViewType]
+    ChoiceWidget[FieldType, ListViewType, Tuple[str, ...], Tuple[str]], Generic[ListViewType]
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1183,7 +1185,7 @@ if dataview:
                 self.control.SetTextValue(data, index, column)
 
 
-class SpinBox(WXWidget[wx.SpinCtrl]):
+class SpinBox(WXWidget[FieldType, wx.SpinCtrl]):
     control_type = wx.SpinCtrl
     style_prefix = "SP"
     default_callback_type = "SPINCTRL"
@@ -1207,7 +1209,7 @@ class SpinBox(WXWidget[wx.SpinCtrl]):
         self.max = max
 
 
-class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
+class ButtonSizer(WXWidget[FieldType, wx.StdDialogButtonSizer]):
     control_type = wx.StdDialogButtonSizer
     unlabeled = True
     focusable = False
@@ -1259,7 +1261,7 @@ class ButtonSizer(WXWidget[wx.StdDialogButtonSizer]):
 ContainerWidgetType = TypeVar("ContainerWidgetType", bound=wx.TopLevelWindow)
 
 
-class BaseContainer(WXWidget[ContainerWidgetType]):
+class BaseContainer(WXWidget[FieldType, ContainerWidgetType], Generic[FieldType, ContainerWidgetType]):
     unlabeled = True
 
     def __init__(self, top_level_window=False, *args, **kwargs):
@@ -1287,7 +1289,7 @@ class BaseContainer(WXWidget[ContainerWidgetType]):
 DialogControlType = TypeVar("DialogControlType", bound=wx.Dialog)
 
 
-class BaseDialog(BaseContainer[DialogControlType]):
+class BaseDialog(BaseContainer[FieldType, DialogControlType], Generic[FieldType, DialogControlType]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._modal_result = None
@@ -1315,11 +1317,11 @@ class BaseDialog(BaseContainer[DialogControlType]):
             return result
 
 
-class SizedDialog(BaseDialog[sc.SizedDialog]):
+class SizedDialog(BaseDialog[FieldType, sc.SizedDialog]):
     control_type = sc.SizedDialog
 
 
-class SizedPanel(BaseContainer):
+class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
     control_type = sc.SizedPanel
     if TYPE_CHECKING:
         control: sc.SizedPanel
@@ -1337,7 +1339,7 @@ class SizedPanel(BaseContainer):
 FrameControlType = TypeVar("FrameControlType", bound=wx.Frame)
 
 
-class BaseFrame(BaseContainer[FrameControlType]):
+class BaseFrame(BaseContainer[FieldType, FrameControlType], Generic[FieldType, FrameControlType]):
     def __init__(self, maximized: bool = False, *args, **kwargs):
         self.control_maximized = maximized
         super(BaseFrame, self).__init__(*args, **kwargs)
@@ -1359,11 +1361,11 @@ class BaseFrame(BaseContainer[FrameControlType]):
         return self.control.Maximize(False)
 
 
-class Frame(BaseContainer[wx.Frame]):
+class Frame(BaseContainer[FieldType, wx.Frame]):
     control_type = wx.Frame
 
 
-class SizedFrame(BaseFrame[sc.SizedFrame]):
+class SizedFrame(BaseFrame[FieldType, sc.SizedFrame]):
     control_type = sc.SizedFrame
     if TYPE_CHECKING:
         control: sc.SizedFrame
@@ -1381,24 +1383,24 @@ class SizedFrame(BaseFrame[sc.SizedFrame]):
         pane.SetSizerProps(border=("all", padding))
 
 
-class MDIParentFrame(BaseFrame[wx.MDIParentFrame]):
+class MDIParentFrame(BaseFrame[FieldType, wx.MDIParentFrame]):
     control_type = wx.MDIParentFrame
 
 
-class MDIChildFrame(BaseFrame[wx.MDIChildFrame]):
+class MDIChildFrame(BaseFrame[FieldType, wx.MDIChildFrame]):
     control_type = wx.MDIChildFrame
 
 
-class Dialog(BaseDialog[wx.Dialog]):
+class Dialog(BaseDialog[FieldType, wx.Dialog]):
     control_type = wx.Dialog
 
 
-class Panel(BaseContainer):
+class Panel(BaseContainer[FieldType, wx.Panel]):
     control_type = wx.Panel
     focusable = False
 
 
-class Notebook(BaseContainer[wx.Notebook]):
+class Notebook(BaseContainer[FieldType, wx.Notebook]):
     control_type = wx.Notebook
     event_prefix = "EVT_NOTEBOOK"
     default_callback_type = "page_changed"
@@ -1485,7 +1487,7 @@ class Notebook(BaseContainer[wx.Notebook]):
         item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
         item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
 
-    def delete_page(self, page: BaseContainer[wx.Panel]):
+    def delete_page(self, page: BaseContainer[Any, wx.Panel]):
         self.control.DeletePage(self.find_page_number(page))
 
     def render(self, *args, **kwargs):
@@ -1578,7 +1580,7 @@ class Notebook(BaseContainer[wx.Notebook]):
         return self.parent.field
 
 
-class RadioBox(ChoiceWidget[wx.RadioBox, str, str]):
+class RadioBox(ChoiceWidget[FieldType, wx.RadioBox, str, str]):
     control_type = wx.RadioBox
     default_callback_type = "RADIOBOX"
     selflabeled = True
@@ -1610,11 +1612,11 @@ class CheckListBox(ListBox):
     control_type = wx.CheckListBox
 
 
-class FilePicker(WXWidget[wx.FilePickerCtrl]):
+class FilePicker(WXWidget[FieldType, wx.FilePickerCtrl]):
     control_type = wx.FilePickerCtrl
 
 
-class MenuBar(WXWidget):
+class MenuBar(WXWidget[FieldType, wx.MenuBar]):
     control_type = wx.MenuBar
     focusable = False
     unlabeled = True
@@ -1636,7 +1638,7 @@ class MenuBar(WXWidget):
         self.control.Append(control, name)
 
 
-class Menu(WXWidget[wx.Menu]):
+class Menu(WXWidget[FieldType, wx.Menu]):
     control_type = wx.Menu
     focusable = False
 
@@ -1663,7 +1665,7 @@ class Menu(WXWidget[wx.Menu]):
         self.control.AppendSubMenu(submenu.control, text=text)
 
 
-class MenuItem(WXWidget[wx.MenuItem]):
+class MenuItem(WXWidget[FieldType, wx.MenuItem]):
     control_type = wx.MenuItem
     if TYPE_CHECKING:
         parent: Menu
@@ -1773,7 +1775,7 @@ class SubMenu(Menu):
         self.parent.append_submenu(self, text=text)
 
 
-class StatusBar(WXWidget[wx.StatusBar]):
+class StatusBar(WXWidget[FieldType, wx.StatusBar]):
     if TYPE_CHECKING:
         parent: BaseFrame
     control_type = wx.StatusBar
@@ -1799,7 +1801,7 @@ class StatusBar(WXWidget[wx.StatusBar]):
     status_text = property(get_status_text, set_status_text)
 
 
-class Link(WXWidget[wx.adv.HyperlinkCtrl]):
+class Link(WXWidget[FieldType, wx.adv.HyperlinkCtrl]):
     control_type = wx.adv.HyperlinkCtrl
     event_module = wx.adv
     default_callback_type = "hyperlink"
@@ -1835,7 +1837,7 @@ class Link(WXWidget[wx.adv.HyperlinkCtrl]):
     visited_color = property(get_visited_color, set_visited_color)
 
 
-class DatePicker(WXWidget[wx.adv.DatePickerCtrl]):
+class DatePicker(WXWidget[FieldType, wx.adv.DatePickerCtrl]):
     control_type = wx.adv.DatePickerCtrl
     event_module = wx.adv
     default_callback_type = "date_changed"
@@ -1899,7 +1901,7 @@ class VirtualListView(wx.ListCtrl):
         self.items[index] = row
 
 
-class TreeView(WXWidget[wx.TreeCtrl]):
+class TreeView(WXWidget[FieldType, wx.TreeCtrl]):
     control_type = wx.TreeCtrl
     style_prefix = "TR"
     event_prefix = "EVT_TREE"
@@ -1968,7 +1970,7 @@ class TreeView(WXWidget[wx.TreeCtrl]):
         self.control.SetItemHasChildren(item, val)
 
 
-class ProgressBar(WXWidget[wx.Gauge]):
+class ProgressBar(WXWidget[FieldType, wx.Gauge]):
     control_type = wx.Gauge
     style_prefix = "GA"
     focusable = False
@@ -2000,7 +2002,7 @@ class ProgressBar(WXWidget[wx.Gauge]):
         self.control.Pulse()
 
 
-class ToolBar(WXWidget[wx.ToolBar]):
+class ToolBar(WXWidget[FieldType, wx.ToolBar]):
     control_type = wx.ToolBar
     style_prefix = "TB"
 
@@ -2066,7 +2068,7 @@ class ToolBarItem(WXWidget):
         self.parent.bind_event(callback_event, wrapped_callback, id=self.control)
 
 
-class StaticBitmap(WXWidget[wx.StaticBitmap]):
+class StaticBitmap(WXWidget[FieldType, wx.StaticBitmap]):
     control_type = wx.StaticBitmap
 
     def load_image(self, image):

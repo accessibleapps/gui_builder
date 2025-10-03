@@ -4,17 +4,20 @@ import weakref
 from abc import abstractmethod
 from collections import defaultdict
 from logging import getLogger
+from typing import Generic, TypeVar
 
 logger = getLogger("gui_builder.widgets.widget")
 
+FieldT = TypeVar("FieldT")
 
-class Widget(object):
+
+class Widget(Generic[FieldT]):
     """Base class which represents a common abstraction over UI elements."""
 
     control_type = None  # the underlying control
 
-    def __init__(self, field: "GUIField", callbacks=None, **kwargs):
-        self.field: "weakref.CallableProxyType[GUIField]" = weakref.proxy(field)
+    def __init__(self, field: FieldT, callbacks=None, **kwargs):
+        self.field: weakref.ProxyType[FieldT] = weakref.proxy(field)
         self.control_kwargs = kwargs
         self.control = None
         self.callbacks = defaultdict(list)

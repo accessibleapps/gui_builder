@@ -1,11 +1,16 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
-if TYPE_CHECKING:
-    from .widgets.wx_widgets import WXWidget
+
+class Freezable(Protocol):
+    """Protocol for objects that support freeze/thaw operations."""
+
+    def freeze(self) -> None: ...
+
+    def thaw(self) -> None: ...
 
 
 class FreezeAndThaw(object):
-    def __init__(self, to_freeze: "WXWidget[Any]"):
+    def __init__(self, to_freeze: Freezable):
         self.to_freeze = to_freeze
 
     def __enter__(self):
