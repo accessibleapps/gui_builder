@@ -1381,25 +1381,12 @@ class Notebook(BaseContainer[wx.Notebook]):
     def add_item(self, name, item):
         self.control.AddPage(item.control, str(name))
         # Now, we shall have much hackyness to work around WX bug 11909
-        logger.info(f"[ADD_ITEM] Adding page '{name}'")
-        logger.info(f"[ADD_ITEM] self = {self}")
-        logger.info(f"[ADD_ITEM] self.field = {self.field}")
-        logger.info(f"[ADD_ITEM] type(self.field) = {type(self.field)}")
-        logger.info(f"[ADD_ITEM] item = {item}")
-        logger.info(
-            f"[ADD_ITEM] item.field = {item.field if hasattr(item, 'field') else 'NO FIELD ATTR'}"
-        )
-        all_children = list(self.field.get_all_children())
-        logger.info(f"[ADD_ITEM] self.field.get_all_children() = {all_children}")
+        logger.debug(f"Adding notebook page '{name}'")
         item_children = (
             list(item.field.get_all_children()) if hasattr(item, "field") else None
         )
-        logger.info(f"[ADD_ITEM] item.field.get_all_children() = {item_children}")
-        logger.info(f"[ADD_ITEM] Length: {len(item_children) if item_children else 0}")
         if not item_children:
-            logger.info(
-                f"[ADD_ITEM] EARLY RETURN - item has no children, skipping handler binding!"
-            )
+            logger.debug(f"Page '{name}' has no children, skipping navigation handler binding")
             return
 
         def on_focus(evt):
@@ -1412,11 +1399,7 @@ class Notebook(BaseContainer[wx.Notebook]):
             focused_window = wx.Window.FindFocus()
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
 
-            logger.info(
-                f"[PAGE_NAV] Navigation event: direction={'forward' if direction else 'backward'}"
-            )
-            logger.info(f"[PAGE_NAV] Focused window: {focused_window}")
-            logger.info(f"[PAGE_NAV] Page item: {item}")
+            logger.debug(f"Page navigation: direction={'forward' if direction else 'backward'}")
 
             # Get the enabled, focusable children of this page
             enabled_children = [
@@ -1427,17 +1410,13 @@ class Notebook(BaseContainer[wx.Notebook]):
                 and child.widget.can_accept_focus()
             ]
 
-            logger.info(f"[PAGE_NAV] Enabled children count: {len(enabled_children)}")
-
             if not enabled_children:
-                logger.info("[PAGE_NAV] No enabled children, SKIPPING")
+                logger.debug("No enabled children, allowing default navigation")
                 nav_evt.Skip()
                 return
 
             first_child = enabled_children[0]
             last_child = enabled_children[-1]
-            logger.info(f"[PAGE_NAV] First child: {first_child.bound_name}")
-            logger.info(f"[PAGE_NAV] Last child: {last_child.bound_name}")
 
             # Check if we're at a boundary that should go to notebook
             current_control = None
@@ -1448,53 +1427,28 @@ class Notebook(BaseContainer[wx.Notebook]):
                         current_control = child
                         break
 
-            logger.info(
-                f"[PAGE_NAV] Current control: {current_control.bound_name if current_control else 'NOT FOUND'}"
-            )
+            logger.debug(f"Current control: {current_control.bound_name if current_control else 'not found'}")
 
             if current_control:
                 # Forward tab from last control -> go to notebook
                 if direction and current_control == last_child:
-                    logger.info(
-                        f"[PAGE_NAV] CONSUMING EVENT: At last control '{current_control.bound_name}', transferring to notebook"
-                    )
-                    logger.info(
-                        f"[PAGE_NAV] Calling self.set_focus() on notebook: {self}"
-                    )
+                    logger.debug(f"At last control '{current_control.bound_name}', transferring focus to notebook")
                     self.set_focus()
-                    logger.info(
-                        f"[PAGE_NAV] After set_focus, focus is now: {wx.Window.FindFocus()}"
-                    )
                     return  # Consume the event
 
                 # Backward tab from first control -> go to notebook
                 elif not direction and current_control == first_child:
-                    logger.info(
-                        f"[PAGE_NAV] CONSUMING EVENT: At first control '{current_control.bound_name}', transferring to notebook"
-                    )
-                    logger.info(
-                        f"[PAGE_NAV] Calling self.set_focus() on notebook: {self}"
-                    )
+                    logger.debug(f"At first control '{current_control.bound_name}', transferring focus to notebook")
                     self.set_focus()
-                    logger.info(
-                        f"[PAGE_NAV] After set_focus, focus is now: {wx.Window.FindFocus()}"
-                    )
                     return  # Consume the event
 
             # Normal intra-page navigation
-            logger.info("[PAGE_NAV] SKIPPING EVENT: normal intra-page navigation")
+            logger.debug("Allowing normal intra-page navigation")
             nav_evt.Skip()
 
-        logger.info(f"[BIND] About to bind page handlers to item: {item}")
-        logger.info(f"[BIND] item type: {type(item)}")
-        logger.info(
-            f"[BIND] item.control: {item.control if hasattr(item, 'control') else 'NO CONTROL ATTR'}"
-        )
-        logger.info(f"[BIND] Binding EVT_CHILD_FOCUS")
+        logger.debug(f"Binding navigation handlers to page '{name}'")
         item.bind_event(wx.EVT_CHILD_FOCUS, on_focus)
-        logger.info(f"[BIND] Binding EVT_NAVIGATION_KEY to on_navigation_key handler")
         item.bind_event(wx.EVT_NAVIGATION_KEY, on_navigation_key)
-        logger.info(f"[BIND] Both handlers bound successfully")
 
     def delete_page(self, page: BaseContainer[wx.Panel]):
         self.control.DeletePage(self.find_page_number(page))
@@ -1514,19 +1468,8 @@ class Notebook(BaseContainer[wx.Notebook]):
             nav_evt = cast(wx.NavigationKeyEvent, evt)
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
-            focused_window = wx.Window.FindFocus()
-            event_object = nav_evt.GetEventObject()
 
-            logger.info(
-                f"[NOTEBOOK_NAV] Navigation event: direction={'forward' if direction else 'backward'}"
-            )
-            logger.info(f"[NOTEBOOK_NAV] Current page: {current_page_index}")
-            logger.info(f"[NOTEBOOK_NAV] Focused window: {focused_window}")
-            logger.info(f"[NOTEBOOK_NAV] Event object: {event_object}")
-            logger.info(f"[NOTEBOOK_NAV] Notebook control: {self.control}")
-            logger.info(
-                f"[NOTEBOOK_NAV] Focus on notebook? {focused_window == self.control}"
-            )
+            logger.debug(f"Notebook navigation: direction={'forward' if direction else 'backward'}, page={current_page_index}")
 
             if direction:
                 # Forward tab from notebook -> focus first control of current page
@@ -1544,9 +1487,7 @@ class Notebook(BaseContainer[wx.Notebook]):
                         ):
                             first_child = field.get_first_enabled_descendant()
                             if first_child:
-                                logger.info(
-                                    f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to first control '{first_child.bound_name}'"
-                                )
+                                logger.debug(f"Transferring focus to first control '{first_child.bound_name}'")
                                 first_child.set_focus()
                                 return  # Consume the event
                             break
@@ -1566,15 +1507,13 @@ class Notebook(BaseContainer[wx.Notebook]):
                         ):
                             last_child = field.get_last_enabled_descendant()
                             if last_child:
-                                logger.info(
-                                    f"[NOTEBOOK_NAV] CONSUMING EVENT: transferring focus to last control '{last_child.bound_name}'"
-                                )
+                                logger.debug(f"Transferring focus to last control '{last_child.bound_name}'")
                                 last_child.set_focus()
                                 return  # Consume the event
                             break
 
             # If we can't find appropriate controls, allow normal navigation
-            logger.info("[NOTEBOOK_NAV] SKIPPING EVENT: allowing normal navigation")
+            logger.debug("Allowing normal navigation")
             nav_evt.Skip()
 
         self.bind_event(wx.EVT_NAVIGATION_KEY, on_notebook_navigation)
