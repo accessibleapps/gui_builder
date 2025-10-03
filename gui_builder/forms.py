@@ -83,10 +83,11 @@ class BaseForm(GUIField[FormWidgetType]):
 
         for field in self.get_children():
             yield field
-            if hasattr(field, "get_all_children"):
-                # We know it's safe to cast after hasattr check
-                for subfield in cast(UIForm, field).get_all_children():
-                    yield subfield
+            if not hasattr(field, "get_all_children"):
+                continue
+            # We know it's safe to cast after hasattr check
+            for subfield in cast(UIForm, field).get_all_children():
+                yield subfield
 
     def get_first_child(self) -> Optional[GUIField[Any]]:
         """Returns the first child field of this form."""
@@ -280,7 +281,7 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
         new_field = super().add_child(field_name, field)
         item: Tuple[str, UnboundField] = (field_name, new_field)
         setattr(self, field_name, new_field)
-        if self._unbound_fields and not any(
+        if not self._unbound_fields or not any(
             name == field_name for name, _ in self._unbound_fields
         ):
             self._extra_fields.append(item)
