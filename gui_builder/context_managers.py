@@ -21,12 +21,20 @@ class FreezeAndThaw(object):
         self.to_freeze.thaw()
 
 
+class Displayable(Protocol):
+    """Protocol for objects that support modal display and destruction."""
+
+    def display_modal(self) -> Any: ...
+
+    def destroy(self) -> None: ...
+
+
 class DisplayAndDestroy(object):
-    def __init__(self, to_display: "WXWidget[Any]"):
+    def __init__(self, to_display: Displayable):
         self.to_display = to_display
 
     def __enter__(self):
-        return self.to_display.show_modal()
+        return self.to_display.display_modal()
 
-    def __exit(self, *args):
+    def __exit__(self, *args):
         self.to_display.destroy()
