@@ -1006,7 +1006,7 @@ ListViewType = TypeVar("ListViewType", bound=Union[wx.ListView, "VirtualListView
 
 class ListView(
     ChoiceWidget[FieldType, ListViewType, Tuple[str, ...], Tuple[str]],
-    Generic[ListViewType],
+    Generic[FieldType, ListViewType],
 ):
     control_type = wx.ListView
     style_prefix = "LC"
@@ -1119,7 +1119,7 @@ class ListView(
         self.set_items(value)
 
 
-class ListViewColumn(WXWidget):
+class ListViewColumn(WXWidget[FieldType, wx.ListItem]):
     if TYPE_CHECKING:
         parent: ListView
 
