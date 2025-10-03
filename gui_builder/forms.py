@@ -13,8 +13,8 @@ from typing import (
     Optional,
     Tuple,
     TypeVar,
-    TYPE_CHECKING,
     Union,
+    cast,
 )
 
 from .fields import ChoiceField, GUIField, UnboundField
@@ -22,7 +22,7 @@ from .widgets import wx_widgets as widgets
 
 logger = getLogger("gui_builder.forms")
 
-FormWidgetType = TypeVar("FormWidgetType", bound=widgets.BaseContainer)
+FormWidgetType = TypeVar("FormWidgetType", bound=widgets.WXWidget)
 
 
 class BaseForm(GUIField[FormWidgetType]):
@@ -45,9 +45,12 @@ class BaseForm(GUIField[FormWidgetType]):
         **kwargs: Any,
     ) -> None:
         self._fields = {}
+        fields_iter: Iterable[Tuple[str, Union[UnboundField, GUIField[Any]]]]
         if hasattr(fields, "items"):
-            fields = fields.items()  # type: ignore[assignment]
-        for name, unbound_field in fields:  # type: ignore[assignment]
+            fields_iter = fields.items()  # type: ignore[assignment]
+        else:
+            fields_iter = fields  # type: ignore[assignment]
+        for name, unbound_field in fields_iter:
             self.add_child(name, unbound_field)
         working_kwargs: MutableMapping[str, Any] = dict(kwargs)
         for key, value in working_kwargs.items():  # type: ignore[attr-defined]
@@ -267,7 +270,7 @@ class FormMeta(type):
 
 class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
     _unbound_fields: List[Tuple[str, UnboundField]]
-    _extra_fields: List[Tuple[str, UnboundField]]
+    _extra_fields: List[Tuple[str, Union[UnboundField, GUIField[Any]]]]
 
     def __init__(self, *args: Any, **kwargs: Any):
         self._extra_fields = []
@@ -279,7 +282,7 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
         self, field_name: str, field: Union[UnboundField, GUIField[Any]]
     ) -> GUIField[Any]:
         new_field = super().add_child(field_name, field)
-        item: Tuple[str, UnboundField] = (field_name, new_field)
+        item = (field_name, new_field)
         setattr(self, field_name, new_field)
         if not self._unbound_fields or not any(
             name == field_name for name, _ in self._unbound_fields
@@ -315,27 +318,27 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
 
 
 class UIForm(Form[FormWidgetType]):
-    def set_value(self, items: Mapping[str, Any]) -> None:
+    def set_value(self, value: Mapping[str, Any]) -> None:
         """Given a mapping of field ids to values, populates each field with the corresponding value"""
-        for key, value in items.items():
-            self[key].populate(value)
+        for key, val in value.items():
+            self[key].populate(val)
 
     def get_title(self) -> str:
         """Returns the form's title"""
-        return self.widget.get_title()
+        return cast(widgets.BaseContainer, self.widget).get_title()
 
     def set_title(self, title: str):
         """Sets the form's title to the string provided."""
-        return self.widget.set_title(title)
+        return cast(widgets.BaseContainer, self.widget).set_title(title)
 
     def delete_child(self, name: str) -> None:
         child = self._fields[name]
-        self.widget.remove_child(child.widget)
+        cast(widgets.BaseContainer, self.widget).remove_child(child.widget)
         super(UIForm, self).delete_child(name)
 
     def close(self) -> None:
         """Closes this form."""
-        self.widget.close()
+        cast(widgets.BaseContainer, self.widget).close()
         self.destroy()
 
 
@@ -354,7 +357,7 @@ class BaseFrame(UIForm[widgets.BaseFrame]):
 
 
 class Frame(BaseFrame):
-    widget_type = widgets.Frame
+    widget_type = widgets.Frame  # type: ignore[assignment]
 
 
 class MDIParentFrame(BaseFrame):
@@ -384,9 +387,6 @@ class SizedDialog(BaseDialog):
 
 class SizedFrame(BaseFrame):
     widget_type = widgets.SizedFrame
-    if TYPE_CHECKING:
-        # These would create problematic class attributes if defined at class level
-        widget: widgets.SizedFrame
 
     def set_content_padding(self, padding: int):
         """Set padding around the frame's content area.
@@ -394,7 +394,7 @@ class SizedFrame(BaseFrame):
         Args:
             padding (int): Padding in pixels around all content
         """
-        return self.widget.set_content_padding(padding)
+        return cast(widgets.SizedFrame, self.widget).set_content_padding(padding)
 
 
 class SizedPanel(UIForm):
@@ -452,7 +452,7 @@ class Menu(UIForm):
         """Enables all menu items in this menu."""
         for menu_item in self:
             if hasattr(menu_item, "enable_menu"):
-                menu_item.enable_menu()
+                cast(Menu, menu_item).enable_menu()
             else:
                 menu_item.enable()
 
@@ -460,7 +460,7 @@ class Menu(UIForm):
         """Disables all menu items in this menu"""
         for menu_item in self:
             if hasattr(menu_item, "disable_menu"):
-                menu_item.disable_menu()
+                cast(Menu, menu_item).disable_menu()
             else:
                 menu_item.disable()
 
@@ -488,8 +488,8 @@ class ListView(ChoiceField, UIForm[widgets.ListView]):
             virtual = False
         super().__init__(virtual=virtual, *args, **kwargs)
 
-    def get_children(self) -> List[GUIField[Any]]:
-        return []
+    def get_children(self) -> Iterator[GUIField[Any]]:
+        return iter([])
 
     def get_item_column(self, index: int, column: int) -> Any:
         """Returns the string at the given column and index"""
