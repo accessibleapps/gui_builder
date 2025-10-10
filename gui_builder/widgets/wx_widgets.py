@@ -1433,6 +1433,13 @@ class Notebook(BaseContainer[FieldType, wx.Notebook]):
         def on_navigation_key(evt: wx.Event):
             # Cast to the specific event type we expect
             nav_evt = cast(wx.NavigationKeyEvent, evt)
+
+            # Don't interfere with Ctrl+Tab or Ctrl+PageUp/PageDown - let wxPython handle tab switching
+            if self.control_down:
+                logger.debug("Ctrl pressed at page level, allowing default notebook tab switching")
+                nav_evt.Skip()
+                return
+
             # Get the currently focused window using FindFocus instead of evt.GetCurrentFocus
             focused_window = wx.Window.FindFocus()
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
@@ -1512,6 +1519,13 @@ class Notebook(BaseContainer[FieldType, wx.Notebook]):
         def on_notebook_navigation(evt: wx.Event):
             # Cast to the specific event type we expect
             nav_evt = cast(wx.NavigationKeyEvent, evt)
+
+            # Don't interfere with Ctrl+Tab or Ctrl+PageUp/PageDown - let wxPython handle tab switching
+            if self.control_down:
+                logger.debug("Ctrl pressed, allowing default notebook tab switching")
+                nav_evt.Skip()
+                return
+
             direction: bool = nav_evt.GetDirection()  # True = forward, False = backward
             current_page_index = self.control.GetSelection()
 
