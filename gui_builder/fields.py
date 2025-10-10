@@ -222,13 +222,15 @@ class GUIField(Generic[WidgetType]):
         return self
 
     @property
-    def label(self):
+    def label(self) -> Optional[str]:
+        """Get the label for this field."""
         if self.control_label is not None:
             return self.control_label
         if self.__autolabel__ and self.bound_name:
             return self.bound_name.replace("_", " ").title()
+        return None
 
-    def render(self, **runtime_kwargs):
+    def render(self, **runtime_kwargs: Any) -> None:
         """Creates this field's widget."""
         if self.widget_type is None:
             raise RuntimeError("Must set a widget_type for %r" % self)
@@ -269,8 +271,8 @@ class GUIField(Generic[WidgetType]):
         self.widget.render()
         self.register_extra_callbacks()
 
-    def register_extra_callbacks(self):
-        """Picks up extra callbacks defined on the field's class and registers them at render time."""
+    def register_extra_callbacks(self) -> None:
+        """Pick up extra callbacks defined on the field's class and register them at render time."""
         if self.extra_callbacks is None:
             return
         for callback_set in self.extra_callbacks:
@@ -330,51 +332,78 @@ class GUIField(Generic[WidgetType]):
         """
         return self.widget.unbind_event(event, callback)
 
-    def is_focused(self):
-        """Returns a boolean indicating if this field is currently focused."""
+    def is_focused(self) -> bool:
+        """Return whether this field is currently focused."""
         return self.widget.is_focused()
 
-    def set_focus(self):
-        """Sets focus to this field."""
+    def set_focus(self) -> None:
+        """Set focus to this field."""
         self.widget.set_focus()
 
-    def scroll_lines(self, lines: int):
-        """Scrolls the contents of this field by the number of lines specified."""
+    def scroll_lines(self, lines: int) -> None:
+        """Scroll the contents of this field by the number of lines specified.
+
+        Args:
+            lines: Number of lines to scroll (positive = down, negative = up)
+        """
         self.widget.scroll_lines(lines)
 
-    def scroll_pages(self, pages: int):
-        """Scrolls the contents of this field by the number of pages specified."""
+    def scroll_pages(self, pages: int) -> None:
+        """Scroll the contents of this field by the number of pages specified.
+
+        Args:
+            pages: Number of pages to scroll (positive = down, negative = up)
+        """
         self.widget.scroll_pages(pages)
 
-    def center(self):
-        """Centers this field's widget on the screen."""
+    def center(self) -> None:
+        """Center this field's widget on the screen."""
         self.widget.center()
 
-    def center_on_parent(self):
-        """Centers this field's widget on its parent."""
+    def center_on_parent(self) -> None:
+        """Center this field's widget on its parent."""
         self.widget.center_on_parent()
 
-    def get_foreground_color(self):
+    def get_foreground_color(self) -> Any:
+        """Get the foreground color of this field."""
         return self.widget.get_foreground_color()
 
-    def set_foreground_color(self, color):
+    def set_foreground_color(self, color: Any) -> None:
+        """Set the foreground color of this field.
+
+        Args:
+            color: Color value (typically wx.Colour)
+        """
         self.widget.set_foreground_color(color)
 
     foreground_color = property(get_foreground_color, set_foreground_color)
 
-    def get_background_color(self):
+    def get_background_color(self) -> Any:
+        """Get the background color of this field."""
         return self.widget.get_background_color()
 
-    def set_background_color(self, color):
+    def set_background_color(self, color: Any) -> None:
+        """Set the background color of this field.
+
+        Args:
+            color: Color value (typically wx.Colour)
+        """
         self.widget.set_background_color(color)
 
     background_color = property(get_background_color, set_background_color)
 
-    def populate(self, value):
-        """this is to provide a common abstraction for getting data into controls. It will take the most common form that data holds in an application and turn it into something this widget can deal with."""
+    def populate(self, value: Any) -> None:
+        """Provide a common abstraction for getting data into controls.
+
+        Takes the most common form that data holds in an application and
+        turns it into something this widget can deal with.
+
+        Args:
+            value: Value to populate the field with
+        """
         self.set_value(value)
 
-    def set_default_value(self):
+    def set_default_value(self) -> None:
         if self.default_value is None:
             return
         default = self.default_value
@@ -386,29 +415,34 @@ class GUIField(Generic[WidgetType]):
         logger.debug("Setting default value of field %r to %r" % (self, default))
         self.populate(default)
 
-    def can_be_focused(self):
+    def can_be_focused(self) -> bool:
+        """Return whether this field type can be focused."""
         return self.widget_type.can_be_focused()
 
-    def disable(self):
-        """Disables this field, I.E. makes it unuseable."""
+    def disable(self) -> None:
+        """Disable this field, making it unusable."""
         self._reset_last_enabled_descendant()
         if "widget" in self.__dict__:
             return self.widget.disable()
 
-    def enable(self):
-        """Enables this field, making it useable."""
+    def enable(self) -> None:
+        """Enable this field, making it usable."""
         self._reset_last_enabled_descendant()
         if "widget" in self.__dict__:
             return self.widget.enable()
 
-    def set_enabled(self, enabled):
-        """A method to enable/disable this field based on the truthyness of the passed in value"""
+    def set_enabled(self, enabled: bool) -> None:
+        """Enable or disable this field based on the truthiness of the passed in value.
+
+        Args:
+            enabled: True to enable, False to disable
+        """
         if enabled:
             self.enable()
         else:
             self.disable()
 
-    def _reset_last_enabled_descendant(self):
+    def _reset_last_enabled_descendant(self) -> None:
         next_field = self
         while next_field is not None:
             if (
@@ -425,24 +459,32 @@ class GUIField(Generic[WidgetType]):
             else:
                 break
 
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
+        """Return whether this field is enabled."""
         return self.widget.enabled
 
-    def freeze(self):
+    def freeze(self) -> None:
+        """Freeze this field to prevent visual updates."""
         self.widget.freeze()
 
-    def thaw(self):
+    def thaw(self) -> None:
+        """Thaw this field to allow visual updates."""
         self.widget.thaw()
 
-    def hide(self):
-        """Hides this field"""
+    def hide(self) -> None:
+        """Hide this field."""
         return self.widget.hide()
 
-    def show(self):
-        """Shows this field, perhaps after it has been hidden"""
+    def show(self) -> None:
+        """Show this field after it has been hidden."""
         return self.widget.show()
 
-    def get_first_ancestor(self):
+    def get_first_ancestor(self) -> Optional["GUIField[Any]"]:
+        """Get the first ancestor (topmost parent) of this field.
+
+        Returns:
+            The topmost ancestor field, or None if no parent
+        """
         parent = self
         current = None
         while parent is not None:
@@ -451,45 +493,68 @@ class GUIField(Generic[WidgetType]):
         return current
 
     def is_shown(self) -> bool:
-        """Returns a boolean. If it is False, this control is hidden. If it is true, it is not."""
+        """Return whether this control is visible.
+
+        Returns:
+            True if shown, False if hidden
+        """
         return self.widget.is_shown()
 
-    def destroy(self):
-        """Destroys the visual counterpart of this field."""
+    def destroy(self) -> None:
+        """Destroy the visual counterpart of this field."""
         self.widget.destroy()
         logger.debug("Destroyed widget for field %r" % self)
 
-    def display(self):
-        """Display's this field's widget on the screen."""
+    def display(self) -> None:
+        """Display this field's widget on the screen."""
         self.widget.display()
 
-    def raise_widget(self):
-        """Raises the window to the top of the window hierarchy (Z-order)."""
+    def raise_widget(self) -> None:
+        """Raise the window to the top of the window hierarchy (Z-order)."""
         return self.widget.raise_widget()
 
-    def display_modal(self):
-        self.widget.display_modal()
+    def display_modal(self) -> Any:
+        """Display this field's widget modally (for dialogs).
 
-    def get_label(self):
-        """Returns this field's current label."""
+        Returns:
+            Modal result value
+        """
+        return self.widget.display_modal()
+
+    def get_label(self) -> str:
+        """Return this field's current label."""
         return self.widget.get_label()
 
-    def set_label(self, label):
-        """Given a string, sets this field's label to it."""
+    def set_label(self, label: str) -> None:
+        """Set this field's label.
+
+        Args:
+            label: Label text to set
+        """
         return self.widget.set_label(label)
 
-    def set_accessible_label(self, label):
+    def set_accessible_label(self, label: str) -> None:
+        """Set this field's accessible label for screen readers.
+
+        Args:
+            label: Accessible label text
+        """
         self.widget.set_accessible_label(label)
 
-    def get_value(self):
-        """Returns the contents of this field."""
+    def get_value(self) -> Any:
+        """Return the contents of this field."""
         return self.widget.get_value()
 
-    def set_value(self, value):
-        """Sets the contents of this field."""
+    def set_value(self, value: Any) -> None:
+        """Set the contents of this field.
+
+        Args:
+            value: Value to set
+        """
         return self.widget.set_value(value)
 
-    def get_default_value(self):
+    def get_default_value(self) -> Any:
+        """Return the default value for this field."""
         return self.default_value
 
     def __call__(self, func: CallbackFunction) -> CallbackFunction:
@@ -544,56 +609,100 @@ class Text(GUIField[widgets.Text]):
     widget_type = widgets.Text
     widget: widgets.Text
 
-    def set_default_value(self):
+    def set_default_value(self) -> None:
+        """Set the default value and select all text."""
         super(Text, self).set_default_value()
         self.select_all()
 
-    def append(self, text):
-        """Appends text to this text field."""
+    def append(self, text: str) -> None:
+        """Append text to this text field.
+
+        Args:
+            text: Text to append
+        """
         self.widget.append(text)
 
-    def write(self, text):
-        """Writes the provided text to this text field at its current position"""
+    def write(self, text: str) -> None:
+        """Write the provided text to this text field at its current position.
+
+        Args:
+            text: Text to write
+        """
         self.widget.write(text)
 
-    def select_range(self, start, end):
-        """Selects the text in this control from the position specified by start to the position specified by end"""
+    def select_range(self, start: int, end: int) -> None:
+        """Select the text in this control from start to end position.
+
+        Args:
+            start: Starting position (0-based index)
+            end: Ending position (0-based index)
+        """
         self.widget.select_range(start, end)
 
-    def get_insertion_point(self):
-        """Returns the current insertion point, a zero-based index representing the user's position into the text contained in this field"""
+    def get_insertion_point(self) -> int:
+        """Return the current insertion point.
+
+        Returns:
+            Zero-based index representing the user's position in the text
+        """
         return self.widget.get_insertion_point()
 
-    def set_insertion_point(self, insertion_point):
-        """Sets the insertion point, the 0-based index representing the user's position in this field."""
+    def set_insertion_point(self, insertion_point: int) -> None:
+        """Set the insertion point.
+
+        Args:
+            insertion_point: The 0-based index representing the user's position
+        """
         self.widget.set_insertion_point(insertion_point)
 
-    def get_length(self):
-        """Returns the length of text contained within this control."""
+    def get_length(self) -> int:
+        """Return the length of text contained within this control."""
         return self.widget.get_length()
 
-    def get_line(self, line_number):
-        """Returns the line number of the currently-focused line in this field."""
+    def get_line(self, line_number: int) -> str:
+        """Return the text of the specified line.
+
+        Args:
+            line_number: Line number (0-based)
+
+        Returns:
+            Text of the line
+        """
         return self.widget.get_line(line_number)
 
-    def get_number_of_lines(self):
-        """Returns the total number of lines of text contained in this field."""
+    def get_number_of_lines(self) -> int:
+        """Return the total number of lines of text contained in this field."""
         return self.widget.get_number_of_lines()
 
-    def get_insertion_point_from_x_y(self, x, y):
-        """Returns the line and column numbers of the given index into this contents of this text field"""
+    def get_insertion_point_from_x_y(self, x: int, y: int) -> int:
+        """Return the insertion point from line and column numbers.
+
+        Args:
+            x: Column number
+            y: Line number
+
+        Returns:
+            0-based index into the text
+        """
         return self.widget.get_insertion_point_from_x_y(x, y)
 
-    def get_x_y_from_insertion_point(self, insertion_point):
-        """Given a line and column number, returns the 0-based index of the specified character in the contents of this field"""
+    def get_x_y_from_insertion_point(self, insertion_point: int) -> tuple[int, int]:
+        """Return line and column numbers from an insertion point.
+
+        Args:
+            insertion_point: 0-based index into the text
+
+        Returns:
+            Tuple of (column, line)
+        """
         return self.widget.get_x_y_from_insertion_point(insertion_point)
 
-    def select_all(self):
-        """Selects all text in this text field"""
+    def select_all(self) -> None:
+        """Select all text in this text field."""
         self.select_range(0, self.get_length())
 
-    def clear(self):
-        """Removes all text from this text field."""
+    def clear(self) -> None:
+        """Remove all text from this text field."""
         return self.widget.clear()
 
 
@@ -608,14 +717,24 @@ class Button(GUIField[widgets.Button]):
 
     widget_type = widgets.Button
 
-    def make_default(self):
-        """Called before rendering, sets this to be the default button in a dialog"""
+    def make_default(self) -> None:
+        """Set this to be the default button in a dialog (called before rendering)."""
         return self.widget.make_default()
 
-    def get_auth_needed(self):
+    def get_auth_needed(self) -> bool:
+        """Return whether this button requires elevated privileges.
+
+        Returns:
+            True if authentication is needed
+        """
         return self.widget.get_auth_needed()
 
-    def set_auth_needed(self, auth_needed):
+    def set_auth_needed(self, auth_needed: bool) -> None:
+        """Set whether this button requires elevated privileges.
+
+        Args:
+            auth_needed: True if authentication should be required
+        """
         self.widget.set_auth_needed(auth_needed)
 
     auth_needed = property(get_auth_needed, set_auth_needed)
@@ -630,10 +749,16 @@ class CheckBox(GUIField[widgets.CheckBox]):
 class ButtonSizer(GUIField[widgets.ButtonSizer]):
     widget_type = widgets.ButtonSizer
 
-    def add_button(self, button: Button):
+    def add_button(self, button: Button) -> None:
+        """Add a button to this sizer.
+
+        Args:
+            button: Button field to add
+        """
         self.widget.add_button(button.widget)
 
-    def realize(self):
+    def realize(self) -> None:
+        """Realize the button sizer (finalize layout)."""
         self.widget.realize()
 
 
@@ -643,80 +768,162 @@ ChoiceWidgetType = TypeVar("ChoiceWidgetType", bound=widgets.ChoiceWidget)
 class ChoiceField(GUIField[ChoiceWidgetType]):
     """A base class defining the methods available on choice fields."""
 
-    def __init__(self, default_index=0, choices=None, *args, **kwargs):
+    def __init__(
+        self,
+        default_index: int = 0,
+        choices: Optional[list[Any]] = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super(ChoiceField, self).__init__(*args, **kwargs)
         self.default_index = default_index
         if choices is None:
             choices = []
         self.choices = [str(i) for i in choices]
 
-    def render(self, **runtime_kwargs):
+    def render(self, **runtime_kwargs: Any) -> None:
+        """Render the choice field with the specified choices."""
         runtime_kwargs.setdefault("choices", self.choices)
         super().render(**runtime_kwargs)
 
-    def populate(self, value):
+    def populate(self, value: Any) -> None:
+        """Populate the choice field with items."""
         self.set_items(value)
 
-    def set_default_value(self):
+    def set_default_value(self) -> None:
+        """Set the default value and index."""
         super(ChoiceField, self).set_default_value()
         self.set_default_index()
 
-    def get_default_choice(self):
+    def get_default_choice(self) -> Optional[str]:
+        """Return the default choice based on default_index.
+
+        Returns:
+            The default choice string, or None if no choices
+        """
         if self.choices:
             return self.choices[self.default_index]
+        return None
 
-    def get_choice(self):
+    def get_choice(self) -> Optional[str]:
+        """Return the currently selected choice."""
         return self.widget.get_choice()
 
-    def get_items(self):
+    def get_items(self) -> list[str]:
+        """Return all items in this choice field."""
         return self.widget.get_items()
 
-    def set_items(self, items):
+    def set_items(self, items: list[Any]) -> None:
+        """Set all items in this choice field.
+
+        Args:
+            items: List of items to set
+        """
         return self.widget.set_items(items)
 
-    def delete_item(self, item):
+    def delete_item(self, item: int) -> None:
+        """Delete an item by index.
+
+        Args:
+            item: Index of item to delete
+        """
         return self.widget.delete_item(item)
 
-    def clear(self):
+    def clear(self) -> None:
+        """Clear all items from this choice field."""
         return self.widget.clear()
 
     def get_index(self) -> Optional[int]:
+        """Return the currently selected index, or None if no selection."""
         return self.widget.get_index()
 
-    def set_index(self, index):
+    def set_index(self, index: int) -> None:
+        """Set the selected index.
+
+        Args:
+            index: Index to select
+        """
         self.default_index = index
         return self.widget.set_index(index)
 
-    def set_default_index(self):
+    def set_default_index(self) -> None:
+        """Set the selection to the default index."""
         if self.get_count():
             self.set_index(self.default_index)
 
-    def find_index(self, item):
+    def find_index(self, item: str) -> int:
+        """Find the index of an item.
+
+        Args:
+            item: Item to find
+
+        Returns:
+            Index of the item
+
+        Raises:
+            ValueError: If item not found
+        """
         for num, current_item in enumerate(self.get_items()):
             if item == current_item:
                 return num
         raise ValueError("%r not in %r" % (item, self))
 
-    def set_index_to_item(self, item):
+    def set_index_to_item(self, item: str) -> None:
+        """Set the selection to the specified item.
+
+        Args:
+            item: Item to select
+        """
         index = self.find_index(item)
         self.set_index(index)
 
-    def insert_item(self, index, item):
+    def insert_item(self, index: int, item: Any) -> Any:
+        """Insert an item at the specified index.
+
+        Args:
+            index: Index to insert at
+            item: Item to insert
+
+        Returns:
+            The inserted item
+        """
         return self.widget.insert_item(index, item)
 
-    def update_item(self, index, new_item):
+    def update_item(self, index: int, new_item: Any) -> None:
+        """Update an item at the specified index.
+
+        Args:
+            index: Index of item to update
+            new_item: New item value
+        """
         return self.widget.update_item(index, new_item)
 
     def get_count(self) -> int:
+        """Return the number of items in this choice field."""
         return self.widget.get_count()
 
-    def get_item(self, index):
+    def get_item(self, index: int) -> str:
+        """Get an item by index.
+
+        Args:
+            index: Index of item to get
+
+        Returns:
+            Item at the specified index
+        """
         return self.widget.get_item(index)
 
-    def set_item(self, index, item):
+    def set_item(self, index: int, item: Any) -> None:
+        """Set an item at the specified index.
+
+        Args:
+            index: Index to set
+            item: Item value
+        """
         return self.widget.update_item(index, item)
 
-    def set_value(self, value):
+    def set_value(self, value: Any) -> None:
+        """Set the value by setting all items."""
         self.set_items(value)
 
 
@@ -725,7 +932,8 @@ class ComboBox(ChoiceField[widgets.ComboBox]):
 
     widget_type = widgets.ComboBox
 
-    def select_all(self):
+    def select_all(self) -> None:
+        """Select all text in the combo box."""
         return self.widget.select_all()
 
 
@@ -780,10 +988,16 @@ class Slider(GUIField[widgets.Slider]):
 
     page_size = property(get_page_size, set_page_size)
 
-    def set_line_size(self, value):
+    def set_line_size(self, value: int) -> None:
+        """Set the line size (arrow key increment).
+
+        Args:
+            value: Line size value
+        """
         self.widget.set_line_size(value)
 
-    def get_line_size(self):
+    def get_line_size(self) -> int:
+        """Return the line size (arrow key increment)."""
         return self.widget.get_line_size()
 
     line_size = property(get_line_size, set_line_size)
@@ -798,37 +1012,46 @@ class MenuItem(GUIField[widgets.MenuItem]):
 
     widget_type = widgets.MenuItem
 
-    def check(self):
+    def check(self) -> None:
         """Check this menu item."""
         self.widget.check()
 
-    def uncheck(self):
+    def uncheck(self) -> None:
         """Uncheck this menu item."""
         self.widget.uncheck()
 
-    def set_checked(self, checked: bool):
-        """Pass in a boolean representing whether or not this menu item should be checked."""
+    def set_checked(self, checked: bool) -> None:
+        """Set whether this menu item should be checked.
+
+        Args:
+            checked: True to check, False to uncheck
+        """
         if checked:
             self.check()
         else:
             self.uncheck()
 
-    def set_enabled(self, enabled):
+    def set_enabled(self, enabled: bool) -> None:
+        """Enable or disable this menu item.
+
+        Args:
+            enabled: True to enable, False to disable
+        """
         if enabled:
             self.enable()
         else:
             self.disable()
 
-    def set_as_mac_about_menu_item(self):
-        """Indicate to OS X that this is the About... item in the help menu"""
+    def set_as_mac_about_menu_item(self) -> None:
+        """Indicate to macOS that this is the About... item in the help menu."""
         self.widget.set_as_mac_about_menu_item()
 
-    def set_as_mac_exit_menu_item(self):
-        """Indicate to OS X that clicking this menu item will exit the application"""
+    def set_as_mac_exit_menu_item(self) -> None:
+        """Indicate to macOS that clicking this menu item will exit the application."""
         self.widget.set_as_mac_exit_menu_item()
 
-    def set_as_mac_preferences_menu_item(self):
-        """Indicate to OS X that clicking this menu item will invoke the application's preferences"""
+    def set_as_mac_preferences_menu_item(self) -> None:
+        """Indicate to macOS that clicking this menu item will invoke the application's preferences."""
         self.widget.set_as_mac_preferences_menu_item()
 
 
@@ -870,8 +1093,13 @@ class StaticText(GUIField):
 class DatePicker(GUIField[widgets.DatePicker]):
     widget_type = widgets.DatePicker
 
-    def set_range(self, start, end):
-        """Sets the minimum and maximum dates that can be picked in this control"""
+    def set_range(self, start: Any, end: Any) -> None:
+        """Set the minimum and maximum dates that can be picked in this control.
+
+        Args:
+            start: Minimum date (datetime.date or wx.DateTime)
+            end: Maximum date (datetime.date or wx.DateTime)
+        """
         self.widget.set_range(start, end)
 
 
@@ -880,17 +1108,56 @@ class TreeView(GUIField[widgets.TreeView]):
 
     widget_type = widgets.TreeView
 
-    def add_root(self, text=None, image=None, selected_image=None, data=None):
+    def add_root(
+        self,
+        text: Optional[str] = None,
+        image: Any = None,
+        selected_image: Any = None,
+        data: Any = None,
+    ) -> Any:
+        """Add a root item to the tree.
+
+        Args:
+            text: Text for the root item
+            image: Image for the item
+            selected_image: Image when selected
+            data: Associated data
+
+        Returns:
+            TreeItemId for the root item
+        """
         return self.widget.add_root(
             text, image=image, selected_image=selected_image, data=data
         )
 
-    def get_root_item(self):
+    def get_root_item(self) -> Any:
+        """Return the root item of the tree.
+
+        Returns:
+            TreeItemId for the root
+        """
         return self.widget.get_root_item()
 
     def append_item(
-        self, parent=None, text=None, image=None, selected_image=None, data=None
-    ):
+        self,
+        parent: Optional[Any] = None,
+        text: Optional[str] = None,
+        image: Any = None,
+        selected_image: Any = None,
+        data: Any = None,
+    ) -> Any:
+        """Append an item to the tree.
+
+        Args:
+            parent: Parent TreeItemId (None for root)
+            text: Text for the item
+            image: Image for the item
+            selected_image: Image when selected
+            data: Associated data
+
+        Returns:
+            TreeItemId for the new item
+        """
         if parent is None:
             return self.add_root(
                 text=text, image=image, selected_image=selected_image, data=data
@@ -903,36 +1170,72 @@ class TreeView(GUIField[widgets.TreeView]):
             data=data,
         )
 
-    def clear(self):
-        """Deletes all items out of this tree view"""
+    def clear(self) -> None:
+        """Delete all items from this tree view."""
         self.widget.clear()
 
-    def collapse_all(self):
+    def collapse_all(self) -> None:
+        """Collapse all tree nodes."""
         self.widget.collapse_all()
 
-    def delete(self, item):
+    def delete(self, item: Any) -> None:
+        """Delete a tree item.
+
+        Args:
+            item: TreeItemId to delete
+        """
         self.widget.delete(item)
 
-    def get_selection(self):
+    def get_selection(self) -> Any:
+        """Return the currently selected tree item.
+
+        Returns:
+            TreeItemId of selected item
+        """
         return self.widget.get_selection()
 
-    def select_item(self, item):
+    def select_item(self, item: Any) -> None:
+        """Select a tree item.
+
+        Args:
+            item: TreeItemId to select
+        """
         self.widget.select_item(item)
 
-    def get_data(self, item):
+    def get_data(self, item: Any) -> Any:
+        """Get the data associated with a tree item.
+
+        Args:
+            item: TreeItemId
+
+        Returns:
+            Associated data
+        """
         return self.widget.get_data(item)
 
-    def set_item_has_children(self, item, val):
+    def set_item_has_children(self, item: Any, val: bool) -> None:
+        """Set whether a tree item has children.
+
+        Args:
+            item: TreeItemId
+            val: True if item has children
+        """
         self.widget.set_item_has_children(item, val)
 
 
 class ProgressBar(GUIField[widgets.ProgressBar]):
     widget_type = widgets.ProgressBar
 
-    def set_range(self, range):
+    def set_range(self, range: int) -> None:
+        """Set the maximum value of the progress bar.
+
+        Args:
+            range: Maximum value
+        """
         self.widget.set_range(range)
 
     def get_range(self) -> int:
+        """Return the maximum value of the progress bar."""
         return self.widget.get_range()
 
     range = property(get_range, set_range)
@@ -945,15 +1248,33 @@ class ToolBarItem(GUIField[widgets.ToolBarItem]):
 class Image(GUIField[widgets.StaticBitmap]):
     widget_type = widgets.StaticBitmap
 
-    def load_image(self, image):
+    def load_image(self, image: Any) -> Any:
+        """Load an image into this image field.
+
+        Args:
+            image: Image to load (wx.Image or compatible)
+
+        Returns:
+            Result from widget's load_image
+        """
         return self.widget.load_image(image)
 
 
 class SpinBox(GUIField[widgets.SpinBox]):
     widget_type = widgets.SpinBox
 
-    def set_min(self, min):
+    def set_min(self, min: int) -> None:
+        """Set the minimum value of the spin box.
+
+        Args:
+            min: Minimum value
+        """
         self.widget.set_min(min)
 
-    def set_max(self, max):
+    def set_max(self, max: int) -> None:
+        """Set the maximum value of the spin box.
+
+        Args:
+            max: Maximum value
+        """
         self.widget.set_max(max)
