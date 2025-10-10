@@ -8,6 +8,7 @@ from typing import (
     Callable,
     Generic,
     Optional,
+    Protocol,
     Type,
     TypeVar,
     Union,
@@ -17,6 +18,17 @@ from typing import (
 from .widgets import wx_widgets as widgets
 
 logger = getLogger("gui_builder.fields")
+
+
+class SupportsStr(Protocol):
+    """Protocol for objects that can be converted to string.
+
+    This allows gui_builder to accept string-like objects (like LazyProxy from i18n)
+    without knowing about specific implementations.
+    """
+
+    def __str__(self) -> str: ...
+
 
 # Type variables for proper generic descriptor support
 FieldType = TypeVar("FieldType", bound="GUIField[Any]", covariant=True)
@@ -160,7 +172,7 @@ class GUIField(Generic[WidgetType]):
     def __init__(
         self,
         widget_type: Optional[Type[WidgetType]] = None,
-        label: Optional[str] = None,
+        label: Union[str, SupportsStr, None] = None,
         parent: Optional[Any] = None,
         bound_name: Optional[str] = None,
         callback: Optional[CallbackFunction] = None,
@@ -525,19 +537,19 @@ class GUIField(Generic[WidgetType]):
         """Return this field's current label."""
         return self.widget.get_label()
 
-    def set_label(self, label: str) -> None:
+    def set_label(self, label: Union[str, SupportsStr]) -> None:
         """Set this field's label.
 
         Args:
-            label: Label text to set
+            label: Label text to set (string or string-like object)
         """
         return self.widget.set_label(label)
 
-    def set_accessible_label(self, label: str) -> None:
+    def set_accessible_label(self, label: Union[str, SupportsStr]) -> None:
         """Set this field's accessible label for screen readers.
 
         Args:
-            label: Accessible label text
+            label: Accessible label text (string or string-like object)
         """
         self.widget.set_accessible_label(label)
 
