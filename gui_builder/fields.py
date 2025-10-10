@@ -2,7 +2,17 @@ from __future__ import absolute_import, annotations
 
 import traceback
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Generic, Optional, Type, TypeVar, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Generic,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 
 from .widgets import wx_widgets as widgets
 
@@ -12,6 +22,12 @@ logger = getLogger("gui_builder.fields")
 FieldType = TypeVar("FieldType", bound="GUIField[Any]", covariant=True)
 FormInstanceType = TypeVar("FormInstanceType")
 SelfType = TypeVar("SelfType", bound="GUIField[Any]")
+
+# Callback type aliases
+# Callbacks are flexible due to runtime introspection in callback_wrapper.
+# They can be: def callback(self), def callback(self, event), def callback(self, **kwargs), etc.
+CallbackFunction = Callable[..., Any]
+TriggerName = str
 
 
 class UnboundField(Generic[FieldType]):
@@ -60,19 +76,43 @@ class UnboundField(Generic[FieldType]):
             **kwargs,
         )
 
-    def add_callback(self, trigger=None):
+    def add_callback(
+        self, trigger: Union[TriggerName, CallbackFunction, None] = None
+    ) -> Union[CallbackFunction, Callable[[CallbackFunction], CallbackFunction]]:
+        """Add a callback to this field.
+
+        Can be used as a decorator in two ways:
+            @field.add_callback              # Sets default callback
+            @field.add_callback("event")     # Adds event-specific callback
+
+        Args:
+            trigger: Either a trigger name (str) for event-specific callbacks,
+                    or a callback function for direct assignment.
+
+        Returns:
+            Either the callback function itself (if used without trigger),
+            or a decorator function (if used with trigger name).
+        """
         if not isinstance(trigger, str):
+            # Direct callback assignment: @field.add_callback
             self.kwargs["callback"] = trigger
             return trigger
 
-        def add_callback_decorator(function):
+        def add_callback_decorator(function: CallbackFunction) -> CallbackFunction:
+            # Event-specific callback: @field.add_callback("event")
             self.extra_callbacks.append((trigger, function))
             return function
 
         return add_callback_decorator
 
-    def __call__(self, func: Any) -> Any:
-        """Support for using fields as decorators."""
+    def __call__(self, func: CallbackFunction) -> CallbackFunction:
+        """Support for using fields as decorators.
+
+        Usage:
+            @field
+            def on_click(self):
+                ...
+        """
         self.kwargs["callback"] = func
         return func
 
@@ -119,17 +159,17 @@ class GUIField(Generic[WidgetType]):
 
     def __init__(
         self,
-        widget_type=None,
-        label=None,
-        parent=None,
-        bound_name=None,
-        callback=None,
-        default_value=None,
-        default_focus=False,
-        extra_callbacks=None,
-        *args,
-        **kwargs,
-    ):
+        widget_type: Optional[Type[WidgetType]] = None,
+        label: Optional[str] = None,
+        parent: Optional[Any] = None,
+        bound_name: Optional[str] = None,
+        callback: Optional[CallbackFunction] = None,
+        default_value: Any = None,
+        default_focus: bool = False,
+        extra_callbacks: Optional[list[tuple[TriggerName, CallbackFunction]]] = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         if widget_type is None:
             widget_type = self.widget_type
         widget_kwargs = {}
@@ -164,7 +204,16 @@ class GUIField(Generic[WidgetType]):
             self.extra_callbacks = list(self.extra_callbacks)
             self.extra_callbacks.extend(extra_callbacks)
 
-    def bind(self, parent, name=None):
+    def bind(self, parent: Any, name: Optional[str] = None) -> "GUIField[WidgetType]":
+        """Bind this field to a parent with an optional name.
+
+        Args:
+            parent: The parent object (typically a form) to bind to
+            name: Optional name for this field binding
+
+        Returns:
+            Self for method chaining
+        """
         logger.debug(
             "Binding field %r to parent %r with name %r" % (self, parent, name)
         )
@@ -229,26 +278,56 @@ class GUIField(Generic[WidgetType]):
                 callback_set = [None] + list(callback_set)
             self.register_callback(*callback_set)
 
-    def register_callback(self, trigger=None, callback=None):
-        """Registers a callback, I.E. an event handler, to a certain trigger (event). If the callback is not provided it is assumed to be this field's default callback. If a trigger is not provided, assumes the trigger is this field's widget's default event type"""
+    def register_callback(
+        self, trigger: Optional[TriggerName] = None, callback: Optional[CallbackFunction] = None
+    ) -> None:
+        """Register a callback (event handler) to a trigger (event).
+
+        Args:
+            trigger: Event trigger name. If None, uses widget's default event type.
+            callback: Callback function. If None, uses this field's default callback.
+        """
         logger.debug(
             "Registering callback %r with trigger %r to field %r"
             % (callback, trigger, self)
         )
         self.widget.register_callback(trigger, callback)
 
-    def unregister_callback(self, trigger, callback):
-        """Unregisters a callback from a trigger"""
+    def unregister_callback(self, trigger: TriggerName, callback: CallbackFunction) -> None:
+        """Unregister a callback from a trigger.
+
+        Args:
+            trigger: Event trigger name
+            callback: Callback function to unregister
+        """
         logger.debug(
             "Unregistering callback %r with trigger %r from field %r"
             % (callback, trigger, self)
         )
         self.widget.unregister_callback(trigger, callback)
 
-    def bind_event(self, event, callback):
+    def bind_event(self, event: Any, callback: CallbackFunction) -> Any:
+        """Bind an event directly to a callback.
+
+        Args:
+            event: wxPython event type
+            callback: Callback function to bind
+
+        Returns:
+            Result from widget's bind_event
+        """
         return self.widget.bind_event(event, callback)
 
-    def unbind_event(self, event, callback=None):
+    def unbind_event(self, event: Any, callback: Optional[CallbackFunction] = None) -> Any:
+        """Unbind an event from a callback.
+
+        Args:
+            event: wxPython event type
+            callback: Optional callback function to unbind. If None, unbinds all.
+
+        Returns:
+            Result from widget's unbind_event
+        """
         return self.widget.unbind_event(event, callback)
 
     def is_focused(self):
@@ -413,25 +492,41 @@ class GUIField(Generic[WidgetType]):
     def get_default_value(self):
         return self.default_value
 
-    def __call__(self, func: Any) -> Any:
-        """Support for using fields as decorators - typically for callback assignment."""
+    def __call__(self, func: CallbackFunction) -> CallbackFunction:
+        """Support for using bound fields as decorators.
+
+        Usage:
+            @field
+            def on_click(self):
+                ...
+        """
         self.callback = func
         return func
 
-    def add_callback(self, trigger=None):
-        """Add callback to this field. Works on bound field instances.
+    def add_callback(
+        self, trigger: Union[TriggerName, CallbackFunction, None] = None
+    ) -> Union[CallbackFunction, Callable[[CallbackFunction], CallbackFunction]]:
+        """Add a callback to this bound field instance.
 
-        Usage:
-            @field.add_callback              # Default callback
-            @field.add_callback("event")     # Event-specific callback
+        Can be used as a decorator in two ways:
+            @field.add_callback              # Sets default callback
+            @field.add_callback("event")     # Adds event-specific callback
+
+        Args:
+            trigger: Either a trigger name (str) for event-specific callbacks,
+                    or a callback function for direct assignment.
+
+        Returns:
+            Either the callback function itself (if used without trigger),
+            or a decorator function (if used with trigger name).
         """
         if not isinstance(trigger, str):
-            # Direct callback assignment (for @field.add_callback usage)
+            # Direct callback assignment: @field.add_callback
             self.callback = trigger
             return trigger
 
-        def add_callback_decorator(function):
-            # Event-specific callback (for @field.add_callback("event") usage)
+        def add_callback_decorator(function: CallbackFunction) -> CallbackFunction:
+            # Event-specific callback: @field.add_callback("event")
             if self.extra_callbacks is None:
                 self.extra_callbacks = []
             self.extra_callbacks.append((trigger, function))
