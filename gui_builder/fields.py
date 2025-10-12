@@ -717,6 +717,108 @@ class Text(GUIField[widgets.Text]):
         """Remove all text from this text field."""
         return self.widget.clear()
 
+    def set_style(
+        self,
+        start: int,
+        end: int,
+        *,
+        font_family: Optional[int] = None,
+        font_size: Optional[int] = None,
+        font_face: Optional[str] = None,
+        bold: Optional[bool] = None,
+        italic: Optional[bool] = None,
+        underline: Optional[bool] = None,
+        text_color: Optional[Union[Any, str, tuple[int, int, int]]] = None,
+        background_color: Optional[Union[Any, str, tuple[int, int, int]]] = None,
+        alignment: Optional[int] = None,
+    ) -> bool:
+        """Apply style to existing text in the range [start, end).
+
+        Note: The text control must have wx.TE_RICH or wx.TE_RICH2 style for this to work.
+
+        Args:
+            start: Starting position (0-based index)
+            end: Ending position (0-based index)
+            font_family: Font family constant (wx.FONTFAMILY_DEFAULT, wx.FONTFAMILY_ROMAN, etc.)
+            font_size: Font size in points
+            font_face: Font face name like "Arial" or "Courier New"
+            bold: Whether text should be bold
+            italic: Whether text should be italic
+            underline: Whether text should be underlined
+            text_color: Text color (wx.Colour, color name string, or RGB tuple)
+            background_color: Background color (wx.Colour, color name string, or RGB tuple)
+            alignment: Text alignment (wx.TEXT_ALIGNMENT_LEFT, etc.)
+
+        Returns:
+            True on success, False on failure
+        """
+        return self.widget.set_style(
+            start=start,
+            end=end,
+            font_family=font_family,
+            font_size=font_size,
+            font_face=font_face,
+            bold=bold,
+            italic=italic,
+            underline=underline,
+            text_color=text_color,
+            background_color=background_color,
+            alignment=alignment,
+        )
+
+    def set_default_style(
+        self,
+        *,
+        font_family: Optional[int] = None,
+        font_size: Optional[int] = None,
+        font_face: Optional[str] = None,
+        bold: Optional[bool] = None,
+        italic: Optional[bool] = None,
+        underline: Optional[bool] = None,
+        text_color: Optional[Union[Any, str, tuple[int, int, int]]] = None,
+        background_color: Optional[Union[Any, str, tuple[int, int, int]]] = None,
+        alignment: Optional[int] = None,
+    ) -> bool:
+        """Set the default style for subsequently inserted text.
+
+        This is more efficient than using set_style() after inserting text.
+        Note: The text control must have wx.TE_RICH or wx.TE_RICH2 style for this to work.
+
+        Args:
+            font_family: Font family constant (wx.FONTFAMILY_DEFAULT, wx.FONTFAMILY_ROMAN, etc.)
+            font_size: Font size in points
+            font_face: Font face name like "Arial" or "Courier New"
+            bold: Whether text should be bold
+            italic: Whether text should be italic
+            underline: Whether text should be underlined
+            text_color: Text color (wx.Colour, color name string, or RGB tuple)
+            background_color: Background color (wx.Colour, color name string, or RGB tuple)
+            alignment: Text alignment (wx.TEXT_ALIGNMENT_LEFT, etc.)
+
+        Returns:
+            True on success, False on failure
+        """
+        return self.widget.set_default_style(
+            font_family=font_family,
+            font_size=font_size,
+            font_face=font_face,
+            bold=bold,
+            italic=italic,
+            underline=underline,
+            text_color=text_color,
+            background_color=background_color,
+            alignment=alignment,
+        )
+
+    def get_default_style(self) -> dict[str, Any]:
+        """Get the current default style.
+
+        Returns:
+            Dict containing style parameters (font_family, font_size, font_face,
+            bold, italic, underline, text_color, background_color, alignment)
+        """
+        return self.widget.get_default_style()
+
 
 class IntText(Text):
     """This text field will only allow the input of numbers."""

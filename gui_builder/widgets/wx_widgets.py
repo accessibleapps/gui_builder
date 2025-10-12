@@ -802,6 +802,225 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
     def clear(self) -> None:
         return self.control.Clear()
 
+    def _to_wx_colour(self, color: Union[wx.Colour, str, Tuple[int, int, int]]) -> wx.Colour:
+        """Convert various color formats to wx.Colour.
+
+        Args:
+            color: Color as wx.Colour, color name string, or RGB tuple
+
+        Returns:
+            wx.Colour object
+        """
+        if isinstance(color, wx.Colour):
+            return color
+        elif isinstance(color, str):
+            return wx.Colour(color)
+        elif isinstance(color, tuple) and len(color) == 3:
+            return wx.Colour(*color)
+        else:
+            raise ValueError(f"Invalid color format: {color}")
+
+    def _from_wx_colour(self, color: wx.Colour) -> Optional[Tuple[int, int, int]]:
+        """Convert wx.Colour to RGB tuple.
+
+        Args:
+            color: wx.Colour object
+
+        Returns:
+            RGB tuple or None if color is invalid
+        """
+        if color.IsOk():
+            return (color.Red(), color.Green(), color.Blue())
+        return None
+
+    def _create_text_attr(
+        self,
+        font_family: Optional[int] = None,
+        font_size: Optional[int] = None,
+        font_face: Optional[str] = None,
+        bold: Optional[bool] = None,
+        italic: Optional[bool] = None,
+        underline: Optional[bool] = None,
+        text_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        background_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        alignment: Optional[int] = None,
+    ) -> wx.TextAttr:
+        """Create a wx.TextAttr from the provided styling parameters.
+
+        Args:
+            font_family: Font family constant (wx.FONTFAMILY_DEFAULT, wx.FONTFAMILY_ROMAN, etc.)
+            font_size: Font size in points
+            font_face: Font face name like "Arial" or "Courier New"
+            bold: Whether text should be bold
+            italic: Whether text should be italic
+            underline: Whether text should be underlined
+            text_color: Text color (wx.Colour, color name string, or RGB tuple)
+            background_color: Background color (wx.Colour, color name string, or RGB tuple)
+            alignment: Text alignment (wx.TEXT_ALIGNMENT_LEFT, etc.)
+
+        Returns:
+            Configured wx.TextAttr object
+        """
+        attr = wx.TextAttr()
+
+        # Use individual TextAttr methods for more granular control
+        if font_size is not None:
+            attr.SetFontSize(font_size)
+        if font_family is not None:
+            attr.SetFontFamily(font_family)
+        if font_face is not None:
+            attr.SetFontFaceName(font_face)
+        if bold is not None:
+            attr.SetFontWeight(wx.FONTWEIGHT_BOLD if bold else wx.FONTWEIGHT_NORMAL)
+        if italic is not None:
+            attr.SetFontStyle(wx.FONTSTYLE_ITALIC if italic else wx.FONTSTYLE_NORMAL)
+        if underline is not None:
+            attr.SetFontUnderlined(underline)
+
+        if text_color is not None:
+            attr.SetTextColour(self._to_wx_colour(text_color))
+
+        if background_color is not None:
+            attr.SetBackgroundColour(self._to_wx_colour(background_color))
+
+        if alignment is not None:
+            attr.SetAlignment(alignment)
+
+        return attr
+
+    def _text_attr_to_dict(self, attr: wx.TextAttr) -> Dict[str, Any]:
+        """Convert wx.TextAttr to a dict of style parameters.
+
+        Args:
+            attr: wx.TextAttr object
+
+        Returns:
+            Dict with style parameters matching the setter API
+        """
+        result: Dict[str, Any] = {}
+
+        if attr.HasFont():
+            font = attr.GetFont()
+            result["font_family"] = font.GetFamily()
+            result["font_size"] = font.GetPointSize()
+            result["font_face"] = font.GetFaceName()
+            result["bold"] = font.GetWeight() == wx.FONTWEIGHT_BOLD
+            result["italic"] = font.GetStyle() == wx.FONTSTYLE_ITALIC
+            result["underline"] = font.GetUnderlined()
+
+        if attr.HasTextColour():
+            result["text_color"] = self._from_wx_colour(attr.GetTextColour())
+
+        if attr.HasBackgroundColour():
+            result["background_color"] = self._from_wx_colour(attr.GetBackgroundColour())
+
+        if attr.HasAlignment():
+            result["alignment"] = attr.GetAlignment()
+
+        return result
+
+    def set_style(
+        self,
+        start: int,
+        end: int,
+        *,
+        font_family: Optional[int] = None,
+        font_size: Optional[int] = None,
+        font_face: Optional[str] = None,
+        bold: Optional[bool] = None,
+        italic: Optional[bool] = None,
+        underline: Optional[bool] = None,
+        text_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        background_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        alignment: Optional[int] = None,
+    ) -> bool:
+        """Apply style to existing text in the range [start, end).
+
+        Note: The text control must have wx.TE_RICH or wx.TE_RICH2 style for this to work.
+
+        Args:
+            start: Starting position (0-based index)
+            end: Ending position (0-based index)
+            font_family: Font family constant (wx.FONTFAMILY_DEFAULT, wx.FONTFAMILY_ROMAN, etc.)
+            font_size: Font size in points
+            font_face: Font face name like "Arial" or "Courier New"
+            bold: Whether text should be bold
+            italic: Whether text should be italic
+            underline: Whether text should be underlined
+            text_color: Text color (wx.Colour, color name string, or RGB tuple)
+            background_color: Background color (wx.Colour, color name string, or RGB tuple)
+            alignment: Text alignment (wx.TEXT_ALIGNMENT_LEFT, etc.)
+
+        Returns:
+            True on success, False on failure
+        """
+        attr = self._create_text_attr(
+            font_family=font_family,
+            font_size=font_size,
+            font_face=font_face,
+            bold=bold,
+            italic=italic,
+            underline=underline,
+            text_color=text_color,
+            background_color=background_color,
+            alignment=alignment,
+        )
+        return self.control.SetStyle(start, end, attr)
+
+    def set_default_style(
+        self,
+        *,
+        font_family: Optional[int] = None,
+        font_size: Optional[int] = None,
+        font_face: Optional[str] = None,
+        bold: Optional[bool] = None,
+        italic: Optional[bool] = None,
+        underline: Optional[bool] = None,
+        text_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        background_color: Optional[Union[wx.Colour, str, Tuple[int, int, int]]] = None,
+        alignment: Optional[int] = None,
+    ) -> bool:
+        """Set the default style for subsequently inserted text.
+
+        This is more efficient than using set_style() after inserting text.
+        Note: The text control must have wx.TE_RICH or wx.TE_RICH2 style for this to work.
+
+        Args:
+            font_family: Font family constant (wx.FONTFAMILY_DEFAULT, wx.FONTFAMILY_ROMAN, etc.)
+            font_size: Font size in points
+            font_face: Font face name like "Arial" or "Courier New"
+            bold: Whether text should be bold
+            italic: Whether text should be italic
+            underline: Whether text should be underlined
+            text_color: Text color (wx.Colour, color name string, or RGB tuple)
+            background_color: Background color (wx.Colour, color name string, or RGB tuple)
+            alignment: Text alignment (wx.TEXT_ALIGNMENT_LEFT, etc.)
+
+        Returns:
+            True on success, False on failure
+        """
+        attr = self._create_text_attr(
+            font_family=font_family,
+            font_size=font_size,
+            font_face=font_face,
+            bold=bold,
+            italic=italic,
+            underline=underline,
+            text_color=text_color,
+            background_color=background_color,
+            alignment=alignment,
+        )
+        return self.control.SetDefaultStyle(attr)
+
+    def get_default_style(self) -> Dict[str, Any]:
+        """Get the current default style.
+
+        Returns:
+            Dict containing style parameters (font_family, font_size, font_face,
+            bold, italic, underline, text_color, background_color, alignment)
+        """
+        return self._text_attr_to_dict(self.control.GetDefaultStyle())
+
 
 class IntText(Text):
     widget_type = intctrl.IntCtrl
