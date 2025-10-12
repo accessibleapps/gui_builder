@@ -819,6 +819,17 @@ class Text(GUIField[widgets.Text]):
         """
         return self.widget.get_default_style()
 
+    def reset_default_style(self) -> bool:
+        """Reset the default style to no styling.
+
+        This explicitly resets all style attributes so subsequently inserted text
+        will have no special formatting.
+
+        Returns:
+            True on success, False on failure
+        """
+        return self.widget.reset_default_style()
+
 
 class IntText(Text):
     """This text field will only allow the input of numbers."""
