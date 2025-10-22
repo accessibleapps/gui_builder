@@ -565,6 +565,8 @@ class GUIField(Generic[WidgetType]):
         """
         return self.widget.set_value(value)
 
+    value = property(get_value, set_value)
+
     def get_default_value(self) -> Any:
         """Return the default value for this field."""
         return self.default_value
