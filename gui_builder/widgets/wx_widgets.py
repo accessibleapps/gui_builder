@@ -802,7 +802,9 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
     def clear(self) -> None:
         return self.control.Clear()
 
-    def _to_wx_colour(self, color: Union[wx.Colour, str, Tuple[int, int, int]]) -> wx.Colour:
+    def _to_wx_colour(
+        self, color: Union[wx.Colour, str, Tuple[int, int, int]]
+    ) -> wx.Colour:
         """Convert various color formats to wx.Colour.
 
         Args:
@@ -912,7 +914,9 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
             result["text_color"] = self._from_wx_colour(attr.GetTextColour())
 
         if attr.HasBackgroundColour():
-            result["background_color"] = self._from_wx_colour(attr.GetBackgroundColour())
+            result["background_color"] = self._from_wx_colour(
+                attr.GetBackgroundColour()
+            )
 
         if attr.HasAlignment():
             result["alignment"] = attr.GetAlignment()
@@ -1565,11 +1569,11 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
     focusable = False
 
     def __init__(self, sizer_type="vertical", *args, **kwargs):
-        super(SizedPanel, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sizer_type = sizer_type
 
     def render(self):
-        super(SizedPanel, self).render()
+        super().render()
         self.control.SetSizerType(self.sizer_type)
 
 
@@ -1584,7 +1588,7 @@ class BaseFrame(
         super(BaseFrame, self).__init__(*args, **kwargs)
 
     def render(self, *args, **kwargs):
-        super(BaseFrame, self).render(*args, **kwargs)
+        super().render(*args, **kwargs)
         if self.control_maximized:
             self.maximize()
 
@@ -1618,8 +1622,8 @@ class SizedFrame(BaseFrame[FieldType, sc.SizedFrame]):
         Args:
             padding (int): Padding in pixels around all content
         """
-        pane = self.control.GetContentsPane()
-        pane.SetSizerProps(border=("all", padding))
+        pane: sc.SizedPanel = self.control.GetContentsPane()
+        pane.SetSizerProp("border", padding)
 
 
 class MDIParentFrame(BaseFrame[FieldType, wx.MDIParentFrame]):
@@ -1666,7 +1670,9 @@ class Notebook(BaseContainer[FieldType, wx.Notebook]):
 
             # Don't interfere with Ctrl+Tab or Ctrl+PageUp/PageDown - let wxPython handle tab switching
             if self.control_down:
-                logger.debug("Ctrl pressed at page level, allowing default notebook tab switching")
+                logger.debug(
+                    "Ctrl pressed at page level, allowing default notebook tab switching"
+                )
                 nav_evt.Skip()
                 return
 
