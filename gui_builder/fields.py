@@ -1,4 +1,4 @@
-from __future__ import absolute_import, annotations
+from __future__ import annotations
 
 import traceback
 from logging import getLogger
@@ -6,6 +6,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
+    ClassVar,
     Generic,
     Optional,
     Protocol,
@@ -43,16 +44,16 @@ TriggerName = str
 
 
 class UnboundField(Generic[FieldType]):
-    creation_counter = 0
-    _GUI_FIELD = True
+    creation_counter: ClassVar[int] = 0
+    _GUI_FIELD: ClassVar[bool] = True
 
     def __init__(self, field: Type[FieldType], *args: Any, **kwargs: Any) -> None:
-        self.field = field
+        self.field: Type[FieldType] = field
         self.args = args
         self.kwargs = kwargs
-        self.extra_callbacks = []
+        self.extra_callbacks: list[tuple[TriggerName, CallbackFunction]] = []
         UnboundField.creation_counter += 1
-        self.creation_counter = UnboundField.creation_counter
+        self.creation_counter = UnboundField.creation_counter  # type: ignore this is how we track field order
 
     @overload
     def __get__(
@@ -146,7 +147,7 @@ WidgetType = TypeVar("WidgetType", bound=widgets.WXWidget)
 
 
 class GUIField(Generic[WidgetType]):
-    __autolabel__ = False
+    __autolabel__: ClassVar[bool] = False
     widget_args = ()
     widget_kwargs = {}
     callback = None
@@ -165,7 +166,7 @@ class GUIField(Generic[WidgetType]):
 
     def __new__(cls, *args, **kwargs):  # type: ignore
         if "parent" in kwargs or kwargs.get("top_level_window"):
-            return super(GUIField, cls).__new__(cls)
+            return super().__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
 
@@ -293,7 +294,9 @@ class GUIField(Generic[WidgetType]):
             self.register_callback(*callback_set)
 
     def register_callback(
-        self, trigger: Optional[TriggerName] = None, callback: Optional[CallbackFunction] = None
+        self,
+        trigger: Optional[TriggerName] = None,
+        callback: Optional[CallbackFunction] = None,
     ) -> None:
         """Register a callback (event handler) to a trigger (event).
 
@@ -307,7 +310,9 @@ class GUIField(Generic[WidgetType]):
         )
         self.widget.register_callback(trigger, callback)
 
-    def unregister_callback(self, trigger: TriggerName, callback: CallbackFunction) -> None:
+    def unregister_callback(
+        self, trigger: TriggerName, callback: CallbackFunction
+    ) -> None:
         """Unregister a callback from a trigger.
 
         Args:
@@ -332,7 +337,9 @@ class GUIField(Generic[WidgetType]):
         """
         return self.widget.bind_event(event, callback)
 
-    def unbind_event(self, event: Any, callback: Optional[CallbackFunction] = None) -> Any:
+    def unbind_event(
+        self, event: Any, callback: Optional[CallbackFunction] = None
+    ) -> Any:
         """Unbind an event from a callback.
 
         Args:
@@ -625,7 +632,7 @@ class Text(GUIField[widgets.Text]):
 
     def set_default_value(self) -> None:
         """Set the default value and select all text."""
-        super(Text, self).set_default_value()
+        super().set_default_value()
         self.select_all()
 
     def append(self, text: str) -> None:
@@ -919,7 +926,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
 
     def set_default_value(self) -> None:
         """Set the default value and index."""
-        super(ChoiceField, self).set_default_value()
+        super().set_default_value()
         self.set_default_index()
 
     def get_default_choice(self) -> Optional[str]:
@@ -1049,9 +1056,15 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
         """
         return self.widget.update_item(index, item)
 
+    def get_value(self) -> Any:
+        """Get the value by getting all items."""
+        return self.get_items()
+
     def set_value(self, value: Any) -> None:
         """Set the value by setting all items."""
         self.set_items(value)
+
+    value = property(get_value, set_value)
 
 
 class ComboBox(ChoiceField[widgets.ComboBox]):
