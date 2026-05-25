@@ -1036,6 +1036,90 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
         """
         return self.control.SetDefaultStyle(wx.TextAttr())
 
+    def load_rtf(self, rtf: bytes) -> bool:
+        """Replace the control's contents with RTF, parsed by Win32 RichEdit.
+
+        Roughly 50x faster than loading text and then looping SetStyle for
+        heavily styled documents because the parser runs entirely in
+        RichEdit's C++ side. Windows only — non-Windows callers must use
+        the SetStyle/AppendText API.
+
+        The control must have wx.TE_RICH2 (or wx.TE_RICH) for RichEdit to
+        be the underlying widget.
+
+        Args:
+            rtf: RTF document bytes.
+
+        Returns:
+            True on success.
+
+        Raises:
+            NotImplementedError: on non-Windows platforms.
+        """
+        if platform.system() != "Windows":
+            raise NotImplementedError("load_rtf is currently Windows-only")
+        hwnd = self.control.GetHandle()
+        if not hwnd:
+            return False
+        return _em_streamin_rtf(int(hwnd), rtf)
+
+
+# Win32 EM_STREAMIN bindings for Text.load_rtf
+_EM_STREAMIN = 0x0400 + 73   # WM_USER + 73
+_SF_RTF = 0x0002
+
+_EDITSTREAMCALLBACK = ctypes.WINFUNCTYPE(
+    ctypes.c_int,
+    ctypes.c_void_p,
+    ctypes.POINTER(ctypes.c_byte),
+    ctypes.c_long,
+    ctypes.POINTER(ctypes.c_long),
+) if platform.system() == "Windows" else None
+
+
+if platform.system() == "Windows":
+
+    class _EDITSTREAM(ctypes.Structure):
+        _fields_ = [
+            ("dwCookie", ctypes.c_void_p),
+            ("dwError", ctypes.c_uint32),
+            ("pfnCallback", _EDITSTREAMCALLBACK),
+        ]
+
+    def _em_streamin_rtf(hwnd: int, rtf: bytes) -> bool:
+        src = (ctypes.c_byte * len(rtf)).from_buffer_copy(rtf)
+        state = {"pos": 0}
+
+        def _cb(_cookie: int, pbBuff, cb_: int, pcb) -> int:
+            remaining = len(rtf) - state["pos"]
+            n = min(cb_, remaining)
+            if n > 0:
+                ctypes.memmove(pbBuff, ctypes.byref(src, state["pos"]), n)
+            pcb[0] = n
+            state["pos"] += n
+            return 0
+
+        callback = _EDITSTREAMCALLBACK(_cb)
+        es = _EDITSTREAM(0, 0, callback)
+        user32 = ctypes.windll.user32
+        user32.SendMessageW.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_uint,
+            ctypes.c_void_p,
+            ctypes.c_void_p,
+        ]
+        user32.SendMessageW.restype = ctypes.c_long
+        user32.SendMessageW(
+            ctypes.c_void_p(hwnd),
+            _EM_STREAMIN,
+            _SF_RTF,
+            ctypes.byref(es),
+        )
+        return es.dwError == 0
+else:
+    def _em_streamin_rtf(hwnd: int, rtf: bytes) -> bool:
+        raise NotImplementedError("EM_STREAMIN is Windows-only")
+
 
 class IntText(Text):
     widget_type = intctrl.IntCtrl

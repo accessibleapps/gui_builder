@@ -643,6 +643,24 @@ class Text(GUIField[widgets.Text]):
         """
         self.widget.append(text)
 
+    def load_rtf(self, rtf: bytes) -> bool:
+        """Replace the field's contents with RTF, parsed by Win32 RichEdit.
+
+        Much faster than the SetStyle path for heavily styled documents
+        (one C++ parse pass vs N round-trips). Windows-only; non-Windows
+        callers must use the SetStyle/append API.
+
+        The control must have wx.TE_RICH2 (or wx.TE_RICH) for RichEdit to
+        be the underlying widget.
+
+        Args:
+            rtf: RTF document bytes.
+
+        Returns:
+            True on success.
+        """
+        return self.widget.load_rtf(rtf)
+
     def write(self, text: str) -> None:
         """Write the provided text to this text field at its current position.
 
