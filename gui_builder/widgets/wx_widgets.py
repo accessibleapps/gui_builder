@@ -1160,6 +1160,27 @@ class StaticText(WXWidget[FieldType, wx.StaticText]):
     def set_value(self, value: str):
         self.control.SetLabel(value)
 
+
+class _SectionHeaderText(wx.StaticText):
+    """wx.StaticText with an opt-out marker for label-column treatment.
+
+    Container panels that auto-arrange StaticText into a label column
+    (e.g. wx_utils.autosizing.AutoSizedPanel) can check
+    `is_section_header` on a child and skip the label treatment. The
+    marker is a class attribute so it is set BEFORE the wx control's
+    constructor calls parent.AddChild (where the layout decision is
+    made); a property set in field.render() would be too late.
+    """
+    is_section_header = True
+
+
+class SectionHeader(WXWidget[FieldType, wx.StaticText]):
+    control_type = _SectionHeaderText
+    selflabeled = True
+
+    def set_value(self, value: str):
+        self.control.SetLabel(value)
+
     def is_ellipsized(self) -> bool:
         """Check if the text is ellipsized (truncated with '...')."""
         return self.control.IsEllipsized()

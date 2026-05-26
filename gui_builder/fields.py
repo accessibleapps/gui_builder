@@ -1257,6 +1257,12 @@ class SectionHeader(StaticText):
     and gains a small amount of top spacing to separate it from the
     previous section.
 
+    Auto-arranging container panels that put StaticText into a label
+    column (e.g. wx_utils.autosizing.AutoSizedPanel) check the
+    underlying wx control's `is_section_header` marker and skip the
+    label treatment, so a SectionHeader spans the full row rather than
+    being treated as a label for the next field.
+
     Example:
         class PreferencesDialog(wx_forms.AutoSizedDialog):
             general_header = fields.SectionHeader(label="General")
@@ -1267,11 +1273,13 @@ class SectionHeader(StaticText):
             theme = fields.ComboBox(label="Theme:")
     """
 
+    widget_type = widgets.SectionHeader
+
     def render(self, *args, **kwargs):
         super().render(*args, **kwargs)
-        # Apply bold font weight. Reach widget.set_font because there is
-        # no field-level set_font yet — see GUIField for the existing
-        # set_foreground_color / set_background_color analogues.
+        # Apply bold font weight. Reach widget.control directly because
+        # there is no field-level set_font yet — see GUIField for the
+        # existing set_foreground_color / set_background_color analogues.
         import wx
         ctrl = self.widget.control
         base_font = ctrl.GetFont()
