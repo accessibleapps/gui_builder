@@ -1248,6 +1248,44 @@ class StaticText(GUIField):
         return self.widget.is_ellipsized()
 
 
+class SectionHeader(StaticText):
+    """A bold static text intended as a visual section divider in dialogs.
+
+    Use to group related fields inside an AutoSizedDialog or
+    AutoSizedPanel. The label renders in bold at the same point size as
+    the system UI font (so it scales with the platform's font settings)
+    and gains a small amount of top spacing to separate it from the
+    previous section.
+
+    Example:
+        class PreferencesDialog(wx_forms.AutoSizedDialog):
+            general_header = fields.SectionHeader(label="General")
+            load_on_startup = fields.CheckBox(label="Load previous documents")
+            language = fields.ComboBox(label="Language:")
+
+            appearance_header = fields.SectionHeader(label="Appearance")
+            theme = fields.ComboBox(label="Theme:")
+    """
+
+    def render(self, *args, **kwargs):
+        super().render(*args, **kwargs)
+        # Apply bold font weight. Reach widget.set_font because there is
+        # no field-level set_font yet — see GUIField for the existing
+        # set_foreground_color / set_background_color analogues.
+        import wx
+        ctrl = self.widget.control
+        base_font = ctrl.GetFont()
+        bold = wx.Font(
+            base_font.GetPointSize(),
+            base_font.GetFamily(),
+            base_font.GetStyle(),
+            wx.FONTWEIGHT_BOLD,
+            base_font.GetUnderlined(),
+            base_font.GetFaceName(),
+        )
+        ctrl.SetFont(bold)
+
+
 class DatePicker(GUIField[widgets.DatePicker]):
     widget_type = widgets.DatePicker
 
