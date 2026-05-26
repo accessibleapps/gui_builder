@@ -1,3 +1,81 @@
+import sys
+import types
+
+
+class WxStub(types.ModuleType):
+    def __getattr__(self, name):
+        value = type(name, (), {})
+        setattr(self, name, value)
+        return value
+
+
+def install_wx_stub():
+    wx = WxStub("wx")
+    wx.__path__ = []
+    for name in (
+        "Window",
+        "EvtHandler",
+        "Event",
+        "PyEventBinder",
+        "StaticText",
+        "Gauge",
+        "Control",
+        "ControlWithItems",
+        "TextCtrl",
+        "Panel",
+        "Slider",
+        "ListCtrl",
+        "TopLevelWindow",
+        "Dialog",
+        "Frame",
+        "MDIParentFrame",
+        "MDIChildFrame",
+        "Notebook",
+        "MenuBar",
+        "Menu",
+        "MenuItem",
+    ):
+        setattr(wx, name, type(name, (), {}))
+    for index, name in enumerate(
+        (
+            "ID_OK",
+            "ID_APPLY",
+            "ID_CANCEL",
+            "ID_CLOSE",
+            "ID_FIND",
+            "ID_YES",
+            "ID_NO",
+            "ID_ANY",
+        ),
+        start=1,
+    ):
+        setattr(wx, name, index)
+
+    wx_lib = types.ModuleType("wx.lib")
+    intctrl = types.ModuleType("wx.lib.intctrl")
+    intctrl.IntCtrl = type("IntCtrl", (), {})
+    sized_controls = types.ModuleType("wx.lib.sized_controls")
+    sized_controls.SizedDialog = type("SizedDialog", (), {})
+    sized_controls.SizedPanel = type("SizedPanel", (), {})
+    sized_controls.SizedFrame = type("SizedFrame", (), {})
+    calendar = types.ModuleType("wx.lib.calendar")
+    adv = WxStub("wx.adv")
+    adv.__path__ = []
+    wx.adv = adv
+
+    sys.modules.setdefault("wx", wx)
+    sys.modules.setdefault("wx.lib", wx_lib)
+    sys.modules.setdefault("wx.lib.intctrl", intctrl)
+    sys.modules.setdefault("wx.lib.sized_controls", sized_controls)
+    sys.modules.setdefault("wx.lib.calendar", calendar)
+    sys.modules.setdefault("wx.adv", adv)
+
+
+try:
+    import wx  # noqa: F401
+except ModuleNotFoundError:
+    install_wx_stub()
+
 from gui_builder.widgets.wx_widgets import callback_wrapper
 
 
