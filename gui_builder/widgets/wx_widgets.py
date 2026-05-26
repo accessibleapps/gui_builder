@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
+    Collection,
     Dict,
     Generic,
     List,
@@ -150,16 +151,21 @@ def case_to_underscore(s: str) -> str:
 UNWANTED_ATTRIBUTES = {"GetLoggingOff", "GetClientData", "GetClientObject"}
 
 
-def extract_event_data(event: wx.Event) -> Dict[str, Any]:
+def extract_event_data(
+    event: wx.Event, requested_names: Optional[Collection[str]] = None
+) -> Dict[str, Any]:
     event_args = {}
+    extract_all = requested_names is None
     for attribute_name in dir(event):
         if (
             attribute_name.startswith("Get")
             and attribute_name not in UNWANTED_ATTRIBUTES
         ):
             translated_name = case_to_underscore(attribute_name[3:])
-            event_args[translated_name] = getattr(event, attribute_name)()
-    event_args["event"] = event
+            if extract_all or translated_name in requested_names:
+                event_args[translated_name] = getattr(event, attribute_name)()
+    if extract_all or "event" in requested_names:
+        event_args["event"] = event
     return event_args
 
 
@@ -188,11 +194,12 @@ def callback_wrapper(
                 a.insert(0, self)
         if has_kwargs:
             k.update(extract_event_data(evt))
+        requested_event_names = set()
         if argspec.defaults is not None:
-            extracted = extract_event_data(evt)
-            for arg in argspec.args:
-                if arg in extracted:
-                    k[arg] = extracted[arg]
+            requested_event_names.update(argspec.args[-len(argspec.defaults) :])
+        requested_event_names.update(getattr(argspec, "kwonlyargs", ()))
+        if requested_event_names:
+            k.update(extract_event_data(evt, requested_event_names))
         try:
             result = callback(*a, **k)
         except Exception as e:
