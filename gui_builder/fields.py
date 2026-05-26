@@ -1248,20 +1248,18 @@ class StaticText(GUIField):
         return self.widget.is_ellipsized()
 
 
-class SectionHeader(StaticText):
-    """A bold static text intended as a visual section divider in dialogs.
+class SectionHeader(GUIField):
+    """A bold text label intended as a visual section divider in dialogs.
 
     Use to group related fields inside an AutoSizedDialog or
     AutoSizedPanel. The label renders in bold at the same point size as
-    the system UI font (so it scales with the platform's font settings)
-    and gains a small amount of top spacing to separate it from the
-    previous section.
+    the system UI font (so it scales with the platform's font settings).
 
-    Auto-arranging container panels that put StaticText into a label
-    column (e.g. wx_utils.autosizing.AutoSizedPanel) check the
-    underlying wx control's `is_section_header` marker and skip the
-    label treatment, so a SectionHeader spans the full row rather than
-    being treated as a label for the next field.
+    The underlying control is a wx.Panel containing a bold wx.StaticText —
+    NOT a wx.StaticText directly — so auto-arranging container panels
+    (e.g. wx_utils.autosizing.AutoSizedPanel) that put wx.StaticText
+    children into a label column don't label-treat the section header.
+    The header spans the full row.
 
     Example:
         class PreferencesDialog(wx_forms.AutoSizedDialog):
@@ -1274,24 +1272,6 @@ class SectionHeader(StaticText):
     """
 
     widget_type = widgets.SectionHeader
-
-    def render(self, *args, **kwargs):
-        super().render(*args, **kwargs)
-        # Apply bold font weight. Reach widget.control directly because
-        # there is no field-level set_font yet — see GUIField for the
-        # existing set_foreground_color / set_background_color analogues.
-        import wx
-        ctrl = self.widget.control
-        base_font = ctrl.GetFont()
-        bold = wx.Font(
-            base_font.GetPointSize(),
-            base_font.GetFamily(),
-            base_font.GetStyle(),
-            wx.FONTWEIGHT_BOLD,
-            base_font.GetUnderlined(),
-            base_font.GetFaceName(),
-        )
-        ctrl.SetFont(bold)
 
 
 class DatePicker(GUIField[widgets.DatePicker]):

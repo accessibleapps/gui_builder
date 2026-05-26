@@ -1161,22 +1161,52 @@ class StaticText(WXWidget[FieldType, wx.StaticText]):
         self.control.SetLabel(value)
 
 
-class _SectionHeaderText(wx.StaticText):
-    """wx.StaticText with an opt-out marker for label-column treatment.
+class _SectionHeaderPanel(wx.Panel):
+    """A wx.Panel containing a bold wx.StaticText, used as a SectionHeader.
 
-    Container panels that auto-arrange StaticText into a label column
-    (e.g. wx_utils.autosizing.AutoSizedPanel) can check
-    `is_section_header` on a child and skip the label treatment. The
-    marker is a class attribute so it is set BEFORE the wx control's
-    constructor calls parent.AddChild (where the layout decision is
-    made); a property set in field.render() would be too late.
+    Why a Panel wrapper rather than a wx.StaticText subclass: container
+    panels that auto-arrange wx.StaticText children into a label column
+    (e.g. wx_utils.autosizing.AutoSizedPanel) check isinstance against
+    wx.StaticText. A subclass would still match. Wrapping in a Panel
+    means the OUTER widget added to the parent's sizer is a Panel, not
+    a StaticText, so it gets full-row treatment.
+
+    The inner StaticText is created with `self` as parent so it does
+    not trigger the outer container's AddChild — the StaticText only
+    interacts with the Panel's own internal sizer.
+
+    Bold is applied via SetFont on the inner StaticText.
     """
-    is_section_header = True
+
+    is_section_header = True  # Honored by wx_utils.AutoSizedPanel as well.
+
+    def __init__(self, parent, label="", **kwargs):
+        # wx.Panel doesn't accept `label`. Strip it before super().
+        kwargs.pop("label", None)
+        super(_SectionHeaderPanel, self).__init__(parent, **kwargs)
+        self._text = wx.StaticText(self, label=str(label))
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self._text, 0, wx.TOP | wx.BOTTOM, 4)
+        self.SetSizer(sizer)
+        base = self._text.GetFont()
+        self._text.SetFont(wx.Font(
+            base.GetPointSize(), base.GetFamily(),
+            base.GetStyle(), wx.FONTWEIGHT_BOLD,
+            base.GetUnderlined(), base.GetFaceName(),
+        ))
+
+    def SetLabel(self, label):
+        self._text.SetLabel(str(label))
+        self.Layout()
+
+    def GetLabel(self):
+        return self._text.GetLabel()
 
 
-class SectionHeader(WXWidget[FieldType, wx.StaticText]):
-    control_type = _SectionHeaderText
+class SectionHeader(WXWidget[FieldType, wx.Panel]):
+    control_type = _SectionHeaderPanel
     selflabeled = True
+    focusable = False
 
     def set_value(self, value: str):
         self.control.SetLabel(value)
