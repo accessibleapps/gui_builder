@@ -192,13 +192,12 @@ def callback_wrapper(
                 self = None
             if self is not None:
                 a.insert(0, self)
-        if has_kwargs:
-            k.update(extract_event_data(evt))
-        requested_event_names = set()
-        if argspec.defaults is not None:
-            requested_event_names.update(argspec.args[-len(argspec.defaults) :])
+        requested_event_names = set(argspec.args)
+        requested_event_names.discard("self")
         requested_event_names.update(getattr(argspec, "kwonlyargs", ()))
-        if requested_event_names:
+        if has_kwargs and not requested_event_names:
+            k.update(extract_event_data(evt))
+        elif requested_event_names:
             k.update(extract_event_data(evt, requested_event_names))
         try:
             result = callback(*a, **k)
