@@ -779,6 +779,19 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
     style_prefix = "TE"
     default_callback_type = "text"
 
+    def __init__(self, text_margins=None, *args, **kwargs):
+        """Extra kwargs beyond WXWidget:
+
+        Args:
+            text_margins: Optional (left, top) pixel pair applied to the
+                wx.TextCtrl via SetMargins after construction. Useful for
+                breathable padding inside long-form reading text. None =
+                use platform default. Note: on wx.TextCtrl backed by Win32
+                RichEdit, only the left margin is honored reliably.
+        """
+        super().__init__(*args, **kwargs)
+        self.text_margins = text_margins
+
     def on_keypress(self, raw_key_code=None, modifiers=None, **kwargs):
         if raw_key_code == ord("A") and modifiers == wx.MOD_CONTROL:
             self.field.select_all()
@@ -789,6 +802,9 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
         self.register_callback("char_hook", self.on_keypress)
         # Fix: ReadOnly TextCtrl's fail to appear in tab order.
         self.control.AcceptsFocusFromKeyboard = lambda: True
+        if self.text_margins is not None:
+            left, top = self.text_margins
+            self.control.SetMargins(wx.Point(left, top))
 
     def get_number_of_lines(self) -> int:
         return self.control.GetNumberOfLines()
