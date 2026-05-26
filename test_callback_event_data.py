@@ -133,6 +133,20 @@ def test_callback_wrapper_event_argument_does_not_read_event_getters():
     assert event.calls == []
 
 
+def test_callback_wrapper_named_event_with_kwargs_does_not_read_event_getters():
+    event = LazyEvent()
+    received = {}
+
+    def callback(event=None, **kwargs):
+        received["event"] = event
+        received["kwargs"] = kwargs
+
+    callback_wrapper(WidgetStub(), callback)(event)
+
+    assert received == {"event": event, "kwargs": {}}
+    assert event.calls == []
+
+
 def test_callback_wrapper_only_reads_requested_keyword_only_event_fields():
     event = LazyEvent()
     received = {}
