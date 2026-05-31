@@ -1087,16 +1087,20 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
 
 
 # Win32 EM_STREAMIN bindings for Text.load_rtf
-_EM_STREAMIN = 0x0400 + 73   # WM_USER + 73
+_EM_STREAMIN = 0x0400 + 73  # WM_USER + 73
 _SF_RTF = 0x0002
 
-_EDITSTREAMCALLBACK = ctypes.WINFUNCTYPE(
-    ctypes.c_int,
-    ctypes.c_void_p,
-    ctypes.POINTER(ctypes.c_byte),
-    ctypes.c_long,
-    ctypes.POINTER(ctypes.c_long),
-) if platform.system() == "Windows" else None
+_EDITSTREAMCALLBACK = (
+    ctypes.WINFUNCTYPE(
+        ctypes.c_int,
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_byte),
+        ctypes.c_long,
+        ctypes.POINTER(ctypes.c_long),
+    )
+    if platform.system() == "Windows"
+    else None
+)
 
 
 if platform.system() == "Windows":
@@ -1139,6 +1143,7 @@ if platform.system() == "Windows":
         )
         return es.dwError == 0
 else:
+
     def _em_streamin_rtf(hwnd: int, rtf: bytes) -> bool:
         raise NotImplementedError("EM_STREAMIN is Windows-only")
 
@@ -1195,11 +1200,16 @@ class _SectionHeaderPanel(wx.Panel):
         sizer.Add(self._text, 0, wx.TOP | wx.BOTTOM, 4)
         self.SetSizer(sizer)
         base = self._text.GetFont()
-        self._text.SetFont(wx.Font(
-            base.GetPointSize(), base.GetFamily(),
-            base.GetStyle(), wx.FONTWEIGHT_BOLD,
-            base.GetUnderlined(), base.GetFaceName(),
-        ))
+        self._text.SetFont(
+            wx.Font(
+                base.GetPointSize(),
+                base.GetFamily(),
+                base.GetStyle(),
+                wx.FONTWEIGHT_BOLD,
+                base.GetUnderlined(),
+                base.GetFaceName(),
+            )
+        )
 
     def SetLabel(self, label):
         self._text.SetLabel(str(label))
@@ -2217,7 +2227,6 @@ class StatusBar(WXWidget[FieldType, wx.StatusBar]):
     focusable = False
 
     def create_control(self, **kwargs):
-        logger.debug("Creating status bar")
         self.control = self.parent.control.CreateStatusBar(**kwargs)
 
     def set_value(self, value):
@@ -2233,6 +2242,18 @@ class StatusBar(WXWidget[FieldType, wx.StatusBar]):
         return self.control.GetStatusText(field)
 
     status_text = property(get_status_text, set_status_text)
+
+    def get_status_field_count(self) -> int:
+        return self.control.GetFieldsCount()
+
+    def set_status_widths(self, widths: List[int]):
+        self.control.SetStatusWidths(widths)
+
+    def get_status_widths(self) -> List[int]:
+        return [self.get_status_width(i) for i in range(self.get_status_field_count())]
+
+    def get_status_width(self, field) -> int:
+        return self.control.GetStatusWidth(field)
 
 
 class Link(WXWidget[FieldType, wx.adv.HyperlinkCtrl]):

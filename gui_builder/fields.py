@@ -1213,7 +1213,7 @@ class MenuItem(GUIField[widgets.MenuItem]):
         self.widget.set_as_mac_preferences_menu_item()
 
 
-class StatusBar(GUIField):
+class StatusBar(GUIField[widgets.StatusBar]):
     """A status bar."""
 
     widget_type = widgets.StatusBar
@@ -1226,6 +1226,30 @@ class StatusBar(GUIField):
             field (int, optional): The field number to set, starting from zero. Defaults to 0.
         """
         self.widget.set_status_text(text, field)
+
+    def get_status_text(self, field=0):
+        """Gets the status text displayed in the status bar.
+
+        Args:
+            field (int, optional): The field number to get text from, starting from zero. Defaults to 0.
+        """
+        return self.widget.get_status_text(field)
+
+    def get_status_widths(self) -> list[int]:
+        """Gets the widths of all fields in the status bar.
+
+        Returns:
+            A list of integers representing the widths of each field in the status bar.
+        """
+        return self.widget.get_status_widths()
+
+    def set_status_widths(self, widths: list[int]) -> None:
+        """Sets the widths of all fields in the status bar.
+
+        Args:
+            widths (list[int]): A list of integers representing the widths of each field in the status bar.
+        """
+        self.widget.set_status_widths(widths)
 
 
 class Link(GUIField):
