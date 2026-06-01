@@ -1771,7 +1771,7 @@ class BaseFrame(
         return self.control.Maximize(False)
 
 
-class Frame(BaseContainer[FieldType, wx.Frame]):
+class Frame(BaseFrame[FieldType, wx.Frame]):
     control_type = wx.Frame
 
 
