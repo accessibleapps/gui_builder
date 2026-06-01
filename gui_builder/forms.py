@@ -291,12 +291,6 @@ class Form(BaseForm[FormWidgetType], metaclass=FormMeta):
         return new_field
 
     def delete_child(self, name: str) -> None:
-        field = self._fields[name]
-        if self._unbound_fields is not None:
-            for field_name, field in list(self._unbound_fields):
-                if name == field_name:
-                    self._unbound_fields.remove((field_name, field))
-                    break
         for field_name, field in list(self._extra_fields):
             if field_name == name:
                 self._extra_fields.remove((field_name, field))
