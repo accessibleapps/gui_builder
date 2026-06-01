@@ -1511,11 +1511,19 @@ class ListView(
             column_number = self._last_added_column + 1
         if width is None:
             width = -1
-        format = wx_attributes(format)
-        if not isinstance(format, (int)):
-            format = wx.ALIGN_LEFT
-        self.create_column(column_number, label, width=width, format=format)
+        column_format = self._resolve_column_format(**format)
+        self.create_column(column_number, label, width=width, format=column_format)
         self._last_added_column = column_number
+
+    def _resolve_column_format(self, **format) -> int:
+        explicit_format = format.pop("format", None)
+        if explicit_format is not None:
+            return int(explicit_format)
+        if format.pop("right", False):
+            return wx.LIST_FORMAT_RIGHT
+        if format.pop("center", False) or format.pop("centre", False):
+            return wx.LIST_FORMAT_CENTRE
+        return wx.LIST_FORMAT_LEFT
 
     def create_column(self, column_number: int, label: str, width: int, format: int):
         return self.control.InsertColumn(
