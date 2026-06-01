@@ -475,12 +475,15 @@ class SubMenu(Menu):
 
 class ListView(ChoiceField, UIForm[widgets.ListView]):
     def __init__(self, virtual: bool = False, *args: Any, **kwargs: Any):
+        choices = kwargs.get("choices")
         if platform.system() == "Windows":
             self.widget_type = widgets.ListView
         else:
             self.widget_type = widgets.DataView
             virtual = False
         super().__init__(virtual=virtual, *args, **kwargs)
+        if choices is not None:
+            self.choices = list(choices)
 
     def get_children(self) -> Iterator[GUIField[Any]]:
         return iter([])
