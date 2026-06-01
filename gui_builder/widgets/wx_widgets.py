@@ -672,7 +672,7 @@ class ChoiceWidget(
     def get_item(self, index: int) -> ChoiceItemOutputType:
         return cast(ChoiceItemOutputType, self.control.GetString(index))
 
-    def __getitem___(self, index: int) -> ChoiceItemOutputType:
+    def __getitem__(self, index: int) -> ChoiceItemOutputType:
         return self.get_item(index)
 
     def get_index(self) -> Optional[int]:
