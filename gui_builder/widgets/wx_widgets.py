@@ -1218,6 +1218,10 @@ class _SectionHeaderPanel(wx.Panel):
     def GetLabel(self):
         return self._text.GetLabel()
 
+    def Wrap(self, width: int) -> None:
+        self._text.Wrap(width)
+        self.Layout()
+
 
 class SectionHeader(WXWidget[FieldType, wx.Panel]):
     control_type = _SectionHeaderPanel
