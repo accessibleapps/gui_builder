@@ -1222,6 +1222,9 @@ class _SectionHeaderPanel(wx.Panel):
         self._text.Wrap(width)
         self.Layout()
 
+    def IsEllipsized(self) -> bool:
+        return self._text.IsEllipsized()
+
 
 class SectionHeader(WXWidget[FieldType, wx.Panel]):
     control_type = _SectionHeaderPanel
