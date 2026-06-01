@@ -871,7 +871,9 @@ class Button(GUIField[widgets.Button]):
 
     def make_default(self) -> None:
         """Set this to be the default button in a dialog (called before rendering)."""
-        return self.widget.make_default()
+        self.widget_kwargs["default"] = True
+        if "widget" in self.__dict__:
+            self.widget.make_default()
 
     def get_auth_needed(self) -> bool:
         """Return whether this button requires elevated privileges.
