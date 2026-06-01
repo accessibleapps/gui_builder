@@ -819,7 +819,12 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
         return self.control.XYToPosition(x, y)
 
     def get_x_y_from_insertion_point(self, insertion_point: int) -> Tuple[int, int]:
-        return self.control.PositionToXY(insertion_point)
+        found, x, y = self.control.PositionToXY(insertion_point)
+        if not found:
+            raise ValueError(
+                "No text coordinates for insertion point %r" % insertion_point
+            )
+        return x, y
 
     def clear(self) -> None:
         return self.control.Clear()
