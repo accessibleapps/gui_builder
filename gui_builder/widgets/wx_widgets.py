@@ -1512,8 +1512,13 @@ class ListView(
         if width is None:
             width = -1
         column_format = self._resolve_column_format(**format)
-        self.create_column(column_number, label, width=width, format=column_format)
+        created_column = self.create_column(
+            column_number, label, width=width, format=column_format
+        )
         self._last_added_column = column_number
+        if created_column is None:
+            return column_number
+        return created_column
 
     def _resolve_column_format(self, **format) -> int:
         explicit_format = format.pop("format", None)
@@ -1549,15 +1554,18 @@ class ListViewColumn(WXWidget[FieldType, wx.ListItem]):
         kwargs.update(runtime_kwargs)
         kwargs["label"] = str(self.label_text)
         translated_kwargs = self.translate_control_arguments(**kwargs)
-        self.control = self.parent.add_column(**translated_kwargs)
+        self.column_index = self.parent.add_column(**translated_kwargs)
+        self.control = self.column_index
 
     def render(self, *args, **kwargs):
         logger.debug("Rendering ListView column")
         self.create_control()
 
-    def set_item(self, index: int, item: Sequence[str]):
-        for column, subitem in enumerate(item):
-            self.control.SetStringItem(index, column, subitem)
+    def set_item(self, index: int, item: Any) -> None:
+        self.parent.set_item_column(index, self.column_index, str(item))
+
+    def destroy(self) -> None:
+        return None
 
 
 if dataview:
