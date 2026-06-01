@@ -123,14 +123,14 @@ self.set_values({"name": "John", "age": 30})
 
 The `examples/` directory contains working demonstrations:
 
-- **test_link.py**: Basic link field usage
-- **test_nested.py**: Nested forms and panels
-- **test_radio_buttons.py**: Radio button groups
+- **link.py**: Basic link field usage
+- **nested.py**: Nested forms and panels
+- **radio_buttons.py**: Radio button groups
 - **text_conversion.py**: Text encoding/decoding with multiple controls
 
 Run any example with:
 ```bash
-python examples/test_nested.py
+python examples/nested.py
 ```
 
 ## Context Managers

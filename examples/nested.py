@@ -1,8 +1,6 @@
 from gui_builder import fields, forms
 import wx
 
-app = wx.App()
-
 
 class CheckBoxes(forms.Panel):
     @fields.CheckBox(label="Frob!", default_value=True)
@@ -20,6 +18,8 @@ class MainFrame(forms.Frame):
     options = CheckBoxes()
 
 
-f = MainFrame(title="Testing nesting", top_level_window=True)
-f.display()
-app.MainLoop()
+if __name__ == "__main__":
+    app = wx.App()
+    f = MainFrame(title="Testing nesting", top_level_window=True)
+    f.display()
+    app.MainLoop()

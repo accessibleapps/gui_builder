@@ -1,8 +1,6 @@
 import wx
 from gui_builder import fields, forms
 
-app = wx.App()
-
 
 class TestPanel(forms.Panel):
     def reveal_choice(self):
@@ -18,6 +16,8 @@ class MainFrame(forms.Frame):
     panel = TestPanel()
 
 
-frame = MainFrame(title="Radio button test", parent=None)
-frame.display()
-app.MainLoop()
+if __name__ == "__main__":
+    app = wx.App()
+    frame = MainFrame(title="Radio button test", parent=None)
+    frame.display()
+    app.MainLoop()
