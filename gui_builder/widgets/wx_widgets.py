@@ -2040,8 +2040,13 @@ class RadioBox(ChoiceWidget[FieldType, wx.RadioBox, str, str]):
     def set_items(self, items: Sequence[str]) -> Sequence[str]:
         """Set items and return the converted output items."""
         converted_items = [self._convert_input_to_output(item) for item in items]
-        # RadioBox doesn't have a SetItems method in the same way as other controls
-        # For now, just return the converted items
+        if len(converted_items) != self.control.GetCount():
+            raise NotImplementedError(
+                "RadioBox choices can only be relabeled after rendering; "
+                "changing the number of choices requires recreating the control."
+            )
+        for index, item in enumerate(converted_items):
+            self.control.SetString(index, item)
         return converted_items
 
 
