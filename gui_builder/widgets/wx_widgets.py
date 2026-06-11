@@ -1091,66 +1091,71 @@ class Text(BaseText[FieldType, wx.TextCtrl]):
         return _em_streamin_rtf(int(hwnd), rtf)
 
 
-# Win32 EM_STREAMIN bindings for Text.load_rtf
-_EM_STREAMIN = 0x0400 + 73  # WM_USER + 73
-_SF_RTF = 0x0002
-
-_EDITSTREAMCALLBACK = (
-    ctypes.WINFUNCTYPE(
-        ctypes.c_int,
-        ctypes.c_void_p,
-        ctypes.POINTER(ctypes.c_byte),
-        ctypes.c_long,
-        ctypes.POINTER(ctypes.c_long),
-    )
-    if platform.system() == "Windows"
-    else None
-)
+# Win32 rich edit bindings for Text.load_rtf
+_WM_USER = 0x0400
+_EM_SETREADONLY = 0x00CF
+_EM_SETTEXTEX = _WM_USER + 97
+_GWL_STYLE = -16
+_ES_READONLY = 0x0800
+_ST_DEFAULT = 0
+_ST_UNICODE = 8
 
 
 if platform.system() == "Windows":
 
-    class _EDITSTREAM(ctypes.Structure):
+    class _SETTEXTEX(ctypes.Structure):
         _fields_ = [
-            ("dwCookie", ctypes.c_void_p),
-            ("dwError", ctypes.c_uint32),
-            ("pfnCallback", _EDITSTREAMCALLBACK),
+            ("flags", ctypes.c_uint32),
+            ("codepage", ctypes.c_uint32),
         ]
+
+
+def _decode_rtf(rtf: bytes) -> str:
+    try:
+        return rtf.decode("utf-8")
+    except UnicodeDecodeError:
+        return rtf.decode("latin-1")
+
+
+def _set_rtf_value(hwnd: int, rtf: bytes) -> bool:
+    text = _decode_rtf(rtf)
+    text_info = _SETTEXTEX(_ST_DEFAULT | _ST_UNICODE, 1200)
+    user32 = ctypes.windll.user32
+    user32.GetWindowLongW.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    user32.GetWindowLongW.restype = ctypes.c_long
+    user32.SendMessageW.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_uint,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+    ]
+    user32.SendMessageW.restype = ctypes.c_ssize_t
+
+    hwnd_arg = ctypes.c_void_p(hwnd)
+    was_read_only = bool(user32.GetWindowLongW(hwnd_arg, _GWL_STYLE) & _ES_READONLY)
+    if was_read_only:
+        user32.SendMessageW(hwnd_arg, _EM_SETREADONLY, 0, 0)
+    try:
+        result = user32.SendMessageW(
+            hwnd_arg,
+            _EM_SETTEXTEX,
+            ctypes.byref(text_info),
+            ctypes.c_wchar_p(text),
+        )
+    finally:
+        if was_read_only:
+            user32.SendMessageW(hwnd_arg, _EM_SETREADONLY, 1, 0)
+    return result != 0
+
+
+if platform.system() == "Windows":
 
     def _em_streamin_rtf(hwnd: int, rtf: bytes) -> bool:
-        src = (ctypes.c_byte * len(rtf)).from_buffer_copy(rtf)
-        state = {"pos": 0}
-
-        def _cb(_cookie: int, pbBuff, cb_: int, pcb) -> int:
-            remaining = len(rtf) - state["pos"]
-            n = min(cb_, remaining)
-            if n > 0:
-                ctypes.memmove(pbBuff, ctypes.byref(src, state["pos"]), n)
-            pcb[0] = n
-            state["pos"] += n
-            return 0
-
-        callback = _EDITSTREAMCALLBACK(_cb)
-        es = _EDITSTREAM(0, 0, callback)
-        user32 = ctypes.windll.user32
-        user32.SendMessageW.argtypes = [
-            ctypes.c_void_p,
-            ctypes.c_uint,
-            ctypes.c_void_p,
-            ctypes.c_void_p,
-        ]
-        user32.SendMessageW.restype = ctypes.c_long
-        user32.SendMessageW(
-            ctypes.c_void_p(hwnd),
-            _EM_STREAMIN,
-            _SF_RTF,
-            ctypes.byref(es),
-        )
-        return es.dwError == 0
+        return _set_rtf_value(hwnd, rtf)
 else:
 
     def _em_streamin_rtf(hwnd: int, rtf: bytes) -> bool:
-        raise NotImplementedError("EM_STREAMIN is Windows-only")
+        raise NotImplementedError("load_rtf is Windows-only")
 
 
 class IntText(Text):
