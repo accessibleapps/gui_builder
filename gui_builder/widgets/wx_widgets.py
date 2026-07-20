@@ -172,29 +172,37 @@ def extract_event_data(
 def callback_wrapper(
     widget: "WXWidget[Any, Any]", callback: Callable[..., Any]
 ) -> Callable[[wx.Event], None]:
+    # Callback signature and owner lookup are stable for the lifetime of this
+    # binding; computing them per event is visible lag on hot event streams.
+    try:
+        argspec = inspect.getfullargspec(callback)
+        has_kwargs = argspec.varkw is not None
+    except AttributeError:
+        argspec = inspect.getargspec(callback)
+        has_kwargs = argspec.keywords is not None
+    bound_self = getattr(callback, "__self__", getattr(callback, "im_self", None))
+    is_bound_method = bound_self is not None
+    should_find_self = not is_bound_method and (
+        (argspec.args and argspec.args[0] == "self") or (argspec.varargs and has_kwargs)
+    )
+    requested_event_names = set(argspec.args)
+    requested_event_names.discard("self")
+    requested_event_names.update(getattr(argspec, "kwonlyargs", ()))
+    found_self = False
+    event_target = None
+
     def wrapper(evt: wx.Event, *a, **k):
+        nonlocal found_self, event_target
         a = list(a)
-        # Use getfullargspec for Python 3.3+ compatibility, fallback to getargspec for older versions
-        try:
-            argspec = inspect.getfullargspec(callback)
-            has_kwargs = argspec.varkw is not None
-        except AttributeError:
-            argspec = inspect.getargspec(callback)
-            has_kwargs = argspec.keywords is not None
-        if (
-            argspec.args
-            and argspec.args[0] == "self"
-            and not hasattr(callback, "im_self")
-        ) or (argspec.varargs and has_kwargs):
-            try:
-                self = widget.find_event_target(callback)
-            except ValueError:
-                self = None
-            if self is not None:
-                a.insert(0, self)
-        requested_event_names = set(argspec.args)
-        requested_event_names.discard("self")
-        requested_event_names.update(getattr(argspec, "kwonlyargs", ()))
+        if should_find_self:
+            if not found_self:
+                try:
+                    event_target = widget.find_event_target(callback)
+                except ValueError:
+                    event_target = None
+                found_self = True
+            if event_target is not None:
+                a.insert(0, event_target)
         if has_kwargs and not requested_event_names:
             k.update(extract_event_data(evt))
         elif requested_event_names:

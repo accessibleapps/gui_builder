@@ -89,6 +89,10 @@ class LazyEvent:
         self.calls.append("GetSelection")
         return 7
 
+    def GetKeyCode(self):
+        self.calls.append("GetKeyCode")
+        return 315
+
     def GetString(self):
         self.calls.append("GetString")
         raise AssertionError("unrequested getter was called")
@@ -103,6 +107,35 @@ class LazyEvent:
 class WidgetStub:
     def find_event_target(self, callback):
         raise ValueError("callback is not attached to this widget")
+
+
+class CompleteEvent:
+    def __init__(self):
+        self.calls = []
+
+    def GetSelection(self):
+        self.calls.append("GetSelection")
+        return 7
+
+    def GetString(self):
+        self.calls.append("GetString")
+        return "value"
+
+    def Skip(self):
+        self.calls.append("Skip")
+
+    def StopPropagation(self):
+        self.calls.append("StopPropagation")
+
+
+class CountingWidgetStub:
+    def __init__(self, event_target):
+        self.calls = []
+        self.event_target = event_target
+
+    def find_event_target(self, callback):
+        self.calls.append(callback)
+        return self.event_target
 
 
 def test_callback_wrapper_only_reads_requested_defaulted_event_fields():
@@ -145,6 +178,57 @@ def test_callback_wrapper_named_event_with_kwargs_does_not_read_event_getters():
 
     assert received == {"event": event, "kwargs": {}}
     assert event.calls == []
+
+
+def test_callback_wrapper_bare_kwargs_still_receives_all_event_data():
+    event = CompleteEvent()
+    received = {}
+
+    def callback(**kwargs):
+        received.update(kwargs)
+
+    callback_wrapper(WidgetStub(), callback)(event)
+
+    assert received == {"selection": 7, "string": "value", "event": event}
+    assert event.calls == ["GetSelection", "GetString", "Skip"]
+
+
+def test_callback_wrapper_reuses_event_target_lookup_for_repeated_events():
+    event_target = object()
+    widget = CountingWidgetStub(event_target)
+    received = []
+
+    def callback(self, event=None):
+        received.append((self, event))
+
+    wrapper = callback_wrapper(widget, callback)
+    first_event = LazyEvent()
+    second_event = LazyEvent()
+
+    wrapper(first_event)
+    wrapper(second_event)
+
+    assert received == [(event_target, first_event), (event_target, second_event)]
+    assert widget.calls == [callback]
+
+
+def test_callback_wrapper_bound_key_callback_skips_event_target_lookup():
+    event_target = object()
+    widget = CountingWidgetStub(event_target)
+    received = []
+
+    class Handler:
+        def callback(self, key_code=None):
+            received.append((self, key_code))
+
+    handler = Handler()
+    event = LazyEvent()
+
+    callback_wrapper(widget, handler.callback)(event)
+
+    assert received == [(handler, 315)]
+    assert widget.calls == []
+    assert event.calls == ["GetKeyCode"]
 
 
 def test_callback_wrapper_only_reads_requested_keyword_only_event_fields():
