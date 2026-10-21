@@ -6,6 +6,13 @@ Preserve this dependency PR and supported Python while wiring the actual tracked
 
 ## State
 
+- Current local successor genuinely rebased from published 0b8d08e5f18f18ec119ffa2715af1057d670d188 onto merged GUI #5 default 5a7ae5f7443e30ab05ad9c01f42d8984962954fb with --no-update-refs. Retain the exact wxPython Python 3.8 compatibility markers and original sphinx-autodoc-typehints >=3.0.1 proposal with its existing matching CI/README pins; no dependency/support/product/test policy change.
+- Separate archive/task6-gui-builder-10-published-before-wx-rebase and -local-before-wx-rebase retain 0b8d08e5; archive/task6-gui-builder-canonical-before-wx-rebase preserves 32eb2671. Existing stacks, review worktrees, canonical experiments and other refs remain untouched. Remote PR #10 remains at 0b8d08e5; no publication.
+- Replay produced add/add and historical-edit conflicts only in the generic living note. Preserve GUI #5's generic note at its original path and this branch's distinct typehints note. The later original rename removed the generic path during replay; restore exact default blob 0581bed9c0eb1ea61d0549f05ec18f184111aee1 before the final note commit. No note content was discarded; the old branch-note content below is retained as history.
+- Return the complete fresh-default delta for root review before publication. No local CI, GUI execution, models, settings or description changes.
+
+## Historical preparation state
+
 - Current landed baseline: prerequisite #11 merged at 2026-10-21 02:35:30 UTC. Fresh authenticated master is 7a3c755e83b3f79f100560c73c3949cb1ec2f02c, independently read back from origin; its reviewed source was caa318f88aecdead2ba335413909d11a4bf69332 with all three hosted jobs green.
 - Rebased this original feature branch from exact published/local 6a921dee3cf5d9f929dfc1ddf678c9011038646d onto actual master using git rebase --no-update-refs, not the earlier local merge stack. Both original feature commits were preserved. Only the established CI/README add-add conflicts occurred; Git reused the previously inspected resolution, retaining typehints3.0.1 pins and exact published file bytes.
 - Exact published remote remains 6a921dee3cf5d9f929dfc1ddf678c9011038646d; no push. The earlier local stack bf2e88c63b4273e0091ebaaa932db1610eeb7ebf and its branch/worktree remain untouched. New backup/task6-gui-builder-10-{published,local,stacked}-before-master-rebase refs preserve those exact tips, alongside all original archives. Canonical dirty work and local master32eb2671 remain untouched.
@@ -25,7 +32,7 @@ Preserve this dependency PR and supported Python while wiring the actual tracked
 
 ## Verification
 
-Source/manifest/test/docs authority read. actionlint1.7.12 (optional shellcheck/pyflakes disabled) and zizmor1.31.1 --offline --pedantic both passed, exit0, no findings. Full hosted suite/build results are pending. No local full CI, GUI windows, model calls, release or service calls.
+Historical pre-rebase validation: source/manifest/test/docs authority read; actionlint1.7.12 (optional shellcheck/pyflakes disabled) and zizmor1.31.1 --offline --pedantic both passed, exit0, no findings. Fresh rebased-head hosted suite/build results remain pending. No local full CI, GUI windows, model calls, release or service calls.
 
 ## Next step
 
