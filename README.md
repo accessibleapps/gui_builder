@@ -177,7 +177,7 @@ the branch's documentation dependency floors and actual wxPython imports:
 
 ```bash
 uv venv --python 3.11
-uv pip install --only-binary wxPython . -r docs/requirements.txt sphinx==8.1.3 sphinx-rtd-theme==3.1.0 sphinx-autodoc-typehints==3.0.0
+uv pip install --only-binary wxPython . -r docs/requirements.txt sphinx==8.1.3 sphinx-rtd-theme==3.1.0 sphinx-autodoc-typehints==3.0.1
 cd docs
 ../.venv/Scripts/python.exe -m sphinx -W --keep-going -b html . _build/html
 ```

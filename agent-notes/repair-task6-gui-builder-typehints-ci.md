@@ -1,0 +1,39 @@
+# GUI Builder PR #10: sphinx-autodoc-typehints floor 3.0.1
+
+## Goal
+
+Preserve this dependency PR and supported Python while wiring the actual tracked tests, package build and real Sphinx autodoc build. No product/accessibility behavior, release workflow, dependency refresh, settings or external model calls.
+
+## State
+
+- Final local successor genuinely rebased from held local a23e4b2d421126ef8cbd875cddf04b7e2526d660 onto cumulative default 9bf539fa61d21b2bee53564f620070c4a46b9718 with --no-update-refs. GUI #9 merged there at 2026-10-21 04:23:27 UTC. Keep landed Sphinx >=8.1.3 and exact wxPython Python 3.8 markers alongside the original sphinx-autodoc-typehints >=3.0.1 proposal and existing matching CI/README pins; no dependency/support/product/test policy change.
+- Separate archive/task6-gui-builder-10-local-before-sphinx-rebase preserves a23e4b2d and -published-before-sphinx-rebase preserves 0b8d08e5f18f18ec119ffa2715af1057d670d188; archive/task6-gui-builder-canonical-before-sphinx-rebase preserves 32eb2671. Earlier wx-rebase archives, stacks, review worktrees, canonical experiments and other refs remain untouched. Remote PR #10 remains at 0b8d08e5; no publication.
+- This cumulative-default rebase completed cleanly. Existing docs-baseline, generic GUI #5 and Sphinx GUI #9 notes remain byte-identical to default; only this unique typehints note is refreshed. The earlier wx rebase's generic-note add/add and historical-edit conflicts were resolved by retaining both distinct notes, with exact generic blob 0581bed9c0eb1ea61d0549f05ec18f184111aee1 restored after the original rename. That preserved resolution remains intact.
+- Return the complete fresh-default delta for root review before publication. No local CI, GUI execution, models, settings or description changes.
+
+## Historical preparation state
+
+- Current landed baseline: prerequisite #11 merged at 2026-10-21 02:35:30 UTC. Fresh authenticated master is 7a3c755e83b3f79f100560c73c3949cb1ec2f02c, independently read back from origin; its reviewed source was caa318f88aecdead2ba335413909d11a4bf69332 with all three hosted jobs green.
+- Rebased this original feature branch from exact published/local 6a921dee3cf5d9f929dfc1ddf678c9011038646d onto actual master using git rebase --no-update-refs, not the earlier local merge stack. Both original feature commits were preserved. Only the established CI/README add-add conflicts occurred; Git reused the previously inspected resolution, retaining typehints3.0.1 pins and exact published file bytes.
+- Exact published remote remains 6a921dee3cf5d9f929dfc1ddf678c9011038646d; no push. The earlier local stack bf2e88c63b4273e0091ebaaa932db1610eeb7ebf and its branch/worktree remain untouched. New backup/task6-gui-builder-10-{published,local,stacked}-before-master-rebase refs preserve those exact tips, alongside all original archives. Canonical dirty work and local master32eb2671 remain untouched.
+- This current successor includes the landed config fix, complete seven tests and supported runtime/strict docs coverage; no source/test behavior changes. New final-head hosted/Claude gates remain pending. The following first-preparation state is historical.
+
+- Fresh same-org origin is git@github.com:accessibleapps/gui_builder.git. Published PR #10 remains at 57e5c494195539488d954434971a3a6129335d89; preserved as backup/task6-gui-builder-10-published-before-repair. There was no local branch matching this Dependabot PR. Canonical master and all dirty/untracked experiments remain untouched.
+- Local successor is based on current master 32eb2671a40eb3dc324e5628ef1544318adb6853, with only the original dependency commit replayed before this amendment. This carries current safe seven-test callback suite instead of inventing tests for an obsolete source tree. It is local and unpublished.
+- Actions is enabled; existing default/release successes do not test this head. Hosted results and actual final-head Claude review are pending. No full local CI was run.
+
+## Decisions and why
+
+- Manifest/README Python floor is 3.8.6; RTD docs explicitly use 3.11. wxPython 4.2.4 primary PyPI metadata requires >=3.9 and supplies Windows wheels through CPython 3.14. The 3.8 wheel exists at 4.2.2. Python 3.14 is the latest demonstrated wheel leg, not a support-policy ceiling.
+- Windows 3.8/3.14 installs the actual package graph with binary-only wxPython, imports wx and fields/forms without creating wx.App, runs the full unchanged tracked pytest suite (seven tests), and builds/verifies wheel/sdist. Compatible pytest pins are 8.3.5/9.1.1. Existing test stubs are not claimed as actual GUI/accessibility exercise.
+- The docs job uses the actual RTD-selected Python 3.11 and real wxPython imports, not blanket autodoc mocks. Exact Sphinx 8.1.3/theme 3.1.0/typehints 3.0.1 meet the branch requirements (both typehints 3.0.0 and 3.0.1 require Sphinx >=8.1.3). Build runs from docs as its Makefile does; warnings are fatal and no links/services/examples are executed.
+- Existing docs conf names absent _templates/_static directories. The strict hosted build may expose baseline documentation warnings; do not suppress or claim green. Classify actual failures against fresh default before a prerequisite fix.
+- CI has ordinary PR/master events, verified pinned checkout/setup-uv, contents:read, no persisted credentials/cache, timeout/concurrency. No release workflow edits.
+
+## Verification
+
+Historical pre-rebase validation: source/manifest/test/docs authority read; actionlint1.7.12 (optional shellcheck/pyflakes disabled) and zizmor1.31.1 --offline --pedantic both passed, exit0, no findings. Fresh rebased-head hosted suite/build results remain pending. No local full CI, GUI windows, model calls, release or service calls.
+
+## Next step
+
+Return the complete actual-master-to-rebased-head diff and exact head to coordinator before publication. Keep remote feature unchanged; no push/merge/model or full local CI. Only concrete reviewed publication authority and subsequent final-head hosted/Claude gates may advance the PR.
