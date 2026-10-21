@@ -158,6 +158,30 @@ The project uses:
 - `uv` for dependency management
 - `pyproject.toml` for configuration
 
+## Tests and documentation
+
+The complete tracked unit suite uses controlled event fixtures and creates no GUI windows:
+
+```bash
+uv venv --python 3.14
+uv pip install --only-binary wxPython . pytest==9.1.1
+uv run --no-project --no-sync python -m pytest -q
+uv build
+```
+
+CI installs and imports real wxPython on Windows with Python 3.8 and 3.14,
+runs all seven tracked callback tests, and verifies both package artifacts.
+Python 3.8 uses pytest 8.3.5; these tests do not exercise interactive accessibility.
+The documentation job uses Python 3.11, as configured for Read the Docs, with
+the branch's documentation dependency floors and actual wxPython imports:
+
+```bash
+uv venv --python 3.11
+uv pip install --only-binary wxPython . -r docs/requirements.txt sphinx==8.1.3 sphinx-rtd-theme==3.1.0 sphinx-autodoc-typehints==3.0.0
+cd docs
+../.venv/Scripts/python.exe -m sphinx -W --keep-going -b html . _build/html
+```
+
 ## License
 
 MIT License - see LICENSE.txt for details.
