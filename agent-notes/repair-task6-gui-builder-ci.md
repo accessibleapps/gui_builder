@@ -6,6 +6,11 @@ Preserve this dependency PR and supported Python while wiring the actual tracked
 
 ## State
 
+- Current landed baseline: prerequisite #11 merged at 2026-10-21 02:35:30 UTC. Fresh authenticated master is 7a3c755e83b3f79f100560c73c3949cb1ec2f02c, independently read back from origin; its reviewed source was caa318f88aecdead2ba335413909d11a4bf69332 with all three hosted jobs green.
+- Rebased this original feature branch from exact published/local 15868f6f92ba7df887a9154a16efffd74a8c664d onto actual master using git rebase --no-update-refs, not the earlier local merge stack. Both original feature commits were preserved. The rebase was clean; identical baseline CI/README were retained automatically.
+- Exact published remote remains 15868f6f92ba7df887a9154a16efffd74a8c664d; no push. The earlier local stack f78814fcb76a39aafe870c3ee6dfe1f5580287ab and its branch/worktree remain untouched. New backup/task6-gui-builder-5-{published,local,stacked}-before-master-rebase refs preserve those exact tips, alongside all original archives. Canonical dirty work and local master32eb2671 remain untouched.
+- This current successor includes the landed config fix, complete seven tests and supported runtime/strict docs coverage; no source/test behavior changes. New final-head hosted/Claude gates remain pending. The following first-preparation state is historical.
+
 - Fresh same-org origin is git@github.com:accessibleapps/gui_builder.git. Published PR #5 remains at 4626f870ac374a2dcdcaa81280f5d0737506fd64; preserved as backup/task6-gui-builder-5-published-before-repair. There was no local branch matching this Dependabot PR. Canonical master and all dirty/untracked experiments remain untouched.
 - Local successor is based on current master 32eb2671a40eb3dc324e5628ef1544318adb6853, with only the original dependency commit replayed before this amendment. This carries current safe seven-test callback suite instead of inventing tests for an obsolete source tree. It is local and unpublished.
 - Actions is enabled; existing default/release successes do not test this head. Hosted results and actual final-head Claude review are pending. No full local CI was run.
@@ -26,4 +31,4 @@ Source/manifest/test/docs authority read. actionlint1.7.12 (optional shellcheck/
 
 ## Next step
 
-Return exact local head and complete diff to coordinator before any publication. All published tips remain unchanged; review and actual hosted green are required before any merge.
+Return the complete actual-master-to-rebased-head diff and exact head to coordinator before publication. Keep remote feature unchanged; no push/merge/model or full local CI. Only concrete reviewed publication authority and subsequent final-head hosted/Claude gates may advance the PR.
