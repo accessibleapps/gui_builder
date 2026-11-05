@@ -1721,7 +1721,7 @@ class BaseContainer(
             wx.GetApp().SetTopWindow(self.control)
 
     def set_title(self, title: str) -> None:
-        self.control.SetTitle(title)
+        self.control.SetTitle(str(title))
 
     def get_title(self) -> str:
         return self.control.GetTitle()
@@ -2154,6 +2154,26 @@ class Menu(WXWidget[FieldType, wx.Menu]):
     def append_submenu(self, submenu, text):
         self.control.AppendSubMenu(submenu.control, text=text)
 
+    def set_label(self, label: str) -> None:
+        """Set this menu's title in its menu bar, or its item text in a parent menu.
+
+        Args:
+            label (str): The new label (any object; converted with str()).
+        """
+        label = str(label)
+        if isinstance(self.parent, MenuBar):
+            menu_bar = self.parent.control
+            for pos in range(menu_bar.GetMenuCount()):
+                if menu_bar.GetMenu(pos) is self.control:
+                    menu_bar.SetMenuLabel(pos, label)
+                    return
+        parent_menu = self.control.GetParent()
+        if parent_menu is not None:
+            for item in parent_menu.GetMenuItems():
+                if item.GetSubMenu() is self.control:
+                    item.SetItemLabel(label)
+                    return
+
 
 class MenuItem(WXWidget[FieldType, wx.MenuItem]):
     control_type = wx.MenuItem
@@ -2186,8 +2206,21 @@ class MenuItem(WXWidget[FieldType, wx.MenuItem]):
         if self.checkable:
             kind = wx.ITEM_CHECK
         self.control = self.get_parent_control().Append(
-            self.control_id, label, self.help_message, kind=kind
+            self.control_id, label, str(self.help_message), kind=kind
         )
+
+    def set_label(self, label: str) -> None:
+        """Set this menu item's text, keeping its hotkey.
+
+        Args:
+            label (str): The new label (any object; converted with str()).
+        """
+        if self.control.IsSeparator():
+            return
+        label = str(label)
+        if self.hotkey is not None:
+            label = "%s\t%s" % (label, self.hotkey)
+        self.control.SetItemLabel(label)
 
     def bind_event(self, callback_event, wrapped_callback):
         parent = self.get_top_level_parent()

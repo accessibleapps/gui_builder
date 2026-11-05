@@ -933,11 +933,13 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
         self.default_index = default_index
         if choices is None:
             choices = []
-        self.choices = [str(i) for i in choices]
+        # Keep the original objects (possibly lazy translated strings) so
+        # BaseForm.refresh can convert them again; convert at render.
+        self.choices = list(choices)
 
     def render(self, **runtime_kwargs: Any) -> None:
         """Render the choice field with the specified choices."""
-        runtime_kwargs.setdefault("choices", self.choices)
+        runtime_kwargs.setdefault("choices", [str(i) for i in self.choices])
         super().render(**runtime_kwargs)
 
     def populate(self, value: Any) -> None:
@@ -956,7 +958,7 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
             The default choice string, or None if no choices
         """
         if self.choices:
-            return self.choices[self.default_index]
+            return str(self.choices[self.default_index])
         return None
 
     def get_choice(self) -> Optional[str]:
@@ -973,6 +975,8 @@ class ChoiceField(GUIField[ChoiceWidgetType]):
         Args:
             items: List of items to set
         """
+        items = list(items)
+        self.choices = items
         return self.widget.set_items(items)
 
     def delete_item(self, item: int) -> None:
