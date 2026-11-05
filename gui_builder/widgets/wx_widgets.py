@@ -1841,20 +1841,37 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
     def update_layout(self) -> None:
         """Re-check whether the wide layout fits, and switch if needed.
 
-        Called automatically on resize and DPI change. Call it after changing
-        fonts, which does not resize the panel.
+        Called automatically on resize and DPI change, and by BaseForm.refresh.
+        Call it after changing fonts, which does not resize the panel. The
+        check runs after the panel's next paint: GTK measures a new font only
+        in its next frame, and only for shown controls.
         """
-        if self.narrow_sizer_type is None:
+        if self.narrow_sizer_type is None or self._switching:
             return
-        self.control.Freeze()
-        try:
-            if self.is_narrow and self.narrow_below_chars is None:
-                # The wide layout's minimum width can only be measured in it.
-                self._set_narrow(False)
-            self._check_fit()
-            self._fit_in_parent()
-        finally:
-            self.control.Thaw()
+        if self.is_narrow and self.narrow_below_chars is None:
+            # The wide layout's minimum width can only be measured in it.
+            self._set_narrow(False)
+        # Ignore resizes until the deferred check has measured.
+        self._switching = True
+        if self.control.IsShownOnScreen():
+            self.control.Bind(wx.EVT_PAINT, self._on_paint_after_update)
+            self.control.Refresh()
+        else:
+            wx.CallAfter(self._deferred_check)
+
+    def _on_paint_after_update(self, event):
+        event.Skip()
+        self.control.Unbind(wx.EVT_PAINT, handler=self._on_paint_after_update)
+        wx.CallAfter(self._deferred_check)
+
+    def _deferred_check(self):
+        if not self.control:
+            return
+        self._switching = False
+        for child in self.control.GetChildren():
+            child.InvalidateBestSize()
+        self._check_fit()
+        self._fit_in_parent()
 
     def _on_size(self, event):
         event.Skip()
@@ -1867,8 +1884,7 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
 
     def _on_dpi_changed(self, event):
         event.Skip()
-        # Fonts are rescaled after this event is handled.
-        wx.CallAfter(self.update_layout)
+        self.update_layout()
 
     def _fit_in_parent(self):
         # Switching layouts, or a wrap sizer re-flowing, changes the panel's
