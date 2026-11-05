@@ -1890,7 +1890,20 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         # Switching layouts, or a wrap sizer re-flowing, changes the panel's
         # minimum size; the parent's sizer has to be told to make room.
         self.control.Layout()
-        min_size = self.control.GetSizer().CalcMin()
+        sizer = self.control.GetSizer()
+        wrap = isinstance(sizer, wx.WrapSizer)
+        if wrap:
+            # Measure the rows at this width: right after InformFirstDirection,
+            # CalcMin depends only on the items and the width.
+            sizer.InformFirstDirection(
+                wx.HORIZONTAL, self.control.GetClientSize().width, -1
+            )
+        min_size = sizer.CalcMin()
+        if wrap:
+            # The parent reads the panel's best size, which comes from the
+            # wrap sizer's state-dependent CalcMin; on MSW it gave one row's
+            # height, clipping the rest. Pin the minimum height instead.
+            self.control.SetMinSize(wx.Size(-1, min_size.height))
         if min_size != self._min_size:
             self._min_size = min_size
             self.control.InvalidateBestSize()
@@ -1940,6 +1953,9 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
 
     def _apply_sizer_type(self, sizer_type):
         if sizer_type != "wrap":
+            if isinstance(self.control.GetSizer(), wx.WrapSizer):
+                # Drop the minimum height set while wrapped.
+                self.control.SetMinSize(wx.Size(*(self.min_size or (-1, -1))))
             self.control.SetSizerType(sizer_type)
             return
         # SetSizerType has no wrap sizer. Move the children across in
