@@ -495,9 +495,25 @@ class WXWidget(Widget[FieldType], Generic[FieldType, ControlType]):
 
     def hide(self) -> None:
         self.control.Hide()
+        if self.label_control is not None:
+            self.label_control.Hide()
+        self._relayout()
 
     def show(self) -> None:
         self.control.Show()
+        if self.label_control is not None:
+            self.label_control.Show()
+        self._relayout()
+
+    def _relayout(self) -> None:
+        # Lay out every ancestor, not just the parent: a nested panel must also
+        # grow or shrink within its own parent.
+        window = self.control.GetParent()
+        while window is not None:
+            window.Layout()
+            if window.IsTopLevel():
+                break
+            window = window.GetParent()
 
     def is_shown(self) -> bool:
         return self.control.IsShown()
