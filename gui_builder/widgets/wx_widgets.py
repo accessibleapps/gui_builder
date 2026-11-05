@@ -1829,6 +1829,7 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         self._wide_min_width = 0
         self._min_size = None
         self._hidden_when_narrow = []
+        self._switching = False
 
     def render(self):
         super().render()
@@ -1857,6 +1858,10 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
 
     def _on_size(self, event):
         event.Skip()
+        if self._switching:
+            # Hiding or showing a field lays out the ancestors, resizing
+            # this panel in the middle of a switch.
+            return
         self._check_fit()
         self._fit_in_parent()
 
@@ -1891,6 +1896,13 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
             self._set_narrow(narrow)
 
     def _set_narrow(self, narrow):
+        self._switching = True
+        try:
+            self._switch_layout(narrow)
+        finally:
+            self._switching = False
+
+    def _switch_layout(self, narrow):
         self.is_narrow = narrow
         if narrow:
             # Fields the app already hid are left alone, and never re-shown.
