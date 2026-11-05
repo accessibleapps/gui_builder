@@ -1892,13 +1892,16 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         self.control.Layout()
         sizer = self.control.GetSizer()
         wrap = isinstance(sizer, wx.WrapSizer)
-        if wrap:
-            # Measure the rows at this width: right after InformFirstDirection,
-            # CalcMin depends only on the items and the width.
-            sizer.InformFirstDirection(
-                wx.HORIZONTAL, self.control.GetClientSize().width, -1
-            )
-        min_size = sizer.CalcMin()
+        width = self.control.GetClientSize().width
+        if wrap and hasattr(sizer, "CalcMinSizeFromKnownDirection"):
+            # wxWidgets 3.3: InformFirstDirection is a no-op stub there.
+            min_size = sizer.CalcMinSizeFromKnownDirection(wx.HORIZONTAL, width, -1)
+        else:
+            if wrap:
+                # wxWidgets 3.2: right after InformFirstDirection, CalcMin
+                # depends only on the items and the width.
+                sizer.InformFirstDirection(wx.HORIZONTAL, width, -1)
+            min_size = sizer.CalcMin()
         if wrap:
             # The parent reads the panel's best size, which comes from the
             # wrap sizer's state-dependent CalcMin; on MSW it gave one row's
