@@ -1830,6 +1830,7 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         self._min_size = None
         self._hidden_when_narrow = []
         self._switching = False
+        self._narrow_min_width = -1
 
     def render(self):
         super().render()
@@ -1837,6 +1838,44 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         if self.narrow_sizer_type is not None:
             self.control.Bind(wx.EVT_SIZE, self._on_size)
             self.control.Bind(wx.EVT_DPI_CHANGED, self._on_dpi_changed)
+            # Deferred, so the window first takes the wide layout's size.
+            wx.CallAfter(self._pin_narrow_min_width)
+
+    def _pin_narrow_min_width(self):
+        """Use the narrow layout's minimum width as the panel's minimum width.
+
+        The best size stays the wide layout's, so the window still opens
+        wide, but a window that takes its minimum size from its sizer can
+        now be made narrow enough for the panel to switch. Measured once.
+        """
+        if not self.control:
+            return
+        if self.is_narrow:
+            width = self.control.GetSizer().CalcMin().width
+        else:
+            self.control.Freeze()
+            try:
+                self._set_narrow(True)
+                width = self.control.GetSizer().CalcMin().width
+                self._set_narrow(False)
+                self.control.Layout()
+            finally:
+                self.control.Thaw()
+        self._narrow_min_width = width
+        height = -1
+        if isinstance(self.control.GetSizer(), wx.WrapSizer):
+            height = self.control.GetMinSize().height
+        self.control.SetMinSize(self._pinned_min_size(height))
+        # Windows that read their sizer's minimum on resize pick it up.
+        self.control.GetTopLevelParent().SendSizeEvent()
+
+    def _pinned_min_size(self, height=-1):
+        # The app's declared min_size, widened to the narrow layout's
+        # minimum width and raised to the given height.
+        min_width, min_height = self.min_size or (-1, -1)
+        return wx.Size(
+            max(min_width, self._narrow_min_width), max(min_height, height)
+        )
 
     def update_layout(self) -> None:
         """Re-check whether the wide layout fits, and switch if needed.
@@ -1906,7 +1945,7 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
             # The parent reads the panel's best size, which comes from the
             # wrap sizer's state-dependent CalcMin; on MSW it gave one row's
             # height, clipping the rest. Pin the minimum height instead.
-            self.control.SetMinSize(wx.Size(-1, min_size.height))
+            self.control.SetMinSize(self._pinned_min_size(min_size.height))
         if min_size != self._min_size:
             self._min_size = min_size
             self.control.InvalidateBestSize()
@@ -1958,7 +1997,7 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         if sizer_type != "wrap":
             if isinstance(self.control.GetSizer(), wx.WrapSizer):
                 # Drop the minimum height set while wrapped.
-                self.control.SetMinSize(wx.Size(*(self.min_size or (-1, -1))))
+                self.control.SetMinSize(self._pinned_min_size())
             self.control.SetSizerType(sizer_type)
             return
         # SetSizerType has no wrap sizer. Move the children across in
