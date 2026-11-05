@@ -485,6 +485,10 @@ class SizedFrame(BaseFrame):
 class SizedPanel(UIForm):
     widget_type = widgets.SizedPanel
 
+    def update_layout(self) -> None:
+        """Re-check whether the wide layout fits; call after changing fonts."""
+        return cast(widgets.SizedPanel, self.widget).update_layout()
+
 
 class Notebook(UIForm[widgets.Notebook]):
     widget_type = widgets.Notebook

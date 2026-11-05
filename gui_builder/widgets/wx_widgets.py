@@ -1792,13 +1792,129 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         control: sc.SizedPanel
     focusable = False
 
-    def __init__(self, sizer_type="vertical", *args, **kwargs):
+    def __init__(
+        self,
+        sizer_type="vertical",
+        narrow_sizer_type=None,
+        narrow_below_chars=None,
+        *args,
+        **kwargs,
+    ):
+        """Create a panel that lays its children out with a sizer.
+
+        Args:
+            sizer_type: Sizer for the normal (wide) layout: "vertical",
+                "horizontal", "form", "grid", or "wrap" (a horizontal
+                wx.WrapSizer).
+            narrow_sizer_type: Sizer to switch to when the wide layout does
+                not fit the panel's width, using the same names. None keeps
+                sizer_type at every width. Children are re-added in creation
+                order, so Tab and screen reader order do not change. Child
+                fields declared with hidden_when_narrow=True are hidden while
+                narrow.
+            narrow_below_chars: Optional fixed threshold, in average character
+                widths of the panel's font: the narrow layout is used while
+                the panel is narrower than this. None (the default) uses the
+                narrow layout only while the wide layout's minimum width is
+                larger than the panel.
+        """
         super().__init__(*args, **kwargs)
         self.sizer_type = sizer_type
+        self.narrow_sizer_type = narrow_sizer_type
+        self.narrow_below_chars = narrow_below_chars
+        self.is_narrow = False
+        self._wide_min_width = 0
+        self._min_size = None
+        self._hidden_when_narrow = []
 
     def render(self):
         super().render()
-        self.control.SetSizerType(self.sizer_type)
+        self._apply_sizer_type(self.sizer_type)
+        if self.narrow_sizer_type is not None:
+            self.control.Bind(wx.EVT_SIZE, self._on_size)
+            self.control.Bind(wx.EVT_DPI_CHANGED, self._on_dpi_changed)
+
+    def update_layout(self) -> None:
+        """Re-check whether the wide layout fits, and switch if needed.
+
+        Called automatically on resize and DPI change. Call it after changing
+        fonts, which does not resize the panel.
+        """
+        if self.narrow_sizer_type is None:
+            return
+        self.control.Freeze()
+        try:
+            if self.is_narrow and self.narrow_below_chars is None:
+                # The wide layout's minimum width can only be measured in it.
+                self._set_narrow(False)
+            self._check_fit()
+            self._fit_in_parent()
+        finally:
+            self.control.Thaw()
+
+    def _on_size(self, event):
+        event.Skip()
+        self._check_fit()
+        self._fit_in_parent()
+
+    def _on_dpi_changed(self, event):
+        event.Skip()
+        # Fonts are rescaled after this event is handled.
+        wx.CallAfter(self.update_layout)
+
+    def _fit_in_parent(self):
+        # Switching layouts, or a wrap sizer re-flowing, changes the panel's
+        # minimum size; the parent's sizer has to be told to make room.
+        self.control.Layout()
+        min_size = self.control.GetSizer().CalcMin()
+        if min_size != self._min_size:
+            self._min_size = min_size
+            self.control.InvalidateBestSize()
+            wx.CallAfter(self._layout_parent)
+
+    def _layout_parent(self):
+        if self.control:
+            self.control.GetParent().Layout()
+
+    def _check_fit(self):
+        if self.narrow_below_chars is not None:
+            needed = self.narrow_below_chars * self.control.GetCharWidth()
+        else:
+            if not self.is_narrow:
+                self._wide_min_width = self.control.GetSizer().CalcMin().width
+            needed = self._wide_min_width
+        narrow = self.control.GetClientSize().width < needed
+        if narrow != self.is_narrow:
+            self._set_narrow(narrow)
+
+    def _set_narrow(self, narrow):
+        self.is_narrow = narrow
+        if narrow:
+            # Fields the app already hid are left alone, and never re-shown.
+            self._hidden_when_narrow = [
+                child
+                for child in self.field.get_children()
+                if child.hidden_when_narrow and child.is_shown()
+            ]
+            for child in self._hidden_when_narrow:
+                child.hide()
+            self._apply_sizer_type(self.narrow_sizer_type)
+        else:
+            self._apply_sizer_type(self.sizer_type)
+            for child in self._hidden_when_narrow:
+                child.show()
+            self._hidden_when_narrow = []
+
+    def _apply_sizer_type(self, sizer_type):
+        if sizer_type == "wrap":
+            # SetSizerType has no wrap sizer; this is the call it makes.
+            # Without EXTEND_LAST_ON_EACH_LINE, which rewrites child
+            # proportions that SetSizerType would then carry over.
+            sizer = wx.WrapSizer(wx.HORIZONTAL, wx.REMOVE_LEADING_SPACES)
+            self.control._SetNewSizer(sizer)
+            self.control.sizerType = sizer_type
+        else:
+            self.control.SetSizerType(sizer_type)
 
 
 FrameControlType = TypeVar("FrameControlType", bound=wx.Frame)
