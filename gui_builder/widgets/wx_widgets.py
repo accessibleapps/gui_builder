@@ -495,9 +495,20 @@ class WXWidget(Widget[FieldType], Generic[FieldType, ControlType]):
 
     def hide(self) -> None:
         self.control.Hide()
+        if self.label_control is not None:
+            self.label_control.Hide()
+        self._layout_parent()
 
     def show(self) -> None:
         self.control.Show()
+        if self.label_control is not None:
+            self.label_control.Show()
+        self._layout_parent()
+
+    def _layout_parent(self) -> None:
+        parent = self.control.GetParent()
+        if parent is not None:
+            parent.Layout()
 
     def is_shown(self) -> bool:
         return self.control.IsShown()
