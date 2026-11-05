@@ -208,7 +208,8 @@ class BaseForm(GUIField[FormWidgetType]):
         value with str() again, so lazy translated strings pick up the current
         language: labels, frame and dialog titles, notebook page labels, menu
         and menu item text, menu item help, tooltips, choices (keeping the
-        selection) and stock button labels. Then lays out each form again.
+        selection) and stock button labels. Then lays out each form again and
+        re-checks the layout of each responsive SizedPanel.
 
         Args:
             font (wx.Font, optional): Font to set on every existing control in
@@ -229,6 +230,10 @@ class BaseForm(GUIField[FormWidgetType]):
             control = getattr(getattr(field, "widget", None), "control", None)
             if isinstance(field, BaseForm) and isinstance(control, wx.Window):
                 control.Layout()
+        # Labels and fonts changed the panels' widths; inner panels first.
+        for field in reversed(fields):
+            if isinstance(field, SizedPanel):
+                field.update_layout()
 
     def set_default_value(self) -> None:
         super(BaseForm, self).set_default_value()
@@ -484,6 +489,10 @@ class SizedFrame(BaseFrame):
 
 class SizedPanel(UIForm):
     widget_type = widgets.SizedPanel
+
+    def update_layout(self) -> None:
+        """Re-check whether the wide layout fits; call after changing fonts."""
+        return cast(widgets.SizedPanel, self.widget).update_layout()
 
 
 class Notebook(UIForm[widgets.Notebook]):
