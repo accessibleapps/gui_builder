@@ -186,6 +186,7 @@ class GUIField(Generic[WidgetType]):
     ) -> None:
         # Read by a parent SizedPanel that has a narrow_sizer_type.
         self.hidden_when_narrow = hidden_when_narrow
+        self.hidden_by_app = False
         if widget_type is None:
             widget_type = self.widget_type
         widget_kwargs = {}
@@ -495,10 +496,12 @@ class GUIField(Generic[WidgetType]):
 
     def hide(self) -> None:
         """Hide this field."""
+        self.hidden_by_app = True
         return self.widget.hide()
 
     def show(self) -> None:
         """Show this field after it has been hidden."""
+        self.hidden_by_app = False
         return self.widget.show()
 
     def get_first_ancestor(self) -> Optional["GUIField[Any]"]:

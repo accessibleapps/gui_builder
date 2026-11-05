@@ -1804,11 +1804,12 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
 
         Args:
             sizer_type: Sizer for the normal (wide) layout: "vertical",
-                "horizontal", "form", "grid", or "wrap" (a horizontal
-                wx.WrapSizer).
+                "horizontal", "form" or "grid".
             narrow_sizer_type: Sizer to switch to when the wide layout does
                 not fit the panel's width, using the same names. None keeps
-                sizer_type at every width. Children are re-added in creation
+                sizer_type at every width, except that a "horizontal" row
+                wraps onto more lines (wx.WrapSizer) when it does not fit.
+                Children are re-added in creation
                 order, so Tab and screen reader order do not change. Child
                 fields declared with hidden_when_narrow=True are hidden while
                 narrow.
@@ -1820,6 +1821,8 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
         """
         super().__init__(*args, **kwargs)
         self.sizer_type = sizer_type
+        if narrow_sizer_type is None and sizer_type == "horizontal":
+            narrow_sizer_type = "wrap"
         self.narrow_sizer_type = narrow_sizer_type
         self.narrow_below_chars = narrow_below_chars
         self.is_narrow = False
@@ -1897,24 +1900,39 @@ class SizedPanel(BaseContainer[FieldType, sc.SizedPanel]):
                 if child.hidden_when_narrow and child.is_shown()
             ]
             for child in self._hidden_when_narrow:
-                child.hide()
+                child.widget.hide()
             self._apply_sizer_type(self.narrow_sizer_type)
         else:
             self._apply_sizer_type(self.sizer_type)
             for child in self._hidden_when_narrow:
-                child.show()
+                # Fields the app hid while narrow stay hidden.
+                if not child.hidden_by_app:
+                    child.widget.show()
             self._hidden_when_narrow = []
 
     def _apply_sizer_type(self, sizer_type):
-        if sizer_type == "wrap":
-            # SetSizerType has no wrap sizer; this is the call it makes.
-            # Without EXTEND_LAST_ON_EACH_LINE, which rewrites child
-            # proportions that SetSizerType would then carry over.
-            sizer = wx.WrapSizer(wx.HORIZONTAL, wx.REMOVE_LEADING_SPACES)
-            self.control._SetNewSizer(sizer)
-            self.control.sizerType = sizer_type
-        else:
+        if sizer_type != "wrap":
             self.control.SetSizerType(sizer_type)
+            return
+        # SetSizerType has no wrap sizer. Move the children across in
+        # GetChildren() order, keeping each one's sizer settings. Without
+        # EXTEND_LAST_ON_EACH_LINE, which rewrites child proportions that
+        # SetSizerType would then carry over.
+        old = self.control.GetSizer()
+        sizer = wx.WrapSizer(wx.HORIZONTAL, wx.REMOVE_LEADING_SPACES)
+        for child in self.control.GetChildren():
+            item = old.GetItem(child)
+            if item is None:
+                continue
+            proportion, flag, border = (
+                item.GetProportion(),
+                item.GetFlag(),
+                item.GetBorder(),
+            )
+            user_data = item.GetUserData()
+            old.Detach(child)
+            sizer.Add(child, proportion, flag, border, user_data)
+        self.control.SetSizer(sizer)
 
 
 FrameControlType = TypeVar("FrameControlType", bound=wx.Frame)
