@@ -17,6 +17,8 @@ from typing import (
     cast,
 )
 
+import wx
+
 from .fields import ChoiceField, GUIField, UnboundField
 from .widgets import wx_widgets as widgets
 
@@ -199,6 +201,35 @@ class BaseForm(GUIField[FormWidgetType]):
         self.set_default_value()
         self.is_rendered = True
 
+    def refresh(self, font: Optional[wx.Font] = None) -> None:
+        """Re-apply the text each rendered field declared, after a language or text-size change.
+
+        Walks this form and every nested field and converts each declared
+        value with str() again, so lazy translated strings pick up the current
+        language: labels, frame and dialog titles, notebook page labels, menu
+        and menu item text, menu item help, tooltips, choices (keeping the
+        selection) and stock button labels. Then lays out each form again.
+
+        Args:
+            font (wx.Font, optional): Font to set on every existing control in
+                this form. Controls created before a parent's SetFont do not
+                inherit it, so each one is set. Defaults to None, which leaves
+                fonts unchanged.
+        """
+        if not self.is_rendered:
+            return
+        fields = [self, *self.get_all_children()]
+        for field in fields:
+            widget = getattr(field, "widget", None)
+            if widget is not None and widget.control is not None:
+                _refresh_field_text(field, widget)
+        if font is not None:
+            _set_font_recursive(self.widget.control, font)
+        for field in reversed(fields):
+            control = getattr(getattr(field, "widget", None), "control", None)
+            if isinstance(field, BaseForm) and isinstance(control, wx.Window):
+                control.Layout()
+
     def set_default_value(self) -> None:
         super(BaseForm, self).set_default_value()
         for field in self:
@@ -237,6 +268,66 @@ class BaseForm(GUIField[FormWidgetType]):
         if not self.is_rendered:
             self.render()
         self.set_default_focus()
+
+
+def _refresh_field_text(field: GUIField[Any], widget: widgets.WXWidget) -> None:
+    """Re-apply one rendered field's declared strings to its widget.
+
+    Args:
+        field (GUIField): The field whose declared values are re-applied.
+        widget (WXWidget): The field's rendered widget.
+    """
+    if field.label is not None and not isinstance(widget, widgets.BaseContainer):
+        widget.set_label(str(field.label))
+    title = field.widget_kwargs.get("title")
+    if title is not None and isinstance(widget, widgets.BaseContainer):
+        widget.set_title(str(title))
+    if isinstance(field, Notebook):
+        for index, page in enumerate(field.get_children()):
+            if page.label is not None:
+                widget.control.SetPageText(index, str(page.label))
+    if widget.tool_tip_text is not None:
+        widget.set_tool_tip_text(widget.tool_tip_text)
+    if (
+        isinstance(widget, widgets.MenuItem)
+        and widget.help_message
+        and not widget.control.IsSeparator()
+    ):
+        widget.control.SetHelp(str(widget.help_message))
+    if (
+        isinstance(field, ChoiceField)
+        and isinstance(widget, (widgets.ComboBox, widgets.ListBox, widgets.RadioBox))
+        and len(field.choices) == widget.get_count()
+    ):
+        selection = widget.get_index()
+        for index, choice in enumerate(field.choices):
+            widget.control.SetString(index, str(choice))
+        if isinstance(widget, widgets.ComboBox) and selection is not None:
+            # A read-only combo box's shown text does not follow SetString on
+            # the selected item (GTK), and reselecting the same index is a no-op.
+            widget.control.SetSelection(wx.NOT_FOUND)
+            widget.control.SetSelection(selection)
+    if isinstance(widget, widgets.ButtonSizer):
+        for item in widget.control.GetChildren():
+            window = item.GetWindow()
+            if isinstance(window, wx.Button):
+                stock_label = wx.GetStockLabel(window.GetId())
+                if stock_label:
+                    window.SetLabel(stock_label)
+
+
+def _set_font_recursive(window: wx.Window, font: wx.Font) -> None:
+    """Set a font on a window and all its descendants, stopping at top-level windows.
+
+    Args:
+        window (wx.Window): The window to start from.
+        font (wx.Font): The font to set.
+    """
+    window.SetFont(font)
+    window.InvalidateBestSize()
+    for child in window.GetChildren():
+        if not isinstance(child, wx.TopLevelWindow):
+            _set_font_recursive(child, font)
 
 
 class FormMeta(type):
@@ -484,6 +575,11 @@ class ListView(ChoiceField, UIForm[widgets.ListView]):
         super().__init__(virtual=virtual, *args, **kwargs)
         if choices is not None:
             self.choices = list(choices)
+
+    def render(self, **runtime_kwargs: Any) -> None:
+        """Render the list view, passing its rows to the widget unconverted."""
+        runtime_kwargs.setdefault("choices", self.choices)
+        super().render(**runtime_kwargs)
 
     def get_children(self) -> Iterator[GUIField[Any]]:
         return iter([])
