@@ -13,10 +13,10 @@ A declarative GUI framework for Python built on wxPython that makes creating des
 ## Installation
 
 ```bash
-pip install gui_builder
+pip install git+https://github.com/accessibleapps/gui_builder.git
 ```
 
-Requires Python 3.8.6 or higher.
+It isn't on PyPI yet, so install it from GitHub. Requires Python 3.8.6 or higher.
 
 ## Quick Example
 
