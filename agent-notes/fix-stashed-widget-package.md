@@ -29,5 +29,9 @@ wxPython; never replace editable text to assign its accessible name. Native
 screen-reader output and the older wxPython provider behavior were not tested.
 
 ## Next step
-Publish the PR, resolve CI failures, and merge normally. After merge, remove only
-the newest stash, whose changes are delivered here; preserve the older stash.
+Delivery is tracked in https://github.com/AccessibleApps/gui_builder/pull/21;
+consult that PR for current CI and merge state. Tests and packaging passed on
+Python 3.8 and 3.14 for the implementation. Documentation is checked in the same
+workflow. Local verification ran only test_widget_package.py on a private desktop.
+Remove only the newest stash after merge; preserve the older autosizing stash
+and all unrelated untracked work.
