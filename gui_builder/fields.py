@@ -106,7 +106,7 @@ class UnboundField(Generic[FieldType]):
             Either the callback function itself (if used without trigger),
             or a decorator function (if used with trigger name).
         """
-        if not isinstance(trigger, str):
+        if not isinstance(trigger, str) and trigger is not None:
             # Direct callback assignment: @field.add_callback
             self.kwargs["callback"] = trigger
             return trigger
@@ -173,7 +173,7 @@ class GUIField(Generic[WidgetType]):
     def __init__(
         self,
         widget_type: Optional[Type[WidgetType]] = None,
-        label: Union[str, SupportsStr, None] = None,
+        label: Optional[SupportsStr] = None,
         parent: Optional[Any] = None,
         bound_name: Optional[str] = None,
         callback: Optional[CallbackFunction] = None,
@@ -242,7 +242,7 @@ class GUIField(Generic[WidgetType]):
     def label(self) -> Optional[str]:
         """Get the label for this field."""
         if self.control_label is not None:
-            return self.control_label
+            return str(self.control_label)
         if self.__autolabel__ and self.bound_name:
             return self.bound_name.replace("_", " ").title()
         return None
@@ -550,21 +550,21 @@ class GUIField(Generic[WidgetType]):
         """Return this field's current label."""
         return self.widget.get_label()
 
-    def set_label(self, label: Union[str, SupportsStr]) -> None:
+    def set_label(self, label: SupportsStr) -> None:
         """Set this field's label.
 
         Args:
             label: Label text to set (string or string-like object)
         """
-        return self.widget.set_label(label)
+        return self.widget.set_label(str(label))
 
-    def set_accessible_label(self, label: Union[str, SupportsStr]) -> None:
+    def set_accessible_label(self, label: SupportsStr) -> None:
         """Set this field's accessible label for screen readers.
 
         Args:
             label: Accessible label text (string or string-like object)
         """
-        self.widget.set_accessible_label(label)
+        self.widget.set_accessible_label(str(label))
 
     def get_value(self) -> Any:
         """Return the contents of this field."""
